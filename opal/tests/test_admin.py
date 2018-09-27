@@ -44,7 +44,7 @@ class UserProfileAdminTestCase(AdminTestCase):
         self.assertTrue(has_perm)
 
     def test_delete_permission_has_created_subrecord(self):
-        dem = self.patient.demographics_set.get()
+        dem = self.patient.demographics()
         dem.created_by = self.user
         dem.save()
         request = self.rf.get('/admin/meh/')
@@ -54,7 +54,7 @@ class UserProfileAdminTestCase(AdminTestCase):
         self.assertFalse(has_perm)
 
     def test_delete_permission_has_updated_subrecord(self):
-        dem = self.patient.demographics_set.get()
+        dem = self.patient.demographics()
         dem.updated_by = self.user
         dem.save()
         request = self.rf.get('/admin/meh/')
@@ -129,8 +129,6 @@ class LookupListFormTestCase(OpalTestCase):
         self.assertEqual("Stetson", form.clean_name())
 
 
-
-
 class EpisodeAdminTestCase(AdminTestCase):
     def setUp(self):
         super(EpisodeAdminTestCase, self).setUp()
@@ -139,13 +137,15 @@ class EpisodeAdminTestCase(AdminTestCase):
     def test_episode_detail_link(self):
         self.assertEqual(
             self.admin.episode_detail_link(self.episode),
-            "<a href='/#/patient/1/1'>/#/patient/1/1</a>"
+            "<a href='/#/patient/{0}/{1}'>/#/patient/{0}/{1}</a>".format(
+                self.patient.id, self.episode.id
+            )
         )
 
     def test_view_on_site(self):
         self.assertEqual(
             self.admin.view_on_site(self.episode),
-            '/#/patient/1/1'
+            '/#/patient/{}/{}'.format(self.patient.id, self.episode.id)
         )
 
 
@@ -157,11 +157,13 @@ class PatientAdminTestCase(AdminTestCase):
     def test_patient_detail_link(self):
         self.assertEqual(
             self.admin.patient_detail_link(self.patient),
-            "<a href='/#/patient/1'>/#/patient/1</a>"
+            "<a href='/#/patient/{0}'>/#/patient/{0}</a>".format(
+                self.patient.id
+            )
         )
 
     def test_view_on_site(self):
         self.assertEqual(
             self.admin.view_on_site(self.patient),
-            '/#/patient/1'
+            '/#/patient/{}'.format(self.patient.id)
         )

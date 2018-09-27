@@ -19,7 +19,9 @@
         {% block heading %}{% icon 'fa-user' %}[[ patient.demographics[0].first_name ]] [[ patient.demographics[0].surname ]]{% endblock %}
         <small>
           {% block subheading %}
-          ([[ patient.demographics[0].date_of_birth | shortDate ]])
+          <span ng-show="patient.demographics[0].date_of_birth">
+            ([[ patient.demographics[0].date_of_birth | shortDate ]])
+          </span>
           [[ patient.demographics[0].hospital_number ]]
           {% endblock %}
         </small>

@@ -10,7 +10,6 @@ import logging
 import random
 import os
 
-from django.conf import settings
 from django.utils import timezone
 from django.db import models, transaction, IntegrityError
 from django.db.models import Q
@@ -27,6 +26,7 @@ from opal.core import (
 )
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
+from opal.core import serialization
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
@@ -36,33 +36,6 @@ from opal.core.subrecords import (
 def get_default_episode_type():
     app = application.get_app()
     return app.default_episode_category
-
-
-def deserialize_datetime(value):
-    input_format = settings.DATETIME_INPUT_FORMATS[0]
-    value = timezone.make_aware(datetime.datetime.strptime(
-        value, input_format
-    ), timezone.get_current_timezone())
-
-    return value
-
-
-def deserialize_time(value):
-    input_format = settings.TIME_INPUT_FORMATS[0]
-    value = timezone.make_aware(datetime.datetime.strptime(
-        value, input_format
-    ), timezone.get_current_timezone()).time()
-
-    return value
-
-
-def deserialize_date(value):
-    input_format = settings.DATE_INPUT_FORMATS[0]
-    dt = datetime.datetime.strptime(
-        value, input_format
-    )
-    dt = timezone.make_aware(dt, timezone.get_current_timezone())
-    return dt.date()
 
 
 class SerialisableFields(object):
@@ -404,11 +377,11 @@ class UpdatesFromDictMixin(SerialisableFields):
                     else:
                         DateTimeField = models.fields.DateTimeField
                         if value and field_type == models.fields.DateField:
-                            value = deserialize_date(value)
+                            value = serialization.deserialize_date(value)
                         elif value and field_type == DateTimeField:
-                            value = deserialize_datetime(value)
+                            value = serialization.deserialize_datetime(value)
                         elif value and field_type == models.fields.TimeField:
-                            value = deserialize_time(value)
+                            value = serialization.deserialize_time(value)
 
                         setattr(self, name, value)
 
@@ -519,7 +492,7 @@ class Patient(models.Model):
 
     def __unicode__(self):
         try:
-            demographics = self.demographics_set.get()
+            demographics = self.demographics()
             return '%s | %s %s' % (
                 demographics.hospital_number,
                 demographics.first_name,
@@ -530,6 +503,12 @@ class Patient(models.Model):
         except:
             print(self.id)
             raise
+
+    def demographics(self):
+        """
+        Shortcut method to return this patient's demographics.
+        """
+        return self.demographics_set.get()
 
     def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
@@ -614,8 +593,7 @@ class Patient(models.Model):
         return d
 
     def update_from_demographics_dict(self, demographics_data, user):
-        demographics = self.demographics_set.get()
-        demographics.update_from_dict(demographics_data, user)
+        self.demographics().update_from_dict(demographics_data, user)
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
@@ -719,7 +697,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def __unicode__(self):
         try:
-            demographics = self.patient.demographics_set.get()
+            demographics = self.patient.demographics()
 
             return '%s | %s | %s' % (demographics.hospital_number,
                                      demographics.name,
@@ -905,21 +883,18 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         for model in patient_subrecords():
             subrecords = model.objects.filter(patient_id=self.patient.id)
 
-            if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
+            d[model.get_api_name()] = [
+                subrecord.to_dict(user) for subrecord in subrecords
+            ]
+
         for model in episode_subrecords():
             subrecords = model.objects.filter(episode_id=self.id)
 
-            if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
+            d[model.get_api_name()] = [
+                subrecord.to_dict(user) for subrecord in subrecords
+            ]
 
         d['tagging'] = self.tagging_dict(user)
-
-        d['episode_history'] = self._episode_history_to_dict(user)
         return d
 
     @classmethod
@@ -932,10 +907,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
 
 class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
-    consistency_token = models.CharField(max_length=8)
-    _is_singleton = False
-    _advanced_searchable = True
+    _is_singleton            = False
+    _advanced_searchable     = True
     _exclude_from_subrecords = False
+
+    consistency_token = models.CharField(max_length=8)
 
     class Meta:
         abstract = True
@@ -959,6 +935,11 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     @classmethod
     def get_display_name(cls):
         if hasattr(cls, '_title'):
+            w = "_title has been deprecated and will be removed in v0.12.0, "
+            w = w + "please use verbose_name in Meta instead for {}"
+            logging.warning(
+                w.format(cls.__name__)
+            )
             return cls._title
         if cls._meta.verbose_name.islower():
             return cls._meta.verbose_name.title()
@@ -1111,7 +1092,6 @@ class EpisodeSubrecord(Subrecord):
 class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
-    _title = 'Teams'
 
     user     = models.ForeignKey(User, null=True, blank=True)
     episode  = models.ForeignKey(Episode, null=False)
@@ -1120,6 +1100,7 @@ class Tagging(TrackedModel, models.Model):
 
     class Meta:
         unique_together = (('value', 'episode', 'user'))
+        verbose_name = "Teams"
 
     def __unicode__(self):
         if self.user is not None:
@@ -1482,7 +1463,7 @@ class Location(EpisodeSubrecord):
         abstract = True
 
     def __unicode__(self):
-        demographics = self.episode.patient.demographics_set.get()
+        demographics = self.episode.patient.demographics()
         return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
             demographics.name,
             demographics.hospital_number,
@@ -1536,7 +1517,6 @@ class Diagnosis(EpisodeSubrecord):
     This is a working-diagnosis list, will often contain things that are
     not technically diagnoses, but is for historical reasons, called diagnosis.
     """
-    _title = 'Diagnosis / Issues'
     _sort = 'date_of_diagnosis'
     _icon = 'fa fa-stethoscope'
 
@@ -1551,18 +1531,18 @@ class Diagnosis(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name = 'Diagnosis / Issues'
         verbose_name_plural = "Diagnoses"
 
     def __unicode__(self):
         return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics_set.get().name,
+            self.episode.patient.demographics().name,
             self.condition,
             self.date_of_diagnosis
         )
 
 
 class PastMedicalHistory(EpisodeSubrecord):
-    _title = 'PMH'
     _sort = 'year'
     _icon = 'fa fa-history'
 
@@ -1572,13 +1552,19 @@ class PastMedicalHistory(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name = "PMH"
         verbose_name_plural = "Past medical histories"
 
 
 class Investigation(EpisodeSubrecord):
-    _title = 'Investigations'
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
+
+    POS_NEG_PENDING = (
+        ("pending", "pending",),
+        ("positive", "positive",),
+        ("negative", "negative",),
+    )
 
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)
@@ -1623,9 +1609,12 @@ class Investigation(EpisodeSubrecord):
     giardia               = models.CharField(max_length=20, blank=True)
     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
     cryptosporidium       = models.CharField(max_length=20, blank=True)
+    rhinovirus            = models.CharField(
+        max_length=20, blank=True, choices=POS_NEG_PENDING)
 
     class Meta:
         abstract = True
+        verbose_name = 'Investigations'
 
 
 class Role(models.Model):
@@ -1742,7 +1731,6 @@ multiple open stages"
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
-    _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
     _advanced_searchable = False
@@ -1754,6 +1742,9 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     room_code = models.CharField(max_length=255, blank=True)
     bed_code = models.CharField(max_length=255, blank=True)
     admission_diagnosis = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        verbose_name = 'Inpatient Admissions'
 
     def update_from_dict(self, data, *args, **kwargs):
         if "id" not in data:
@@ -1772,12 +1763,12 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
 
 
 class ReferralRoute(EpisodeSubrecord):
-    _title = "Referral Route"
     _icon = 'fa fa-level-up'
     _is_singleton = True
 
     class Meta:
         abstract = True
+        verbose_name = 'Referral Route'
 
     internal = models.NullBooleanField()
 
@@ -1800,11 +1791,11 @@ class PatientConsultation(EpisodeSubrecord):
     _sort = 'when'
     _icon = 'fa fa-comments'
     _list_limit = 3
-    _title = "Patient Consultation"
     _angular_service = 'PatientConsultationRecord'
 
     class Meta:
         abstract = True
+        verbose_name = "Patient Consultation"
 
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(
@@ -1819,17 +1810,17 @@ class PatientConsultation(EpisodeSubrecord):
 
     def set_when(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
-            self.when = deserialize_datetime(incoming_value)
+            self.when = serialization.deserialize_datetime(incoming_value)
         else:
             self.when = timezone.make_aware(datetime.datetime.now())
 
 
 class SymptomComplex(EpisodeSubrecord):
-    _title = 'Symptoms'
     _icon = 'fa fa-stethoscope'
 
     class Meta:
         abstract = True
+        verbose_name = "Symptoms"
         verbose_name_plural = "Symptom complexes"
 
     symptoms = models.ManyToManyField(

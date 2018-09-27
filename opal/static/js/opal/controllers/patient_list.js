@@ -3,7 +3,8 @@ angular.module('opal.controllers').controller(
                                 $location, $routeParams,
                                 $modal, $rootScope, $window, $injector,
                                 growl, Flow, Item, Episode,
-                                episodedata, metadata, profile, episodeVisibility){
+                                episodedata, metadata, profile, episodeLoader,
+                                episodeVisibility){
 
         $scope.ready = false;
         var version = window.version;
@@ -91,6 +92,22 @@ angular.module('opal.controllers').controller(
         $scope.episode = $scope.rows[0];
 
         $scope.ready = true;
+
+      //
+      // Reload a single episode from the server.
+      // Useful for Pathway callbacks.
+      //
+      $scope.refresh = function(episode_id){
+        episodeLoader(episode_id).then(
+          function(episode){
+            $scope.episodes[episode_id] = episode;
+            if($scope.episode.id == episode_id){
+              $scope.episode = episode;
+            }
+            $scope.rows = $scope.getVisibleEpisodes()
+          }
+        )
+      }
 
         //
         // This is used to be callable we can pass to

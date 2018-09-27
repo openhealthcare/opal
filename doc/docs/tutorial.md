@@ -172,7 +172,7 @@ Next, we're going to let Opal take care of the boilerplate that we'll need to us
 model in our application. From the commandline:
 
 ```sh
-opal scaffold mynewapp
+python manage.py scaffold mynewapp
 ```
 
 Let's take a look at what that did:

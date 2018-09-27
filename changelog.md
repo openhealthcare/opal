@@ -1,3 +1,164 @@
+### 0.12.0 (Major Release)
+
+#### Misc Changes
+* Adds the {% block analytics %} in the base template (opal/templates/base.html) that by default contains the google analytics code.
+
+* Adds the block {% block javascripts %} in the base template (opal/templates/base.html) that will compress all javascripts.
+
+* Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
+
+### 0.11.2 (Bugfix Release)
+
+Includes referencedata JSON files in Manifest.
+
+### 0.11.1 (Bugfix Release)
+Fixes the user_options in the date picker tag to display the options as part of the text input.
+
+### 0.11.0 (Major Release)
+
+#### Adds options of `today` and `yesterday` in the date picker
+
+If you pass in `user_options=True` to the date picker. You will be provided with
+options to select today or yesterday in the form tag.
+
+#### Adds `dateHelper` to the rootScope
+
+The dateHelper has the functions `now` and `yesterday` that return javascript Dates for
+the current time and the current time - 1 day.
+
+#### Deprecates the _title property
+
+In future we will use the standard `verbose_name` property as the display name.
+The abstract models have been changed to account for this.
+
+#### Core API registration
+
+A refactor in the way that the core APIs are registered by Opal means that
+importing `opal.core.api` in a plugin API no longer results in circular imports.
+
+Fixes a bug whereby episodes were serialising differently depending on whether
+the code path went via `.to_dict()` or `.objects.serialised()`.
+
+#### HelpTextStep can now use a custom template
+
+The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
+
+This is the template for what will be placed in the side bar.
+
+#### Adds in a radio_vertical template tag
+
+This displays the label and then the radio
+buttons as a vertical list.
+
+#### opal.core.serialization
+
+A number of helpers related to serialization and deserialization have been brought
+together in the new module `opal.core.serialization`.
+
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the
+Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### as_menuitem helpers
+
+Applications using Opal Menuitems often wish to add menu items for Patient Lists and
+Pathways.
+
+To aid this, the `.as_menuitem()` method now creates one from the target class with
+sensible but overridable defaults.
+
+#### `opal serve` command
+
+We add `opal serve` to the Opal commandline tool. Currently this simply wraps the
+Django runserver management command. It is envisaged that in the future this will
+also initialize e.g. sass precompilers with a single command.
+
+#### Misc Changes
+
+Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
+for a method named `get_$attr` and will call that if it exists.
+
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
+#### Template removals
+
+We removed a number of superfluous templates:
+
+* opal/templates/patient_lists/spreadsheet_list.html
+* opal/templates/layouts/left-panel.html
+
+#### Static asset minification
+
+The Django upgrade in Opal 0.10 stopped compressor minifying files
+when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
+a version that supports Django 1.10.
+
+#### The return of an old friend: IE Document modes
+
+Users report that their system administrators sometimes configure Internet Explorer
+in such a way that it uses e.g. IE7 Document mode by default.
+
+This is problematical for Opal applications which do in fact make use of internet
+technologies that were in widespread use after say, 2006.
+
+We have altered `base.html` to specify `"X-UA-Compatible" content="IE=Edge"`. If you
+override `base.html`in your application we advise that you add this `<meta>` tag.
+
+#### Misc Changes
+
+* Adds the utility function `opal.core.subrecords.singletons()` which returns
+a generator function which will yield all subrecord singletons.
+* Fixes a URI encoding bug in the `Episode.findByHospitalNumber()` method that
+made hospital numbers including `#` or `/` raise an error.
+* Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
+to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
+
+#### Updates to the Dependency Graph
+
+* Django compressor: 1.5 -> 2.2
+
+
+### 0.10.1 (Minor Release)
+
+#### Plugin API end points can now override application end points
+
+A change to the order that APIs are registered with Django Rest Framework allows
+plugins to now override the core Opal application APIs.
+
+#### Fonts are now locally sourced
+
+Fonts are now served from Opal's static assets rather than from the Google CDN.
+
+#### print/screen stylesheets have been collapsed into opal.css
+
+Print/screen differences are now in opal.css with media tags.
+
+#### Google Analytics is now deferred
+
+The loading in of Google Analytics is now deferred to the bottom of the body
+tag to allow the page to load without waiting on analytics scripts to load.
+
+#### Scaffold version control failures
+
+The `startplugin` and `startproject` commands initialize a git repository by
+default. If we (The `subprocess` module) cannot find the `git` command, we now
+continue with a message printed to screen rather than raising an exception.
+
+#### Episode.objects.serialised now uses select_related
+
+`ForeignKeyOrFreeText` fields now have their ForeignKey items preselected when
+we use `Episode.objects.serialised`. This provides a speed boost for applications
+with moderately heavy `ForeignKeyOrFreeText` usage.
+
+(Approx 30-40% in our tests.)
+
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
@@ -38,6 +199,15 @@ currently available.
 Disoverable features now have a `filter` method which allows you to filter features
 with matching attributes.
 
+#### Pathways ContextProcessor
+
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
+
+    {% include pathways.YourPathway.get_display_name %}
+
+
 #### Missing consistency token errors
 
 `.update_from_dict()` will now raise the new error
@@ -70,6 +240,28 @@ We remove a number of stale unused templates:
 As Django ships with a `LoginRequiredMixin` of its own we no longer roll our own
 in `opal.core.views.
 
+#### Testing options
+
+Adds a `--failfast` option to the test harness to stop test runs on the first
+failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+#### Moves scaffold to be a django management command
+
+The rest of the api is still the same but now
+we run `python manage.py scaffold {my_app_name}`
+
+#### Deprecations completed
+
+As previously noted in console warnings, the Angular Episode service no longer
+supports the `discharge_date`, `date_of_admission`, `date_of_episode` properties.
+These were replaced by `.start` and `.end`.
+
 #### Updates to the Dependency Graph
 
 * Django: 1.8.13 -> 1.10.8
@@ -79,21 +271,8 @@ in `opal.core.views.
 * Jinja2: 2.9.6 -> 2.10
 * Ffs: 0.0.8.1 -> 0.0.8.2
 * Requests: 2.7.0 -> 2.18.4
-
-#### Testing options
-
-Adds a `--failfast` option to the test harness to stop test runs on the first
-failure.
-
-If you are a plugin developer upgrading an existing plugin you will have to
-manually add support for `--failfast` passthrough to your `runtests.py`.
-
-
-#### Moves scaffold to be a django management command
-
-The rest of the api is still the same but now
-we run `python manage.py scaffold {my_app_name}`
-
+* django-celery: 3.1.17 -> 3.2.2
+* celery: 3.1.19 -> 3.1.25
 
 #### Misc Changes
 
@@ -102,17 +281,12 @@ library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
-### 0.9.1 (Minor Release)
+Adds the `rows` option to the textarea template tag which just fills in the html textarea
+`rows` attribute. Text areas are defaulted to 5 rows (the same as before).
 
-#### Pathways ContextProcessor
+Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
 
-The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
-access your pathways from templates without having to explicitly load them in a view. In
-turn, this allows patterns like:
-
-    {% include pathways.YourPathway.get_display_name %}
-
-### Misc Changes
+Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
 
 Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
 as opposed to episode.category (which was always null)

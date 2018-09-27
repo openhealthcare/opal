@@ -10,7 +10,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from opal import models
-from opal.core import exceptions
+from opal.core import exceptions, subrecords
 from opal.models import (
     Subrecord, Tagging, Patient, InpatientAdmission, Symptom, Stage
 )
@@ -20,7 +20,8 @@ from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
-    HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner
+    HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner,
+    EntitledHatWearer
 )
 
 
@@ -39,12 +40,30 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    def test_demographics(self):
+        patient = models.Patient.objects.create()
+        self.assertEqual(patient.demographics_set.get(), patient.demographics())
+
+    def test_demographics_does_not_exist(self):
+        # This is one of those things that should not exist, but let's make
+        # doubly sure that we raise an exception if it does happen !
+        patient = models.Patient.objects.create()
+        patient.demographics_set.get().delete()
+        Demographics = subrecords.get_subrecord_from_model_name('Demographics')
+        with self.assertRaises(Demographics.DoesNotExist):
+            demographics = patient.demographics()
+
     def test_create_episode(self):
         patient = models.Patient()
         patient.save()
         episode = patient.create_episode()
         self.assertEqual(models.Episode, episode.__class__)
         self.assertEqual(patient, episode.patient)
+
+    def test_to_dict_episode_identical_to_episode_to_dict(self):
+        patient, episode = self.new_patient_and_episode_please()
+        episode_dict = episode.to_dict(self.user)
+        self.assertEqual(episode_dict, patient.to_dict(self.user)['episodes'][episode.id])
 
     @patch("opal.models.application.get_app")
     def test_created_with_the_default_episode(self, get_app):
@@ -76,7 +95,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
@@ -101,8 +120,9 @@ class PatientTestCase(OpalTestCase):
         }
         patient.bulk_update(d, self.user)
         colours = patient.patientcolour_set.all()
-        self.assertEqual(colours[0].name, "green")
-        self.assertEqual(colours[1].name, "purple")
+        expected = set(["green", "purple"])
+        found = set([colours[0].name, colours[1].name])
+        self.assertEqual(expected, found)
 
     def test_bulk_update_with_existing_patient_episode(self):
         original_patient = models.Patient()
@@ -123,15 +143,17 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
 
         colours = patient.patientcolour_set.all()
         self.assertEqual(len(colours), 2)
-        self.assertEqual(colours[0].name, "green")
-        self.assertEqual(colours[1].name, "purple")
+        self.assertEqual(
+            set([colours[0].name, colours[1].name]),
+            set(["green", "purple"]),
+        )
         self.assertTrue(patient.episode_set.get(), original_episode)
 
     def test_bulk_update_without_demographics(self):
@@ -146,7 +168,7 @@ class PatientTestCase(OpalTestCase):
 
         original_patient.bulk_update(d, self.user)
         self.assertEqual(
-            original_patient.demographics_set.first().hospital_number, ""
+            original_patient.demographics().hospital_number, ""
         )
 
     def test_bulk_update_tagging(self):
@@ -191,7 +213,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
@@ -200,8 +222,11 @@ class PatientTestCase(OpalTestCase):
 
         hat_wearers = episode.hatwearer_set.all()
         self.assertEqual(len(hat_wearers), 2)
-        self.assertEqual(hat_wearers[0].name, "bowler")
-        self.assertEqual(hat_wearers[1].name, "wizard")
+        expected = set(["bowler", "wizard"])
+        found = set([hat_wearers[0].name, hat_wearers[1].name])
+        self.assertEqual(
+            expected, found
+        )
         self.assertEqual(hat_wearers[0].episode, episode)
         self.assertEqual(hat_wearers[1].episode, episode)
 
@@ -259,8 +284,15 @@ class SubrecordTestCase(OpalTestCase):
         ])
         self.assertEqual(result, "found")
 
-    def test_get_display_name_from_property(self):
-        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
+    @patch('opal.models.logging')
+    def test_get_display_name_from_property(self, logging):
+        display_name = EntitledHatWearer.get_display_name()
+        self.assertEqual('Entitled Wearer of Hats', display_name)
+        self.assertTrue(logging.warning)
+        logging.warning.assert_called_once_with(
+            "_title has been deprecated and will be removed in v0.12.0, please \
+use verbose_name in Meta instead for EntitledHatWearer"
+        )
 
     def test_get_display_name_from_meta_verbose_name(self):
         self.assertEqual(
@@ -277,7 +309,7 @@ class SubrecordTestCase(OpalTestCase):
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
-        birthday_party= "11/2/2016 20:30:10"
+        birthday_party = "11/2/2016 20:30:10"
         birthday = Birthday()
         birthday.update_from_dict(dict(
             birth_date=birthday_date,
@@ -740,7 +772,7 @@ class SymptomComplexTestCase(OpalTestCase):
             symptoms=["alertness", "apathy"],
             duration="a week",
             details="information",
-            episode_id=1,
+            episode_id=self.symptom_complex.episode.id,
             updated=None,
             updated_by_id=None,
             created=None,

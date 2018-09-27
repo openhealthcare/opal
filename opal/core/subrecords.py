@@ -36,6 +36,15 @@ def subrecords():
         yield m
 
 
+def singletons():
+    """
+    Generator function for singleton subrecords
+    """
+    for s in subrecords():
+        if s._is_singleton:
+            yield s
+
+
 def get_subrecord_from_api_name(api_name):
     for subrecord in subrecords():
         if subrecord.get_api_name() == api_name:

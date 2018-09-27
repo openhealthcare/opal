@@ -3,7 +3,35 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-### 0.9.1 -> 0.10.0
+### 0.11.1 -> 0.11.2
+
+This bugfix release should be entirely backwards compatible.
+
+### 0.11.0 -> 0.11.1
+
+This bugfix release should be entirely backwards compatible.
+
+### 0.10.1 -> 0.11.0
+
+Please upgrade django-compressor version to 2.2, ie update your requirements to
+
+# requirements.txt
+django-compressor==2.2
+
+### 0.10.0 -> 0.10.1
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.10.1
+
+There are no migrations or additional commands for this upgrae, and we are not aware of
+any backwards incompatible changes.
+
+### 0.9.0 -> 0.10.0
 
 #### Upgrading Opal
 
@@ -22,6 +50,9 @@ you have specified them in for instance, a requirements.txt.
     ffs==0.0.8.2
     opal==0.10.0
     requests==2.18.4
+    django-celery==3.2.2
+    celery==3.1.25
+    django-compressor==2.2
 
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will
@@ -91,20 +122,15 @@ Django now ships with `django.contrib.auth.mixins.LoginRequiredMixin`. According
 removed `opal.core.views.LoginRequiredMixin`. A direct switch to the Django class should
 work seamlessly without any functional differences.
 
-### 0.9.0 -> 0.9.1
+##### CSRF_FAILURE_VIEW
+We now ship the `opal.views.csrf_failure` view which can be enabled by adding
+`CSRF_FAILURE_VIEW = 'opal.views.csrf_failure'` in your settings.py. This will
+redirect a user to their intended destination on a CSRF failure. This mitigates
+an edge case where an unauthenticated user opens two pages at the same time.
+Both pages will get redirected to the login form and whichever page the user
+logs into second will throw a CSRF failure because Django invalidates CSRF
+tokens on login.
 
-#### Upgrading Opal
-
-How you do this depends on how you have configured your application, but updating your
-requirements.txt to update the version should work.
-
-    # requirements.txt
-    opal==0.9.1
-
-After re-installing (via for instance `pip install -r requirements.txt`) you will need to
-run the migrations for Opal 0.9.1
-
-    $ python manage.py migrate opal
 
 ### 0.8.3 -> 0.9.0
 

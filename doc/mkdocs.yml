@@ -47,8 +47,9 @@ pages:
       - Django Admin: guides/django_admin.md
 
       # Working on Opal itself
-      - Contributing: guides/CONTRIBUTING.md
+      - Contributing: guides/contributing.md
       - Development environment: guides/development_environment.md
+      - Releasing: guides/releasing.md
 
       # Other guides
       - Deployment: guides/deployment.md
@@ -75,6 +76,8 @@ pages:
       - Fields: reference/core_fields.md
       - Lookuplists: reference/core_lookuplists.md
       - Discoverable: reference/core_discoverable.md
+      - Serialization: reference/core_serialization.md
+      - Subrecords: reference/core_subrecords.md
 
       # Angular Services
       - reference/javascript/patient_service.md
@@ -90,6 +93,7 @@ pages:
       - Panel Template tags: reference/panels_templatetags.md
       - Menu Template tag: reference/menus_templatetags.md
       - Javascript helpers: reference/javascript/javascript_helpers.md
+      - Utils module: reference/utils.md
 
       # Search
       - Search Queries: reference/search_queries.md
@@ -99,7 +103,7 @@ pages:
 
       # Misc
       - Settings: reference/settings.md
-      - Changelog: reference/CHANGELOG.md
+      - Changelog: reference/changelog.md
       - Testing: reference/testing.md
       - Javascript dependencies: reference/javascript/javascript_dependencies.md
       - Upgrading: reference/upgrading.md
@@ -117,7 +121,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.10.0
+  version: v0.11.2
 
 markdown_extensions:
     - fenced_code

@@ -98,8 +98,6 @@ this order.
 As a [discoverable](discoverable.md) feature, the slug for each list is determined by
 either setting the `slug` property, or returning a string from the `get_slug` classmethod.
 
-### Templates
-
 ### Tagged Patient Lists
 
 A common model for working with lists is to use lists based on the tags assigned to an episode.

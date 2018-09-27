@@ -34,7 +34,7 @@ class PatientSummary(object):
         self.episode_ids = set([episode.id])
         self.patient_id = episode.patient.id
         self.categories = set([episode.category_name])
-        self.id = episode.patient.demographics_set.get().id
+        self.id = episode.patient.demographics().id
 
     def update(self, episode):
         if not self.start:
@@ -378,10 +378,19 @@ class DatabaseQuery(QueryBackend):
             kw = {queryset_path: query['query']}
 
             if Mod == models.Tagging:
-                tag_name = query['field'].replace(" ", "_").title()
-                eps = models.Episode.objects.filter(
-                    tagging__value__iexact=tag_name
-                )
+                if query['field'] == "mine":
+                    tags = models.Tagging.objects.filter(
+                        value="mine",
+                        user=self.user
+                    )
+                    eps = models.Episode.objects.filter(
+                        tagging__in=tags
+                    )
+                else:
+                    tag_name = query['field'].replace(" ", "_").title()
+                    eps = models.Episode.objects.filter(
+                        tagging__value__iexact=tag_name
+                    )
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
@@ -412,6 +421,8 @@ class DatabaseQuery(QueryBackend):
 
         for patient_id, patient_summary in patient_summaries.items():
             patient = next(p for p in patients if p.id == patient_id)
+            # Explicitly not using the .demographics property for performance
+            # note that we prefetch demographics_set a few lines earlier
             demographic = patient.demographics_set.get()
 
             result = {k: getattr(demographic, k) for k in [
