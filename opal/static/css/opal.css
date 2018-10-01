@@ -54,6 +54,13 @@
       line-height: 12px;
   }
 
+  .outer-container .panel.panel-primary, .outer-container .panel.panel-primary .panel-heading{
+    border-color: #bbb;
+  }
+
+  .outer-container .panel-primary .panel-default .panel-heading, .outer-container .panel-default .panel-heading {
+    border-bottom-color: #bbb;
+  }
   .screen-only {
   	display: none;
   }
