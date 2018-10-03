@@ -283,16 +283,6 @@ class SubrecordTestCase(OpalTestCase):
         ])
         self.assertEqual(result, "found")
 
-    @patch('opal.models.logging')
-    def test_get_display_name_from_property(self, logging):
-        display_name = EntitledHatWearer.get_display_name()
-        self.assertEqual('Entitled Wearer of Hats', display_name)
-        self.assertTrue(logging.warning)
-        logging.warning.assert_called_once_with(
-            "_title has been deprecated and will be removed in v0.12.0, please \
-use verbose_name in Meta instead for EntitledHatWearer"
-        )
-
     def test_get_display_name_from_meta_verbose_name(self):
         self.assertEqual(
             'Invisible Wearer of Hats',
