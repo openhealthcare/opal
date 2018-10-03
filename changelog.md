@@ -1,5 +1,10 @@
 ### 0.13.0 (Major Release)
 
+#### Removes the deprecated Model._title property
+
+Use of `Model._title` to set a display name of a subrecord has issued a warning for several
+releases - this has now been removed and will no longer work.
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
