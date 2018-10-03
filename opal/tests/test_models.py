@@ -861,8 +861,10 @@ class StageTestCase(OpalTestCase):
                 started=timezone.now(),
                 episode=self.episode
             )
-        self.assertTrue(
-            str(i.exception).endswith("An episode cannot have multiple open stages")
+        e = str(i.exception)
+        expected = "Episode {} currently is on stage_2 and cannot have multiple open stages".format(self.episode.id)
+        self.assertEqual(
+            e, expected
         )
 
         # test roll back

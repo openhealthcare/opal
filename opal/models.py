@@ -1697,12 +1697,11 @@ class Stage(TrackedModel):
         This is expected to be set by the episode_category
         which determines what stages are available to an episode.
     """
-    episode = models.ForeignKey(Episode, null=False)
+    episode = models.ForeignKey(Episode)
     started = models.DateTimeField()
     stopped = models.DateTimeField(blank=True, null=True)
     value = models.CharField(max_length=256)
 
-    @transaction.atomic
     def save(self, *args, **kwargs):
         """ An episode should not have multiple open stages.
             raise exceptions and roll back if anyone tries
@@ -1711,7 +1710,7 @@ class Stage(TrackedModel):
         if not self.id:
             if(self.episode.stage_set.filter(stopped=None).exists()):
                 if not self.stopped:
-                    err = "for episode {}, stage {}. An episode cannot have \
+                    err = "Episode {} currently is on {} and cannot have \
 multiple open stages"
                     raise IntegrityError(
                         err.format(self.episode.id, self.value)

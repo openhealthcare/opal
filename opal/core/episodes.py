@@ -66,7 +66,7 @@ class EpisodeCategory(DiscoverableFeature):
         return stage in self.get_stages()
 
     @transaction.atomic
-    def set_stage(self, stage_value, user, data):
+    def set_stage(self, stage_value, user, *args, **kwargs):
         """
         Setter for Episode.stage
 
@@ -82,25 +82,22 @@ class EpisodeCategory(DiscoverableFeature):
 
         current_stage = self.episode.stage_set.filter(stopped=None).last()
 
-        # if the stage hasn't changed, don't do anything
+        # if the stage hasn't changed, don't do anything.
         if current_stage and current_stage.value == stage_value:
             return
 
-        # some models won't have stages yet, but if an episode category
-        # has been migrated to use stages,
-        # then it should once an episode has a stage it should
-        # always have a stage.
-
-        if current_stage and not stage_value:
-            raise ValueError(
-                "A stage cannot be removed after one has been set"
-            )
-
-        # this is the stage for when an episode category
-        # has not been migrated to use stages yet
-        # so we can just ignore this.
-        if not stage_value:
+        # The episode did not have a stage
+        # and we are not setting a stage.
+        if not current_stage and not stage_value:
             return
+
+        # if the stage to set isn't in self.stages, blow up
+        if stage_value not in self.stages:
+            raise ValueError(
+                "An episode {} cannot set their stage to {}".format(
+                    self.episode, stage_value
+                )
+            )
 
         now = timezone.now()
 
