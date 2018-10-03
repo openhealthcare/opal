@@ -3,6 +3,8 @@ Tests create_singletons command
 """
 import os
 
+from mock import patch
+
 from django.template import Template, Context
 from opal.core.test import OpalTestCase
 from opal.templatetags import panels
@@ -75,6 +77,7 @@ class RecordPanelTestCase(OpalTestCase):
 
 
 class RecordTimelineTestCase(OpalTestCase):
+
     def test_record_timeline(self):
         expected = dict(
             name='demographics',
@@ -86,6 +89,12 @@ class RecordTimelineTestCase(OpalTestCase):
         )
         result = panels.record_timeline(Demographics(), 'when')
         self.assertEqual(expected, result)
+
+    def test_record_timeline_uses_get_display_name(self):
+        with patch.object(Demographics, 'get_display_name') as display:
+            display.return_value = 'Person Deets'
+            result = panels.record_timeline(Demographics(), 'when')
+            self.assertEqual('Person Deets', result['title'])
 
 
 class TemasPanelTestCase(OpalTestCase):

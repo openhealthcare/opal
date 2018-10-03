@@ -895,13 +895,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def get_display_name(cls):
-        if hasattr(cls, '_title'):
-            w = "_title has been deprecated and will be removed in v0.12.0, "
-            w = w + "please use verbose_name in Meta instead for {}"
-            logging.warning(
-                w.format(cls.__name__)
-            )
-            return cls._title
         if cls._meta.verbose_name.islower():
             return cls._meta.verbose_name.title()
         return cls._meta.verbose_name
