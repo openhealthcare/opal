@@ -13,6 +13,11 @@ This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the t
 `copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
 `CopyToCategory` and Subrecord property `_clonable`.
 
+#### Removes the deprecated Model._title property
+
+Use of `Model._title` to set a display name of a subrecord has issued a warning for several
+releases - this has now been removed and will no longer work.
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
