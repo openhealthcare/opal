@@ -1,3 +1,5 @@
+### 0.13.0 (Major Release)
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
