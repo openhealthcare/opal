@@ -292,7 +292,7 @@ class EpisodeCategoryTestCase(OpalTestCase):
 
         self.assertEqual(
             str(ve.exception),
-            "An episode  |   | None cannot set their stage to None"
+            "An episode {} cannot set their stage to None".format(self.episode.id)
         )
 
     def test_state_is_not_updated_if_set_to_the_same_value(self):

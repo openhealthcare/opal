@@ -95,7 +95,7 @@ class EpisodeCategory(DiscoverableFeature):
         if stage_value not in self.stages:
             raise ValueError(
                 "An episode {} cannot set their stage to {}".format(
-                    self.episode, stage_value
+                    self.episode.id, stage_value
                 )
             )
 
