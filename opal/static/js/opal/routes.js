@@ -41,7 +41,7 @@
              })
              .when('/account', {
                  controller: 'AccountCtrl',
-                 templateUrl: '/accounts/templates/account_detail.html'
+                 templateUrl: '/accounts/account_detail.html'
   	     })
              .otherwise({redirectTo: '/'});
 
