@@ -8,15 +8,12 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 
 from opal import models
 from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
-from opal.core.subrecords import (
-    episode_subrecords, get_subrecord_from_api_name
-)
-from opal.core.views import json_response
+from opal.core.subrecords import get_subrecord_from_api_name
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
