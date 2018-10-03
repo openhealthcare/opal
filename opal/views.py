@@ -144,31 +144,6 @@ def check_password_reset(request, *args, **kwargs):
     return response
 
 
-"""Internal (Legacy) API View"""
-
-
-class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
-    """
-    Copy an episode to a given category, excluding tagging.
-    """
-    def post(self, request, pk=None, category=None, **kwargs):
-        old = models.Episode.objects.get(pk=pk)
-        new = models.Episode(patient=old.patient,
-                             category_name=category,
-                             start=old.start)
-        new.save()
-
-        for sub in episode_subrecords():
-            if sub._is_singleton or not sub._clonable:
-                continue
-            for item in sub.objects.filter(episode=old):
-                item.id = None
-                item.episode = new
-                item.save()
-        serialised = new.to_dict(self.request.user)
-        return json_response(serialised)
-
-
 """
 Template views for Opal
 """
@@ -270,10 +245,6 @@ class UndischargeTemplateView(LoginRequiredMixin, TemplateView):
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_episode_modal.html'
-
-
-class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'copy_to_category.html'
 
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):

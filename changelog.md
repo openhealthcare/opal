@@ -1,3 +1,18 @@
+### 0.13.0 (Major Release)
+
+#### Removes CopyToCategory
+
+Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,
+they are advised to implement at application level.
+
+In general application developers are advised to find alternative ways to display subrecords
+from multiple episodes rather than copying them however, as this is known to cause duplication
+of data that is hard to trace back later on.
+
+This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the template
+`copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
+`CopyToCategory` and Subrecord property `_clonable`.
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
