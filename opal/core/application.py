@@ -6,7 +6,9 @@ import itertools
 import os
 
 from django.core.urlresolvers import reverse
+
 from opal.core import plugins, menus
+from opal import utils
 
 
 class OpalApplication(object):
@@ -176,6 +178,15 @@ def get_app():
     Return the current Opal Application
     """
     return OpalApplication.__subclasses__()[0]
+
+
+def get_app_models():
+    """
+    Return the models module for the current Opal Application
+    """
+    app = get_app()
+    models_module_path = '.'.join([app.__module__, 'models'])
+    return utils.stringport(models_module_path)
 
 
 def get_all_components():

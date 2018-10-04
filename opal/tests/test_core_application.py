@@ -123,6 +123,18 @@ class GetAppTestCase(OpalTestCase):
         self.assertEqual(mock_app, application.get_app())
 
 
+class GetAppModelsTestCase(OpalTestCase):
+
+    @patch('opal.core.application.get_app')
+    def test_get_app_models(self, getter):
+        mock_app = MagicMock('Mock App')
+        mock_app.__module__ = 'opal.tests'
+        getter.return_value = mock_app
+
+        from opal.tests import models
+        self.assertEqual(models, application.get_app_models())
+
+
 class GetAllComponentsTestCase(OpalTestCase):
 
     @patch('opal.core.application.OpalApplication.__subclasses__')
