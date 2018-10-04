@@ -28,9 +28,6 @@ urlpatterns = [
          'password_change_form': ChangePasswordForm},
         name='change-password'),
 
-    url(r'^accounts/templates/account_detail.html',
-        views.AccountDetailTemplateView.as_view()),
-
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
     url(r'^admin/', include(admin.site.urls)),

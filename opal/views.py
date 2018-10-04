@@ -215,10 +215,6 @@ class RecordTemplateView(LoginRequiredMixin, TemplateView):
         return [template_name]
 
 
-class AccountDetailTemplateView(TemplateView):
-    template_name = 'accounts/account_detail.html'
-
-
 class BannedView(TemplateView):
     template_name = 'accounts/banned.html'
 
