@@ -64,5 +64,5 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         return [j for j in klass.javascripts]
 
     @classmethod
-    def get_menu_items(self, user=None):
-        return [i for i in self.menuitems if i.for_user(user)]
+    def get_menu_items(cls, user=None):
+        return [i for i in cls.menuitems if i.for_user(user)]
