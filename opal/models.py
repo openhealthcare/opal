@@ -1035,7 +1035,6 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
-    _clonable = True
 
     episode = models.ForeignKey(Episode, null=False)
 

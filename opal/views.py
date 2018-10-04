@@ -8,15 +8,12 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 
 from opal import models
 from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
-from opal.core.subrecords import (
-    episode_subrecords, get_subrecord_from_api_name
-)
-from opal.core.views import json_response
+from opal.core.subrecords import get_subrecord_from_api_name
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -144,31 +141,6 @@ def check_password_reset(request, *args, **kwargs):
     return response
 
 
-"""Internal (Legacy) API View"""
-
-
-class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
-    """
-    Copy an episode to a given category, excluding tagging.
-    """
-    def post(self, request, pk=None, category=None, **kwargs):
-        old = models.Episode.objects.get(pk=pk)
-        new = models.Episode(patient=old.patient,
-                             category_name=category,
-                             start=old.start)
-        new.save()
-
-        for sub in episode_subrecords():
-            if sub._is_singleton or not sub._clonable:
-                continue
-            for item in sub.objects.filter(episode=old):
-                item.id = None
-                item.episode = new
-                item.save()
-        serialised = new.to_dict(self.request.user)
-        return json_response(serialised)
-
-
 """
 Template views for Opal
 """
@@ -270,10 +242,6 @@ class UndischargeTemplateView(LoginRequiredMixin, TemplateView):
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_episode_modal.html'
-
-
-class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'copy_to_category.html'
 
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
