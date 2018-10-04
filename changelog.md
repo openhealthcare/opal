@@ -13,6 +13,14 @@ This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the t
 `copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
 `CopyToCategory` and Subrecord property `_clonable`.
 
+
+#### Lookuplist data format
+
+Lookuplist entries in data files are no longer required to have an empty synonyms list
+if the entry doesn't have a synonym. This reduces the file size and makes it easier to
+hand craft data files for new applications.
+
+
 #### Removes the deprecated Model._title property
 
 Use of `Model._title` to set a display name of a subrecord has issued a warning for several
