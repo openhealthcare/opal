@@ -72,7 +72,7 @@ angular.module('opal.controllers').controller(
           _.values(patient.episodes),
           function(x){ return x.active == true }
         );
-        if(active_ids.length > 0){
+        if(active_ids.length){
           return active_ids[0].id
         }else{
           return null;
