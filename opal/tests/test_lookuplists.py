@@ -20,6 +20,7 @@ class AbstractLookupListTestCase(OpalTestCase):
 
 
 class LookupListLoadingTestCase(AbstractLookupListTestCase):
+
     def test_create_instance(self):
         data = {"hat": [dict(name="Bowler", synonyms=[])]}
         _, created, _ = load_lookuplist(data)
@@ -44,6 +45,12 @@ class LookupListLoadingTestCase(AbstractLookupListTestCase):
 
     def test_create_instance_and_synonym(self):
         data = {"hat": [dict(name="Bowler", synonyms=["Derby"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 1)
+        self.assertEqual(synonyms, 1)
+
+    def test_create_instance_allow_no_symptom(self):
+        data = {"hat": [dict(name="Bowler")]}
         _, created, synonyms = load_lookuplist(data)
         self.assertEqual(created, 1)
         self.assertEqual(synonyms, 1)
