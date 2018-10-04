@@ -16,7 +16,7 @@ def load_lookuplist_item(model, item):
     instance, created = model.objects.get_or_create(name=item['name'])
     synonyms_created = 0
 
-    for synonym in item['synonyms']:
+    for synonym in item.get('synonyms', []):
         syn, created_synonym = Synonym.objects.get_or_create(
             content_type=content_type,
             object_id=instance.id,

@@ -35,9 +35,6 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
-        views.EpisodeCopyToCategoryView.as_view()),
-
     # Template views
     url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$',
         views.PatientListTemplateView.as_view(),
@@ -62,9 +59,6 @@ urlpatterns = [
 
     url(r'^templates/modals/discharge_episode.html/?$',
         views.DischargeEpisodeTemplateView.as_view()),
-
-    url(r'^templates/modals/copy_to_category.html/?$',
-        views.CopyToCategoryTemplateView.as_view()),
 
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),

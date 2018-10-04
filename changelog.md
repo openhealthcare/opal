@@ -1,11 +1,34 @@
 ### 0.13.0 (Major Release)
 
+
 #### Removes Patient.to_dict().active_episode_id
 
 We no longer include a value for "active_episode_id" as part of the Patient to_dict serialisation.
 
 This is effectively meaningless since we moved to an episode model that allows for multiple
 concurrent episodes.
+
+
+#### Removes CopyToCategory
+
+Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,
+they are advised to implement at application level.
+
+In general application developers are advised to find alternative ways to display subrecords
+from multiple episodes rather than copying them however, as this is known to cause duplication
+of data that is hard to trace back later on.
+
+This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the template
+`copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
+`CopyToCategory` and Subrecord property `_clonable`.
+
+
+#### Lookuplist data format
+
+Lookuplist entries in data files are no longer required to have an empty synonyms list
+if the entry doesn't have a synonym. This reduces the file size and makes it easier to
+hand craft data files for new applications.
+
 
 #### Removes the deprecated Model._title property
 
