@@ -66,7 +66,6 @@ describe('HospitalNumberCtrl', function(){
 
 
     _patientData = {
-        "active_episode_id": null,
         "demographics": [
             {
                 "consistency_token": "0beb0d46",
@@ -279,7 +278,7 @@ describe('HospitalNumberCtrl', function(){
             var deferred, callArgs;
             spyOn($scope, 'newForPatientWithActiveEpisode');
 
-            patientData.active_episode_id = 3;
+            patientData.episodes["3"].active = true;
 
             deferred = $q.defer();
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
@@ -299,7 +298,7 @@ describe('HospitalNumberCtrl', function(){
 
         it('should call through if there is an active episode.', function(){
             spyOn($scope, 'newForPatientWithActiveEpisode');
-            patientData.active_episode_id = 3;
+            patientData.episodes["3"].active = true;
             patientData.episodes[3].location[0].category = 'Inpatient'
 
             $scope.newForPatient(patientData);
@@ -372,8 +371,8 @@ describe('HospitalNumberCtrl', function(){
         var activePatientData;
 
         beforeEach(function(){
-            activePatientData = angular.copy(patientData);
-            activePatientData.active_episode_id = 3;
+          activePatientData = angular.copy(patientData);
+          activePatientData.episodes["3"].active = true;
         })
 
         describe('if not an inpatient', function(){
