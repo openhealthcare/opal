@@ -1,5 +1,12 @@
 ### 0.13.0 (Major Release)
 
+#### Removes Patient.to_dict().active_episode_id
+
+We no longer includ a value for "active_episode_id" as part of the Patient to_dict serialisation.
+
+This is effectively meaningless since we moved to an episode model that allows for multiple
+concurrent episodes.
+
 #### Removes the deprecated Model._title property
 
 Use of `Model._title` to set a display name of a subrecord has issued a warning for several
