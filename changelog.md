@@ -1,5 +1,8 @@
 ### 0.13.0 (Major Release)
 
+#### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
+
+We no longer use these functions, instead we use a standard href to the patient detail.
 
 #### Removes Patient.to_dict().active_episode_id
 
