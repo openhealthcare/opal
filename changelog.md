@@ -1,5 +1,11 @@
 ### 0.13.0 (Major Release)
 
+#### Lookuplist data format
+
+Lookuplist entries in data files are no longer required to have an empty synonyms list
+if the entry doesn't have a synonym. This reduces the file size and makes it easier to
+hand craft data files for new applications.
+
 #### Removes the deprecated Model._title property
 
 Use of `Model._title` to set a display name of a subrecord has issued a warning for several

@@ -53,7 +53,7 @@ class LookupListLoadingTestCase(AbstractLookupListTestCase):
         data = {"hat": [dict(name="Bowler")]}
         _, created, synonyms = load_lookuplist(data)
         self.assertEqual(created, 1)
-        self.assertEqual(synonyms, 1)
+        self.assertEqual(synonyms, 0)
 
 
 class LookupListClassTestCase(AbstractLookupListTestCase):
