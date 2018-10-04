@@ -172,7 +172,7 @@ describe('SearchCtrl', function (){
 
     describe('getEpisodeId', function() {
 
-        it('should use the first episode if we have no active episode_id', function() {
+        it('should use the first episode', function() {
             var patient = {
                 episodes: {
                     42: {}, //dummy episode
@@ -186,8 +186,13 @@ describe('SearchCtrl', function (){
 
     describe('jumpToEpisode()', function (){
         it('Should call location.path()', function () {
-            $scope.jumpToEpisode({active_episode_id: 555});
-            expect(location.path).toHaveBeenCalledWith('/episode/555');
+          $scope.jumpToEpisode({
+            episodes: {
+              555: {},
+              8492: {}
+            }
+          });
+          expect(location.path).toHaveBeenCalledWith('/episode/555');
         });
     });
 

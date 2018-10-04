@@ -1,5 +1,14 @@
 ### 0.13.0 (Major Release)
 
+
+#### Removes Patient.to_dict().active_episode_id
+
+We no longer include a value for "active_episode_id" as part of the Patient to_dict serialisation.
+
+This is effectively meaningless since we moved to an episode model that allows for multiple
+concurrent episodes.
+
+
 #### Removes CopyToCategory
 
 Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,

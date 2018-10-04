@@ -577,12 +577,10 @@ class Patient(models.Model):
                                              force=force)
 
     def to_dict(self, user):
-        active_episode = self.get_active_episode()
         d = {
             'id': self.id,
             'episodes': {episode.id: episode.to_dict(user) for episode in
-                         self.episode_set.all()},
-            'active_episode_id': active_episode.id if active_episode else None,
+                         self.episode_set.all()}
         }
 
         for model in patient_subrecords():
