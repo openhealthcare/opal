@@ -209,7 +209,7 @@ class EpisodeManagerTestCase(OpalTestCase):
         as_dict = Episode.objects.serialised(
             self.user, [self.episode]
         )
-        self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})
+        self.assertEqual(as_dict[0]['tagging'][0], {'id': self.episode.id})
 
 
 class LookupListQuerysetTestCase(OpalTestCase):
@@ -403,6 +403,11 @@ class LookupListQuerysetTestCase(OpalTestCase):
 
         hats = test_models.Hat.objects.search_many(
             ["bob hat", "top hat"], case_sensitive=False
+        )
+        self.assertTrue(hats.exists())
+
+        hats = test_models.Hat.objects.search_many(
+            ["bob hat", "top hat"], case_sensitive=True
         )
         self.assertFalse(hats.exists())
 
