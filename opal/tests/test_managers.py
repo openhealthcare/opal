@@ -77,18 +77,18 @@ class PrefetchTestCase(OpalTestCase):
 class PatientManagerTestCase(OpalTestCase):
     def setUp(self):
         self.patient_1 = Patient.objects.create()
-        self.patient_1.demographics_set.all().update(
-            first_name="je ne",
-            surname="regrette",
-            hospital_number="rien"
-        )
+        demographics1 = self.patient_1.demographics()
+        demographics1.first_name="je ne"
+        demographics1.surname="regrette"
+        demographics1.hospital_number="rien"
+        demographics1.save()
 
         self.patient_2 = Patient.objects.create()
-        self.patient_2.demographics_set.all().update(
-            first_name="je joue",
-            surname="au",
-            hospital_number="football"
-        )
+        demographics2 = self.patient_2.demographics()
+        demographics2.first_name="je joue"
+        demographics2.surname="au",
+        demographics2.hospital_number="football"
+        demographics2.save()
 
     def test_hospital_number(self):
         """
@@ -157,18 +157,18 @@ class EpisodeManagerTestCase(OpalTestCase):
     def test_search_returns_both_episodes(self):
         self.patient_1, self.episode_1_1 = self.new_patient_and_episode_please()
         self.episode_1_2 = self.patient_1.create_episode()
-        self.patient_1.demographics_set.all().update(
-            first_name="je ne",
-            surname="regrette",
-            hospital_number="rien"
-        )
+        demographics1 = self.patient_1.demographics()
+        demographics1.first_name="je ne"
+        demographics1.surname="regrette"
+        demographics1.hospital_number="rien"
+        demographics1.save()
 
         self.patient_2, self.episode_2_1 = self.new_patient_and_episode_please()
-        self.patient_2.demographics_set.all().update(
-            first_name="je joue",
-            surname="au",
-            hospital_number="football"
-        )
+        demographics2 = self.patient_2.demographics()
+        demographics2.first_name="je joue"
+        demographics2.surname="au"
+        demographics2.hospital_number="football"
+        demographics2.save()
 
         episodes = Episode.objects.search("je ne")
         expected = set([self.episode_1_1.id, self.episode_1_2.id])

@@ -2,7 +2,7 @@
 
 Opal provides classes and methods to define application menus programatically.
 
-## opal.core.MenuItem
+### opal.core.MenuItem
 
 An item in an application menu.
 
@@ -15,7 +15,12 @@ An item in an application menu.
 * display - the text to display in this menu item
 * index - a number to use as the primary sort order for your menu items
 
-## opal.core.Menu
+**Methods**
+
+#### for_user
+A method that takes a user and returns True by default. Override this if you want menu items hidden for certain users.
+
+### opal.core.Menu
 
 The menu for an Opal application. On initialization it will construct a menu
 for the current user, pulling items from the current app, and any plugins.
