@@ -7,7 +7,7 @@
 
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
 
-* Adds in a footer updated/created by to the form base template
+* Modal editing forms for individual Subrecord instances will now display details updated / created user and timestamps by default.
 
 * Adds a `for_user` method on to the menu item. This method
 takes a user and by default returns True. Override this
