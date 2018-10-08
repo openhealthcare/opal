@@ -65,7 +65,28 @@ class OpalApplicationTestCase(OpalTestCase):
     def test_get_menu_items(self):
         self.assertEqual(
             application.OpalApplication.menuitems,
-            application.OpalApplication.get_menu_items())
+            application.OpalApplication.get_menu_items()
+        )
+
+    def test_get_menu_items_for_user(self):
+        class MenuItemIncluded(menus.MenuItem):
+            pass
+
+        class MenuItemNotIncluded(menus.MenuItem):
+            def for_user(self, user):
+                return False
+
+        menu_item_included = MenuItemIncluded()
+        menu_item_not_included = MenuItemNotIncluded()
+
+        self.app.menuitems = [
+                    menu_item_included, menu_item_not_included
+                ]
+
+        self.assertEqual(
+            [menu_item_included],
+            list(self.app.get_menu_items())
+        )
 
     def test_get_menu_items_includes_logout_for_authenticated_users(self):
         user = self.user

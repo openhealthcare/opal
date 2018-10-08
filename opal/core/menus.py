@@ -33,6 +33,9 @@ class MenuItem(object):
 
         return not self == other
 
+    def for_user(self, user):
+        return True
+
 
 class Menu(object):
 
@@ -46,13 +49,10 @@ class Menu(object):
         # If we don't += this here, we start appending to the
         # list attached to the active Application class.
         # Which is suboptimal.
-        app_items = app.get_menu_items(user=self.user)
-        for item in app_items:
-            self.items.append(item)
+        self.items = app.get_menu_items(self.user)
 
         for plugin in plugins.OpalPlugin.list():
-            for item in plugin.menuitems:
-                self.items.append(item)
+            self.items.extend(plugin.get_menu_items(self.user))
 
     def __iter__(self):
 

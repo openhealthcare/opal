@@ -142,7 +142,7 @@ class OpalApplication(object):
                 items.append(logout)
                 if user.is_staff:
                     items.append(admin)
-        return items
+        return [item for item in items if item.for_user(user)]
 
     @classmethod
     def get_menu(klass, user=None):

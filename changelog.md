@@ -1,10 +1,18 @@
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
+* Adds the {% block analytics %} in the base template (opal/templates/base.html) that by default contains the google analytics code.
+
+* Adds the block {% block javascripts %} in the base template (opal/templates/base.html) that will compress all javascripts.
 
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
 
 * Adds in a footer updated/created by to the form base template
+
+* Adds a `for_user` method on to the menu item. This method
+takes a user and by default returns True. Override this
+to decide if a menu item should be shown in the nav bar.
+
 
 ### 0.11.2 (Bugfix Release)
 
