@@ -13,9 +13,9 @@ IMPORTED_FROM_APPS = set()
 
 def import_from_apps(module):
     """
-    Iterate through installed apps attempting to import app.wardrounds
-    This way we allow our implementation, or plugins, to define their
-    own ward rounds.
+    Iterate through installed apps attempting to import app.`module`.
+
+    This enables us to ensure that we have autoloaded instances of discoverables.
     """
     global IMPORTED_FROM_APPS
     if module not in IMPORTED_FROM_APPS:
