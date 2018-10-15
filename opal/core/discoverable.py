@@ -15,7 +15,7 @@ def import_from_apps(module):
     """
     Iterate through installed apps attempting to import app.`module`.
 
-    This enables us to ensure that we have autoloaded instances of 
+    This enables us to ensure that we have autoloaded instances of
     discoverables.
     """
     global IMPORTED_FROM_APPS
