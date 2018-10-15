@@ -11,6 +11,8 @@
 takes a user and by default returns True. Override this
 to decide if a menu item should be shown in the nav bar.
 
+* Adds a `populated` angular filter that returns True if an object is populated
+
 ### 0.11.2 (Bugfix Release)
 
 Includes referencedata JSON files in Manifest.

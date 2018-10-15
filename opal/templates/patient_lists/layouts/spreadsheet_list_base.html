@@ -53,7 +53,7 @@
               </a>
             </p>
           </li>
-          <li class="list-group-item" ng-show="profile.can_see_pid()">
+          <li class="list-group-item" ng-show="profile.can_see_pid() && metadata.tags|populated">
             <h4>
               <i class="fa fa-users"></i> Teams
               {% if patient_list.allow_edit_teams %}

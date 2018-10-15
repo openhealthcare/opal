@@ -499,4 +499,26 @@ describe('filters', function() {
 
     });
 
+    describe('populated', function(){
+        var populated;
+
+        beforeEach(function(){
+            inject(function($injector){
+                populated = $injector.get('populatedFilter')
+            });
+        });
+
+        it('should return true if the object is populated', function(){
+            expect(populated({hello: 1})).toBe(true);
+            expect(populated({hello: null})).toBe(true);
+            expect(populated({hello: undefined})).toBe(true);
+            expect(populated({hello: NaN})).toBe(true);
+        });
+
+        it('should return false if the object is not populated', function(){
+            expect(populated({})).toBe(false);
+            expect(populated(null)).toBe(false);
+        });
+    });
+
 });

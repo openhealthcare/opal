@@ -166,6 +166,15 @@ Converts strings with underscores (e.g. variable names etc) to words with spaces
 ->> some underscore string
 ```
 
+#### populated
+
+Checks to see if an object is populated
+
+```html
+[[ {} | populated ]]
+->> false
+```
+
 
 ### Angular HTTP Interceptors
 

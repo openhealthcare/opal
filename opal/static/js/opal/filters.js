@@ -20,8 +20,9 @@ filters.filter('boxed',  function(){
             return '[X]'
         }
         return '[ ]'
-    }
-})
+	}
+	debugger;
+});
 
 filters.filter('plural', function(){
 		return function(someWord, count, plural){
@@ -261,4 +262,11 @@ filters.filter('totalDays', function(toMomentFilter){
             return moment().diff(start, 'days') + 1;
         }
     };
+});
+
+filters.filter('populated', function(){
+	// returns true if an object is populated
+	return function(something){
+		return !_.isEmpty(something);
+	};
 });
