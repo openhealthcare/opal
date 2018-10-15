@@ -21,7 +21,6 @@ filters.filter('boxed',  function(){
         }
         return '[ ]'
 	}
-	debugger;
 });
 
 filters.filter('plural', function(){
