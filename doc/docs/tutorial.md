@@ -296,7 +296,7 @@ We also have a detail view for our patients, which you can access via search res
 view will typically allow for a more detailed display and editing of all the events
 comprising a patient's care than is available on the list page.
 
-<img src="/img/detail.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
+<img src="/img/detail_1.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
 
 
 #### JSON APIs
