@@ -224,14 +224,6 @@ class BannedView(TemplateView):
         return data
 
 
-class HospitalNumberTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'hospital_number_modal.html'
-
-
-class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'reopen_episode_modal.html'
-
-
 class UndischargeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'undischarge_modal.html'
 

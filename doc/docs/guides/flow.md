@@ -34,7 +34,7 @@ wish to be called.
     enter: function(){
             return {
                 'controller': 'HospitalNumberCtrl',
-                'template'  : '/templates/modals/hospital_number.html/'
+                'template'  : '/templates/hospital_number_modal.html/'
             }
         }
 

@@ -48,12 +48,6 @@ urlpatterns = [
         name="undischarge_tempate_view"
         ),
 
-    url(r'^templates/modals/hospital_number.html/?$',
-        views.HospitalNumberTemplateView.as_view()),
-
-    url(r'^templates/modals/reopen_episode.html/?$',
-        views.ReopenEpisodeTemplateView.as_view()),
-
     url(r'^templates/modals/discharge_episode.html/?$',
         views.DischargeEpisodeTemplateView.as_view()),
 

@@ -38,6 +38,11 @@ hand craft data files for new applications.
 Use of `Model._title` to set a display name of a subrecord has issued a warning for several
 releases - this has now been removed and will no longer work.
 
+#### Misc Changes
+
+* The undocumented Reopen Episode flow included in Opal < 0.8.0 has now been completely removed,
+including the `reopen_episode_modal.html` template and the url/view at `templates/modals/reopen_episode.html/`.
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes

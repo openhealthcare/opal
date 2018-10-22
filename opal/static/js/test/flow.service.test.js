@@ -37,7 +37,7 @@ describe('Flow ', function(){
             Flow.enter({hospital_number: '555-456'}, {some: "context"});
             var args = $modal.open.calls.mostRecent().args;
             expect(args[0].controller).toEqual('HospitalNumberCtrl');
-            expect(args[0].templateUrl).toEqual('/templates/modals/hospital_number.html/');
+            expect(args[0].templateUrl).toEqual('/templates/hospital_number_modal.html');
             var resolves = args[0].resolve;
             expect(resolves.tags()).toEqual(undefined);
             expect(resolves.hospital_number()).toEqual('555-456');
@@ -88,7 +88,7 @@ describe('Flow ', function(){
             enter: jasmine.createSpy().and.returnValue(
                 {
                     'controller': 'HospitalNumberCtrl',
-                    'template'  : '/templates/modals/hospital_number.html/'
+                    'template'  : '/templates/hospital_number_modal.html'
                 }
             ),
             exit: jasmine.createSpy().and.returnValue(
