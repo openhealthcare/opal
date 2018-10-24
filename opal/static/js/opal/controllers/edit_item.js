@@ -122,7 +122,7 @@ angular.module('opal.controllers').controller(
 
             $scope.undischarge = function() {
                 undischargeMoadal = $modal.open({
-                    templateUrl: '/templates/modals/undischarge.html/',
+                    templateUrl: '/templates/undischarge_modal.html',
                     controller: 'UndischargeCtrl',
                     resolve: {episode: function(){ return episode } }
                 }
