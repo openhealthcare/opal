@@ -43,9 +43,6 @@ urlpatterns = [
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
         views.EpisodeDetailTemplateView.as_view(), name="episode_detail"),
 
-    url(r'^templates/modals/delete_item_confirmation.html/?$',
-        views.DeleteItemConfirmationView.as_view()),
-
     # New Public facing API urls
     url(r'api/v0.1/', include(api.router.urls)),
 

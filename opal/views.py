@@ -224,10 +224,6 @@ class BannedView(TemplateView):
         return data
 
 
-class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
-    template_name = 'delete_item_confirmation_modal.html'
-
-
 class RawTemplateView(LoginRequiredMixin, TemplateView):
     """
     Failover view for templates - just look for this path in Django!

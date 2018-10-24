@@ -216,7 +216,7 @@ describe('RecordEditor', function(){
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
                 expect(callArgs[0].templateUrl).toBe(
-                  '/templates/modals/delete_item_confirmation.html/'
+                  '/templates/delete_item_confirmation_modal.html'
                 );
               var resolves = callArgs[0].resolve;
               expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 0));

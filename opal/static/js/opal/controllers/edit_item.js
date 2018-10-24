@@ -80,7 +80,7 @@ angular.module('opal.controllers').controller(
             $scope.delete = function(result){
                 $modalInstance.close(result);
                 var modal = $modal.open({
-                    templateUrl: '/templates/modals/delete_item_confirmation.html/',
+                    templateUrl: '/templates/delete_item_confirmation_modal.html',
                     controller: 'DeleteItemConfirmationCtrl',
                     resolve: {
                         item: function() {
