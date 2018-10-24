@@ -19,7 +19,7 @@ angular.module('opal.services').factory('AppFlow', function($routeParams){
         exit: function(){
             return  {
                 'controller': 'DischargeEpisodeCtrl',
-                'template'  : '/templates/modals/discharge_episode.html/'
+                'template'  : '/templates/discharge_episode_modal.html'
             }
         }
     };

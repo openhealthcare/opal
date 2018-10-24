@@ -24,7 +24,7 @@ angular.module('opal.services').factory('RecordEditor', function(
         }
 
         var modal = $modal.open({
-          templateUrl: '/templates/modals/delete_item_confirmation.html/',
+          templateUrl: '/templates/delete_item_confirmation_modal.html',
           controller: 'DeleteItemConfirmationCtrl',
           resolve: {
             item: function() { return item; },

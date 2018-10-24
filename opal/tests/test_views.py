@@ -57,7 +57,6 @@ class LoginRequredTestCase(OpalTestCase):
             reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore")),
             reverse("patient_detail"),
             reverse("episode_detail", kwargs=dict(pk=self.episode.id)),
-            reverse("undischarge_tempate_view"),
             reverse("raw_template_view", kwargs=dict(template_name="not_a_real_template.html")),
         ]
 

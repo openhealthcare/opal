@@ -52,7 +52,7 @@ describe('Flow ', function(){
             Flow.exit('episode', {current_tags: {}}, {some: "context"});
             var args = $modal.open.calls.mostRecent().args;
             expect(args[0].controller).toEqual('DischargeEpisodeCtrl');
-            expect(args[0].templateUrl).toEqual('/templates/modals/discharge_episode.html/');
+            expect(args[0].templateUrl).toEqual('/templates/discharge_episode_modal.html');
             var resolves = args[0].resolve;
             expect(resolves.tags()).toEqual({});
             expect(resolves.episode()).toEqual('episode');
@@ -94,7 +94,7 @@ describe('Flow ', function(){
             exit: jasmine.createSpy().and.returnValue(
                 {
                     'controller': 'DischargeEpisodeCtrl',
-                    'template'  : '/templates/modals/discharge_episode.html/'
+                    'template'  : '/templates/discharge_episode_modal.html'
                 }
             )
         };
