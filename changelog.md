@@ -43,6 +43,8 @@ releases - this has now been removed and will no longer work.
 * The undocumented Reopen Episode flow included in Opal < 0.8.0 has now been completely removed,
 including the `reopen_episode_modal.html` template and the url/view at `templates/modals/reopen_episode.html/`.
 
+* Removes the method `.deleteItem` from the `RecordEditor` service.
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
