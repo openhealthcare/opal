@@ -64,6 +64,6 @@ that acts differently for deceased patients might look as follows
           }
           return {
               'controller': 'DischargeEpisodeCtrl',
-              'template'  : '/templates/modals/discharge_episode.html/'
+              'template'  : '/templates/discharge_episode_modal.html'
           }
         }
