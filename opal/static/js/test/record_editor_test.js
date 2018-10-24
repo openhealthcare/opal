@@ -205,6 +205,8 @@ describe('RecordEditor', function(){
 
       });
 
+    });
+
     describe("get item", function(){
       it("should handle the case where there is no subrecords of this type on the episode", function(){
         var result = episode.recordEditor.getItem("microbiology_test", 0);
