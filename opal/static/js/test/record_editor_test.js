@@ -205,61 +205,6 @@ describe('RecordEditor', function(){
 
       });
 
-      describe('delete item', function(){
-          it('should open the DeleteItemConfirmationCtrl', function(){
-                var deferred, callArgs;
-                deferred = $q.defer();
-                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-                episode.recordEditor.deleteItem('diagnosis', 0);
-                $scope.$digest();
-                callArgs = $modal.open.calls.mostRecent().args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
-                expect(callArgs[0].templateUrl).toBe(
-                  '/templates/delete_item_confirmation_modal.html'
-                );
-              var resolves = callArgs[0].resolve;
-              expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 0));
-              expect(resolves.profile(null)).toEqual(profile);
-            });
-
-            describe('for a readonly user', function(){
-                beforeEach(function(){
-                    profile.readonly = true;
-                });
-
-                it('should return just return an empty promise', function(){
-                    var deferred, callArgs;
-                    deferred = $q.defer();
-                    spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-                    episode.recordEditor.deleteItem('diagnosis', 0);
-                    $scope.$digest();
-                    expect($modal.open.calls.count()).toBe(0);
-                });
-
-                afterEach(function(){
-                    profile.readonly = false;
-                });
-            });
-
-            it('should change state to "normal" when the modal is closed', function() {
-                var deferred;
-                deferred = $q.defer();
-                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-                episode.recordEditor.deleteItem('diagnosis', 0);
-                deferred.resolve('save');
-                $scope.$digest();
-            });
-
-            it('should not delete singletons', function(){
-              var deferred, callArgs;
-              deferred = $q.defer();
-              spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-              episode.recordEditor.deleteItem('demographics', 0);
-              $scope.$digest();
-              expect($modal.open.calls.count()).toBe(0);
-            });
-      });
     });
 
     describe("get item", function(){

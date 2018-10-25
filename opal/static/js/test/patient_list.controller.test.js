@@ -58,7 +58,6 @@ describe('PatientListCtrl', function() {
         deferred.resolve();
         var promise = deferred.promise
 
-        spyOn(episode.recordEditor, 'deleteItem').and.returnValue(promise);
         spyOn(episode.recordEditor, 'editItem').and.returnValue(promise);
         spyOn($cookies, 'put').and.stub();
 
