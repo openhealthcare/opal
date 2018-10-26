@@ -233,11 +233,6 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
             possible.append("{0}.{1}".format(self.tag, self.subtag))
         return possible
 
-    def to_dict(self, user):
-        # As opposed to general lists, we only ever want active episodes
-        # for tagged lists
-        return self.get_queryset(user=user).serialised_active(user)
-
 
 """
 Sometimes we group lists for display purposes.

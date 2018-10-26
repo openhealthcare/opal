@@ -138,15 +138,3 @@ class EpisodeQueryset(models.QuerySet):
             d['tagging'][0]['id'] = e.id
             serialised.append(d)
         return serialised
-
-    def serialised_active(self, user, **kw):
-        """
-        Return a set of serialised active episodes.
-
-        KWARGS will be passed to the episode filter.
-        """
-        filters = kw.copy()
-        filters['active'] = True
-        episodes = self.filter(**filters)
-        as_dict = self.serialised(user, episodes)
-        return as_dict
