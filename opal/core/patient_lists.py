@@ -182,7 +182,6 @@ class PatientList(discoverable.DiscoverableFeature,
                 columns.append(ModelColumn(column).to_dict(patient_list=klass))
         return columns
 
-
     @property
     def queryset(self):
         raise ValueError("this needs to be implemented")
