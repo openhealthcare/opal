@@ -226,6 +226,33 @@ describe('filters', function() {
 
   });
 
+  describe('displayDateTime()', function() {
+    var displayDateTime;
+    var date_display_format = 'D MMM YYYY';
+
+    beforeEach(function(){
+      module(function($provide){
+        $provide.value('DATE_DISPLAY_FORMAT', date_display_format);
+      });
+
+      inject(function($injector){
+        displayDateTime = $injector.get('displayDateTimeFilter');
+      });
+
+    });
+
+    it('should display the date time as D MMM YYYY h:s', function() {
+      expect(displayDateTime(new Date(1959, 2, 3, 19, 12))).toBe(
+        '3 Mar 1959 19:12'
+      );
+    });
+
+    it('should return_nothing if null', function() {
+      expect(displayDateTime(null)).toEqual(undefined);
+    });
+
+  });
+
   describe('momentDateFormat()', function() {
     var momentDateFormat;
 

@@ -119,6 +119,19 @@ filters.filter('displayDate', function(toMomentFilter, $injector){
   }
 })
 
+filters.filter('displayDateTime', function(displayDateFilter, hhmmFilter){
+  return function(input){
+    if(!input){
+      return
+    };
+    var datePart = displayDateFilter(input);
+    var timePart = hhmmFilter(input);
+    if (datePart && timePart) {
+      return datePart + " " + timePart;
+    }
+  }
+})
+
 filters.filter('momentDateFormat', function(toMomentFilter){
 	return function(input, format){
 			if(!input){
