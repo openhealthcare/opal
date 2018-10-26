@@ -434,6 +434,14 @@ class SubrecordTestCase(OpalTestCase):
         enum = FavouriteColour.get_field_enum('name')
         self.assertEqual(enum, ["purple", "yellow", "blue"])
 
+    def test_get_field_enum_for_boolean_field(self):
+        enum = HatWearer.get_field_enum('wearing_a_hat')
+        self.assertEqual(enum, ['Yes', 'No'])
+
+    def test_get_field_enum_for_null_boolean_field(self):
+        enum = HatWearer.get_field_enum('suits_a_hat')
+        self.assertEqual(enum, ['Yes', 'No', 'Unknown'])
+
     def test_description(self):
         description = FavouriteColour.get_field_description('name')
         self.assertEqual(description, "orange is the new black")
