@@ -13,13 +13,13 @@ angular.module(
                     enter:  function(){
                         return {
                             'controller': 'HospitalNumberCtrl',
-                            'template'  : '/templates/modals/hospital_number.html/'
+                            'template'  : '/templates/hospital_number_modal.html'
                         };
                     },
                     exit: function(){
                         return  {
                             'controller': 'DischargeEpisodeCtrl',
-                            'template'  : '/templates/modals/discharge_episode.html/'
+                            'template'  : '/templates/discharge_episode_modal.html'
                         };
                     }
                 };

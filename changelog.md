@@ -1,9 +1,82 @@
+### 0.13.0 (Major Release)
+
+#### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
+
+We no longer use these functions, instead we use an HTML link to the patient detail view.
+
+#### Removes Patient.to_dict().active_episode_id
+
+We no longer include a value for "active_episode_id" as part of the Patient to_dict serialisation.
+
+This is effectively meaningless since we moved to an episode model that allows for multiple
+concurrent episodes.
+
+
+#### Removes CopyToCategory
+
+Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,
+they are advised to implement at application level.
+
+In general application developers are advised to find alternative ways to display subrecords
+from multiple episodes rather than copying them however, as this is known to cause duplication
+of data that is hard to trace back later on.
+
+This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the template
+`copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
+`CopyToCategory` and Subrecord property `_clonable`.
+
+
+#### Lookuplist data format
+
+Lookuplist entries in data files are no longer required to have an empty synonyms list
+if the entry doesn't have a synonym. This reduces the file size and makes it easier to
+hand craft data files for new applications.
+
+
+#### Removes the deprecated Model._title property
+
+Use of `Model._title` to set a display name of a subrecord has issued a warning for several
+releases - this has now been removed and will no longer work.
+
+#### Misc Changes
+
+* The undocumented Reopen Episode flow included in Opal < 0.8.0 has now been completely removed,
+including the `reopen_episode_modal.html` template and the url/view at `templates/modals/reopen_episode.html/`.
+
+* Removes the method `.deleteItem` from the `RecordEditor` service.
+
+* Adds in a footer updated/created by to the form base template
+
+
+### 0.12.0 (Major Release)
+
+#### Misc Changes
+* Adds the {% block analytics %} in the base template (opal/templates/base.html) that by default contains the google analytics code.
+
+* Adds the block {% block javascripts %} in the base template (opal/templates/base.html) that will compress all javascripts.
+
+* Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
+
+* Adds a `for_user` method on to the menu item. This method
+takes a user and by default returns True. Override this
+to decide if a menu item should be shown in the nav bar.
+
+### 0.11.2 (Bugfix Release)
+
+Includes referencedata JSON files in Manifest.
+
+### 0.11.1 (Bugfix Release)
+Fixes the user_options in the date picker tag to display the options as part of the text input.
+
 ### 0.11.0 (Major Release)
 
 #### Adds options of `today` and `yesterday` in the date picker
-If you pass in `user_options=True` to the date picker. You will be provided with options to select today or yesterday in the form tag.
+
+If you pass in `user_options=True` to the date picker. You will be provided with
+options to select today or yesterday in the form tag.
 
 #### Adds `dateHelper` to the rootScope
+
 The dateHelper has the functions `now` and `yesterday` that return javascript Dates for
 the current time and the current time - 1 day.
 
@@ -21,11 +94,13 @@ Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
 
 #### HelpTextStep can now use a custom template
+
 The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
 
 This is the template for what will be placed in the side bar.
 
 #### Adds in a radio_vertical template tag
+
 This displays the label and then the radio
 buttons as a vertical list.
 
@@ -51,6 +126,12 @@ Pathways.
 To aid this, the `.as_menuitem()` method now creates one from the target class with
 sensible but overridable defaults.
 
+#### `opal serve` command
+
+We add `opal serve` to the Opal commandline tool. Currently this simply wraps the
+Django runserver management command. It is envisaged that in the future this will
+also initialize e.g. sass precompilers with a single command.
+
 #### Misc Changes
 
 Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
@@ -58,7 +139,6 @@ for a method named `get_$attr` and will call that if it exists.
 
 Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
 `opal.core.patient_lists.PatientList`.
-
 
 #### Template removals
 
@@ -90,10 +170,8 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 a generator function which will yield all subrecord singletons.
 * Fixes a URI encoding bug in the `Episode.findByHospitalNumber()` method that
 made hospital numbers including `#` or `/` raise an error.
-
 * Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
 to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
-
 
 #### Updates to the Dependency Graph
 

@@ -57,7 +57,6 @@ class LoginRequredTestCase(OpalTestCase):
             reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore")),
             reverse("patient_detail"),
             reverse("episode_detail", kwargs=dict(pk=self.episode.id)),
-            reverse("undischarge_tempate_view"),
             reverse("raw_template_view", kwargs=dict(template_name="not_a_real_template.html")),
         ]
 
@@ -412,36 +411,6 @@ class RawTemplateViewTestCase(BaseViewTestCase):
             views.RawTemplateView, request)
         resp = view.dispatch(request, template_name='not_a_real_template.html')
         self.assertEqual(404, resp.status_code)
-
-
-class CopyToCategoryViewTestCase(BaseViewTestCase):
-    def test_copy_to_category(self):
-        """ copy all subrecords that don't have _clonable=True and
-            are not singletons
-        """
-        request = MagicMock()
-        request.user = self.user;
-        view = self.setup_view(views.EpisodeCopyToCategoryView, request)
-        testmodels.Colour.objects.create(
-            episode=self.episode, name="purple"
-        )
-        testmodels.HatWearer.objects.create(
-            episode=self.episode, name="hat wearer"
-        )
-        testmodels.EpisodeName.objects.create(
-            episode=self.episode, name="episode name"
-        )
-        view.post(request, pk=self.episode.pk, category="Outpatient")
-
-        new_episode = models.Episode.objects.exclude(id=self.episode.id).get()
-        self.assertEqual(new_episode.hatwearer_set.get().name, "hat wearer")
-        self.assertEqual(new_episode.colour_set.count(), 0)
-        self.assertEqual(new_episode.category_name, "Outpatient")
-
-        # a singleton will be created but not populate it
-        self.assertEqual(
-            new_episode.episodename_set.filter(name="episode name").count(), 0
-        )
 
 
 class CSRFFailureTestCase(TestCase):

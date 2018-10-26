@@ -44,11 +44,13 @@ class HatWearer(models.EpisodeSubrecord):
 
 
 class EntitledHatWearer(models.EpisodeSubrecord):
-    _title = 'Entitled Wearer of Hats'
     _advanced_searchable = False
     _exclude_from_extract = True
 
     name = dmodels.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = 'Entitled Wearer of Hats'
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
@@ -134,7 +136,6 @@ class CockerSpanielOwner(SpanielOwner):
 
 
 class Colour(models.EpisodeSubrecord):
-    _clonable = False
     _advanced_searchable = False
     _exclude_from_extract = True
     _angular_service = 'Colour'

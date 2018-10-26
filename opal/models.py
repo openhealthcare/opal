@@ -498,7 +498,7 @@ class Patient(models.Model):
 
     def __unicode__(self):
         try:
-            demographics = self.demographics_set.get()
+            demographics = self.demographics()
             return '%s | %s %s' % (
                 demographics.hospital_number,
                 demographics.first_name,
@@ -509,6 +509,12 @@ class Patient(models.Model):
         except:
             print(self.id)
             raise
+
+    def demographics(self):
+        """
+        Shortcut method to return this patient's demographics.
+        """
+        return self.demographics_set.get()
 
     def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
@@ -577,12 +583,10 @@ class Patient(models.Model):
                                              force=force)
 
     def to_dict(self, user):
-        active_episode = self.get_active_episode()
         d = {
             'id': self.id,
             'episodes': {episode.id: episode.to_dict(user) for episode in
-                         self.episode_set.all()},
-            'active_episode_id': active_episode.id if active_episode else None,
+                         self.episode_set.all()}
         }
 
         for model in patient_subrecords():
@@ -593,8 +597,7 @@ class Patient(models.Model):
         return d
 
     def update_from_demographics_dict(self, demographics_data, user):
-        demographics = self.demographics_set.get()
-        demographics.update_from_dict(demographics_data, user)
+        self.demographics().update_from_dict(demographics_data, user)
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
@@ -705,7 +708,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def __unicode__(self):
         try:
-            demographics = self.patient.demographics_set.get()
+            demographics = self.patient.demographics()
 
             return '%s | %s | %s' % (demographics.hospital_number,
                                      demographics.name,
@@ -896,13 +899,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def get_display_name(cls):
-        if hasattr(cls, '_title'):
-            w = "_title has been deprecated and will be removed in v0.12.0, "
-            w = w + "please use verbose_name in Meta instead for {}"
-            logging.warning(
-                w.format(cls.__name__)
-            )
-            return cls._title
         if cls._meta.verbose_name.islower():
             return cls._meta.verbose_name.title()
         return cls._meta.verbose_name
@@ -1043,7 +1039,6 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
-    _clonable = True
 
     episode = models.ForeignKey(Episode, null=False)
 
@@ -1425,7 +1420,7 @@ class Location(EpisodeSubrecord):
         abstract = True
 
     def __unicode__(self):
-        demographics = self.episode.patient.demographics_set.get()
+        demographics = self.episode.patient.demographics()
         return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
             demographics.name,
             demographics.hospital_number,
@@ -1498,7 +1493,7 @@ class Diagnosis(EpisodeSubrecord):
 
     def __unicode__(self):
         return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics_set.get().name,
+            self.episode.patient.demographics().name,
             self.condition,
             self.date_of_diagnosis
         )

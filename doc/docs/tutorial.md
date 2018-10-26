@@ -120,7 +120,8 @@ class Diagnosis(EpisodeSubrecord):
 
 You will notice that the condition field has a custom field type - `ForeignKeyOrFreeText`.
 This is a custom field type that we use with Opal when we want to use a
-[Lookup List](/guides/lookup_lists/).
+[Lookup List](/guides/referencedata/).
+
 
 Lookup Lists allow us to reference canonical lists of available terminology as a foreign key, while
 also allowing synonymous terms, and a free text override. That means that we can ensure that
@@ -262,7 +263,7 @@ application.
 
 For us, you'll notice that the value of `TODOItem.completed` simply displays as false -
 which is not particularly useful. So let's update that using the Opal
-[Boxed filter](/reference/javascript_helpers/). In `mynewapp/templates/records/todo_item.html`
+[Boxed filter](/reference/javascript/javascript_helpers/#boxed). In `mynewapp/templates/records/todo_item.html`
 change the last `span` to look like this:
 
 ```html
@@ -295,7 +296,7 @@ We also have a detail view for our patients, which you can access via search res
 view will typically allow for a more detailed display and editing of all the events
 comprising a patient's care than is available on the list page.
 
-<img src="/img/detail.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
+<img src="/img/detail_1.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
 
 
 #### JSON APIs

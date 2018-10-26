@@ -65,12 +65,12 @@ def record_timeline(model, whenfield):
     name = camelcase_to_underscore(model.__class__.__name__)
 
     return {
-        'name': name,
-        'editable': True,
-        'title': getattr(model, '_title', name.replace('_', ' ').title()),
+        'name'           : name,
+        'editable'       : True,
+        'title'          : model.__class__.get_display_name(),
         'detail_template': model.__class__.get_detail_template(),
-        'icon': getattr(model, '_icon', None),
-        'whenfield': whenfield,
+        'icon'           : getattr(model, '_icon', None),
+        'whenfield'      : whenfield,
     }
 
 

@@ -8,15 +8,12 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 
 from opal import models
 from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
-from opal.core.subrecords import (
-    episode_subrecords, get_subrecord_from_api_name
-)
-from opal.core.views import json_response
+from opal.core.subrecords import get_subrecord_from_api_name
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -144,31 +141,6 @@ def check_password_reset(request, *args, **kwargs):
     return response
 
 
-"""Internal (Legacy) API View"""
-
-
-class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
-    """
-    Copy an episode to a given category, excluding tagging.
-    """
-    def post(self, request, pk=None, category=None, **kwargs):
-        old = models.Episode.objects.get(pk=pk)
-        new = models.Episode(patient=old.patient,
-                             category_name=category,
-                             start=old.start)
-        new.save()
-
-        for sub in episode_subrecords():
-            if sub._is_singleton or not sub._clonable:
-                continue
-            for item in sub.objects.filter(episode=old):
-                item.id = None
-                item.episode = new
-                item.save()
-        serialised = new.to_dict(self.request.user)
-        return json_response(serialised)
-
-
 """
 Template views for Opal
 """
@@ -229,10 +201,6 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
-        context['title'] = getattr(
-            self.column, '_title', self.name.replace('_', ' ').title()
-        )
-        context['icon'] = getattr(self.column, '_icon', '')
         # pylint: disable=W0201
         context['single'] = self.column._is_singleton
         context["column"] = self.column
@@ -247,10 +215,6 @@ class RecordTemplateView(LoginRequiredMixin, TemplateView):
         return [template_name]
 
 
-class AccountDetailTemplateView(TemplateView):
-    template_name = 'accounts/account_detail.html'
-
-
 class BannedView(TemplateView):
     template_name = 'accounts/banned.html'
 
@@ -258,30 +222,6 @@ class BannedView(TemplateView):
         data = super(BannedView, self).get_context_data(*a, **k)
         data['banned'] = banned
         return data
-
-
-class HospitalNumberTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'hospital_number_modal.html'
-
-
-class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'reopen_episode_modal.html'
-
-
-class UndischargeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'undischarge_modal.html'
-
-
-class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'discharge_episode_modal.html'
-
-
-class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'copy_to_category.html'
-
-
-class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
-    template_name = 'delete_item_confirmation_modal.html'
 
 
 class RawTemplateView(LoginRequiredMixin, TemplateView):

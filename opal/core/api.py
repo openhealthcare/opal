@@ -319,7 +319,7 @@ class EpisodeViewSet(LoginRequiredViewset):
             patient, created = Patient.objects.get_or_create(
                 demographics__hospital_number=hospital_number)
             if created:
-                demographics = patient.demographics_set.get()
+                demographics = patient.demographics()
                 demographics.hospital_number = hospital_number
                 demographics.save()
         else:
