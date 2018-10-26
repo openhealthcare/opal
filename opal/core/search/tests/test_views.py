@@ -151,7 +151,6 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             u'page_number': 1,
             u'object_list': [{
                 u'count': 1,
-                u'id': self.patient.demographics_set.first().id,
                 u'first_name': u'Sean',
                 u'surname': u'Connery',
                 u'end': u'15/10/2015',
@@ -257,7 +256,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "James", "Bond", str(i)
             )
 
-        with self.assertNumQueries(36):
+        with self.assertNumQueries(26):
             self.get_response('{}/?query=Bond'.format(self.url))
 
         for i in range(20):
@@ -265,7 +264,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "James", "Blofelt", str(i)
             )
 
-        with self.assertNumQueries(36):
+        with self.assertNumQueries(26):
             self.get_response('{}/?query=Blofelt'.format(self.url))
 
     def test_with_multiple_patient_episodes(self):
@@ -289,7 +288,6 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "hospital_number": "23422",
                 "date_of_birth": None,
                 "end": None,
-                "id": blofeld_patient.demographics_set.first().id,
                 "categories": ["Inpatient"]
             }],
             "page_number": 1,
