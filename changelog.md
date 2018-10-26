@@ -45,6 +45,9 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Removes the method `.deleteItem` from the `RecordEditor` service.
 
+* Adds in a footer updated/created by to the form base template
+
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
