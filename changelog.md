@@ -1,5 +1,12 @@
 ### 0.13.0 (Major Release)
 
+#### New date display format helpers
+
+Introduces two new Angular filters: `displayDate` and `displayDateTime`. These format a date
+for display according to the setting `DATE_DISPLAY_FORMAT`. This defaults to `D MMM YYYY`.
+
+New applications will have this setting in their scaffold, existing applications may wish to add it.
+
 #### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
 
 We no longer use these functions, instead we use an HTML link to the patient detail view.
