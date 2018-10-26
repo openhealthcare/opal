@@ -3,6 +3,15 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.13.0 -> 0.12.0 - 0.11.2
+
+#### Free text or foreign key fields are now, by default case insensitive
+
+It is recommended you resave all model values for fk_or_ft fields as this will give you
+consistent behaviour. Otherwise fk_ft values wihch differ from fkt values only by
+case prior to this upgrade will be stored as ft and those afterwards will be stored as
+the relevant fk.
+
 ### 0.11.1 -> 0.11.2
 
 This bugfix release should be entirely backwards compatible.
@@ -15,7 +24,8 @@ This bugfix release should be entirely backwards compatible.
 
 Please upgrade django-compressor version to 2.2, ie update your requirements to
 
-# requirements.txt
+##### requirements.txt
+
 django-compressor==2.2
 
 ### 0.10.0 -> 0.10.1

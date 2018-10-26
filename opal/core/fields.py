@@ -42,6 +42,7 @@ class ForeignKeyOrFreeText(property):
         related_name=None,
         verbose_name=None,
         help_text=None,
+        case_sensitive=False,
         default=None
     ):
         self.foreign_model = foreign_model
@@ -49,6 +50,11 @@ class ForeignKeyOrFreeText(property):
         self._verbose_name = verbose_name
         self.default = default
         self.help_text = help_text
+
+        if case_sensitive:
+            self.fk_synonym_lookup_arg = "name"
+        else:
+            self.fk_synonym_lookup_arg = "name__iexact"
 
         # for use in the fields, lookup lists essentially have
         #  a max length based on the char field that's used internally
@@ -123,8 +129,11 @@ class ForeignKeyOrFreeText(property):
             val = val.strip()
             try:
                 from opal.models import Synonym
-                synonym = Synonym.objects.get(
-                    content_type=content_type, name=val)
+                kwargs = {
+                    "content_type": content_type,
+                    self.fk_synonym_lookup_arg: val
+                }
+                synonym = Synonym.objects.get(**kwargs)
                 vals.append(synonym.content_object.name)
             except Synonym.DoesNotExist:
                 vals.append(val)
@@ -135,7 +144,9 @@ class ForeignKeyOrFreeText(property):
         else:
             val = vals[0]
             try:
-                foreign_obj = self.foreign_model.objects.get(name=val)
+                foreign_obj = self.foreign_model.objects.get(
+                    **{self.fk_synonym_lookup_arg: val}
+                )
                 setattr(inst, self.fk_field_name, foreign_obj)
                 setattr(inst, self.ft_field_name, '')
             except self.foreign_model.DoesNotExist:
