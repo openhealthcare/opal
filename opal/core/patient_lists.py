@@ -161,8 +161,9 @@ class PatientList(discoverable.DiscoverableFeature,
         )
 
     def get_template_prefixes(self):
-        """ a patient list can return templates particular to themselves
-            or indeed used by other patient lists
+        """
+        A patient list can return templates particular to themselves
+        or indeed used by other patient lists
         """
         return []
 
@@ -180,6 +181,7 @@ class PatientList(discoverable.DiscoverableFeature,
             else:
                 columns.append(ModelColumn(column).to_dict(patient_list=klass))
         return columns
+
 
     @property
     def queryset(self):
