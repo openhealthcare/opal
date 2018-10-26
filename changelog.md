@@ -43,6 +43,20 @@ releases - this has now been removed and will no longer work.
 
 This can be adjusted with a flag on the field.
 
+Existing fk_or_ft fields could therefore still have the field set as free text.
+
+This change is not accompanied by a retrospective migration so your existing fk_or_ft may be
+stored in a case sensitive manner. It is recommended you migrate all of your fk_or_ft fields
+as this will give you consistent behaviour.
+
+##### For example.
+
+Prior to this change if I had an allergy for "paracetomol" but an entry in the models.Drug
+table of "Paracetomol", it would be stored as free text in the `Allergies.drug` field, because
+it was case sensitive. Going forward after this change it will be saved as a foreign key. This
+change will not be made retrospecively however so you would need to add a migration that resaved
+the Allergies.drug.
+
 
 #### Misc Changes
 
