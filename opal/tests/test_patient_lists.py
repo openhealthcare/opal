@@ -444,12 +444,14 @@ class TestTaggedPatientList(OpalTestCase):
         self.assertEqual(set(taglist), expected)
 
     def test_to_dict_inactive_episodes(self):
+        # Older vesions of Opal only serialised active episodes here
+        # Explicitly test to prevent a reversion
         p, e = self.new_patient_and_episode_please()
         e.set_tag_names(['carnivore'], self.user)
         self.assertEqual(e.pk, TaggingTestNotSubTag().to_dict(self.user)[0]['id'])
         e.active = False
         e.save()
-        self.assertEqual(0, len(TaggingTestNotSubTag().to_dict(self.user)))
+        self.assertEqual(1, len(TaggingTestNotSubTag().to_dict(self.user)))
 
 
 class TabbedPatientListGroupTestCase(OpalTestCase):

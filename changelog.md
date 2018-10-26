@@ -18,7 +18,6 @@ We no longer include a value for "active_episode_id" as part of the Patient to_d
 This is effectively meaningless since we moved to an episode model that allows for multiple
 concurrent episodes.
 
-
 #### Removes CopyToCategory
 
 Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,
@@ -32,13 +31,18 @@ This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the t
 `copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
 `CopyToCategory` and Subrecord property `_clonable`.
 
-
 #### Lookuplist data format
 
 Lookuplist entries in data files are no longer required to have an empty synonyms list
 if the entry doesn't have a synonym. This reduces the file size and makes it easier to
 hand craft data files for new applications.
 
+#### TaggedPatientList Episode serialisation
+
+Alters the default serialisation of TaggedPatientList serialisation to no longer filter out
+'inactive' episodes. Given that 'active' was always true when an episode had a tag, this
+was effectivly a no-op anyway unless applications were altering the `get_queryset` for
+these patient lists somehow.
 
 #### Removes the deprecated Model._title property
 
