@@ -66,7 +66,6 @@ class OpalApplication(object):
             "js/opal/services/patient_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/record_editor.js",
-            "js/opal/services/copy_to_category.js",
             "js/opal/services/patientlist_loader.js",
             'js/opal/services/fields_translater.js',
             'js/opal/services/referencedata.js',
@@ -86,7 +85,6 @@ class OpalApplication(object):
             "js/opal/controllers/account.js",
             "js/opal/controllers/discharge.js",
             "js/opal/controllers/undischarge.js",
-            "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/keyboard_shortcuts.js",
             "js/opal/controllers/patient_access_log.js",
             "js/opal/controllers/lookup_list_reference.js"
@@ -142,7 +140,7 @@ class OpalApplication(object):
                 items.append(logout)
                 if user.is_staff:
                     items.append(admin)
-        return items
+        return [item for item in items if item.for_user(user)]
 
     @classmethod
     def get_menu(klass, user=None):

@@ -8,6 +8,7 @@ from mock import patch
 
 from opal.core.test import OpalTestCase
 from opal.core import menus
+from opal.utils import AbstractBase
 
 from opal.core import plugins
 
@@ -18,7 +19,7 @@ class OpalPluginTestCase(OpalTestCase):
             javascripts = ['js/test/notreal.js']
             stylesheets = ['css/test/notreal.css']
             head_extra = ['notareal_template.html']
-            menuitems = [ menus.MenuItem(display='test') ]
+            menuitems = [menus.MenuItem(display='test') ]
             angular_module_deps = ['js/test.angular.mod.js']
 
         class TestPlugin2(plugins.OpalPlugin):
@@ -74,3 +75,24 @@ class OpalPluginTestCase(OpalTestCase):
         js_orig = copy.copy(js)
         js.append('icanhazcheezburgerify.js')
         self.assertEqual(js_orig, self.plugin1.get_javascripts())
+
+    def test_get_menu_items(self):
+        class MenuItemIncluded(menus.MenuItem):
+            pass
+
+        class MenuItemNotIncluded(menus.MenuItem):
+            def for_user(self, user):
+                return False
+
+        menu_item_included = MenuItemIncluded()
+        menu_item_not_included = MenuItemNotIncluded()
+
+        class TestPlugin(plugins.OpalPlugin, AbstractBase):
+                menuitems = [
+                    menu_item_included, menu_item_not_included
+                ]
+
+        self.assertEqual(
+            [menu_item_included],
+            list(TestPlugin.get_menu_items())
+        )

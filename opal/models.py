@@ -577,12 +577,10 @@ class Patient(models.Model):
                                              force=force)
 
     def to_dict(self, user):
-        active_episode = self.get_active_episode()
         d = {
             'id': self.id,
             'episodes': {episode.id: episode.to_dict(user) for episode in
-                         self.episode_set.all()},
-            'active_episode_id': active_episode.id if active_episode else None,
+                         self.episode_set.all()}
         }
 
         for model in patient_subrecords():
@@ -895,13 +893,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def get_display_name(cls):
-        if hasattr(cls, '_title'):
-            w = "_title has been deprecated and will be removed in v0.12.0, "
-            w = w + "please use verbose_name in Meta instead for {}"
-            logging.warning(
-                w.format(cls.__name__)
-            )
-            return cls._title
         if cls._meta.verbose_name.islower():
             return cls._meta.verbose_name.title()
         return cls._meta.verbose_name
@@ -1042,7 +1033,6 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
-    _clonable = True
 
     episode = models.ForeignKey(Episode, null=False)
 

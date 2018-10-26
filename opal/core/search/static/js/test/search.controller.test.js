@@ -169,26 +169,4 @@ describe('SearchCtrl', function (){
             $httpBackend.flush();
         });
     });
-
-    describe('getEpisodeId', function() {
-
-        it('should use the first episode if we have no active episode_id', function() {
-            var patient = {
-                episodes: {
-                    42: {}, //dummy episode
-                    8738: {} // another dummy episode
-                }
-            }
-            expect($scope.getEpisodeID(patient)).toEqual('42');
-        });
-
-    });
-
-    describe('jumpToEpisode()', function (){
-        it('Should call location.path()', function () {
-            $scope.jumpToEpisode({active_episode_id: 555});
-            expect(location.path).toHaveBeenCalledWith('/episode/555');
-        });
-    });
-
 });

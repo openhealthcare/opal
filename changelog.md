@@ -1,10 +1,62 @@
-### 0.12.0 (Major Release)
+### 0.13.0 (Major Release)
+
+#### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
+
+We no longer use these functions, instead we use an HTML link to the patient detail view.
+
+#### Removes Patient.to_dict().active_episode_id
+
+We no longer include a value for "active_episode_id" as part of the Patient to_dict serialisation.
+
+This is effectively meaningless since we moved to an episode model that allows for multiple
+concurrent episodes.
+
+
+#### Removes CopyToCategory
+
+Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,
+they are advised to implement at application level.
+
+In general application developers are advised to find alternative ways to display subrecords
+from multiple episodes rather than copying them however, as this is known to cause duplication
+of data that is hard to trace back later on.
+
+This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the template
+`copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
+`CopyToCategory` and Subrecord property `_clonable`.
+
+
+#### Lookuplist data format
+
+Lookuplist entries in data files are no longer required to have an empty synonyms list
+if the entry doesn't have a synonym. This reduces the file size and makes it easier to
+hand craft data files for new applications.
+
+
+#### Removes the deprecated Model._title property
+
+Use of `Model._title` to set a display name of a subrecord has issued a warning for several
+releases - this has now been removed and will no longer work.
 
 #### Misc Changes
 
+* The undocumented Reopen Episode flow included in Opal < 0.8.0 has now been completely removed,
+including the `reopen_episode_modal.html` template and the url/view at `templates/modals/reopen_episode.html/`.
+
+* Removes the method `.deleteItem` from the `RecordEditor` service.
+
+### 0.12.0 (Major Release)
+
+#### Misc Changes
+* Adds the {% block analytics %} in the base template (opal/templates/base.html) that by default contains the google analytics code.
+
+* Adds the block {% block javascripts %} in the base template (opal/templates/base.html) that will compress all javascripts.
+
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
 
-* Adds in a footer updated/created by to the form base template
+* Adds a `for_user` method on to the menu item. This method
+takes a user and by default returns True. Override this
+to decide if a menu item should be shown in the nav bar.
 
 ### 0.11.2 (Bugfix Release)
 

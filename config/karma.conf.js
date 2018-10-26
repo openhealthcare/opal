@@ -10,8 +10,6 @@ module.exports = function(config){
     var includedFiles = [
       'opal/app.js',
       'opal/routes.js',
-      '../../core/pathway/static/js/pathway/**/*.js',
-      '../../core/search/static/js/search/**/*.js',
       'test/*.js',
       '../../core/search/static/js/test/*',
       '../../core/pathway/static/js/test/*',
