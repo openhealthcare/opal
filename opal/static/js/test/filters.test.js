@@ -212,8 +212,8 @@ describe('filters', function() {
       inject(function($injector){
         displayDate = $injector.get('displayDateFilter');
       });
-
     });
+
 
     it('should format as D MMM YYYY', function() {
       var d = new Date(1959, 2, 3);
@@ -300,7 +300,6 @@ describe('filters', function() {
     beforeEach(function(){
       inject(function($injector){
         shortDateTime = $injector.get('shortDateTimeFilter');
-
       });
     });
 
