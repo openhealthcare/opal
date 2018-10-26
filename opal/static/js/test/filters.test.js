@@ -194,10 +194,63 @@ describe('filters', function() {
       expect(shortTime(weCare)).toBe('10:12');
     });
 
-    it('should display the time as hh:mm from date', function(){
+    it('should display the time as hh:mm from moment', function(){
       var weCare = moment(new Date(2017, 10, 1, 10, 12));
       expect(shortTime(weCare)).toBe('10:12');
     });
+  });
+
+  describe('displayDate()', function() {
+    var displayDate;
+    var date_display_format = 'D MMM YYYY';
+
+    beforeEach(function(){
+      module(function($provide){
+        $provide.value('DATE_DISPLAY_FORMAT', date_display_format);
+      });
+
+      inject(function($injector){
+        displayDate = $injector.get('displayDateFilter');
+      });
+    });
+
+
+    it('should format as D MMM YYYY', function() {
+      var d = new Date(1959, 2, 3);
+      expect(displayDate(d)).toBe('3 Mar 1959');
+    });
+
+    it('should return undefined if passed null', function() {
+      expect(displayDate(null)).toEqual(undefined);
+    });
+
+  });
+
+  describe('displayDateTime()', function() {
+    var displayDateTime;
+    var date_display_format = 'D MMM YYYY';
+
+    beforeEach(function(){
+      module(function($provide){
+        $provide.value('DATE_DISPLAY_FORMAT', date_display_format);
+      });
+
+      inject(function($injector){
+        displayDateTime = $injector.get('displayDateTimeFilter');
+      });
+
+    });
+
+    it('should display the date time as D MMM YYYY h:s', function() {
+      expect(displayDateTime(new Date(1959, 2, 3, 19, 12))).toBe(
+        '3 Mar 1959 19:12'
+      );
+    });
+
+    it('should return_nothing if null', function() {
+      expect(displayDateTime(null)).toEqual(undefined);
+    });
+
   });
 
   describe('momentDateFormat()', function() {
@@ -247,7 +300,6 @@ describe('filters', function() {
     beforeEach(function(){
       inject(function($injector){
         shortDateTime = $injector.get('shortDateTimeFilter');
-
       });
     });
 
