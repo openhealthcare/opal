@@ -55,6 +55,7 @@ def deserialize_date(value):
     dt = timezone.make_aware(dt, timezone.get_current_timezone())
     return dt.date()
 
+
 def _temporal_thing_to_string(thing):
     """
     If THING is a time, date, or datetime, return a string representation of it
@@ -72,6 +73,7 @@ def _temporal_thing_to_string(thing):
         )
     else:
         return thing
+
 
 class OpalSerializer(DjangoJSONEncoder):
     """
