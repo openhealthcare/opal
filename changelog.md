@@ -1,5 +1,13 @@
 ### 0.13.0 (Major Release)
 
+#### Coding systems for lookuplists
+
+Lookuplist entries may now have an associated coding system and code value stored against them.
+
+This enables applications to explicitly code entries against e.g. SNOMED value sets.
+
+Note: This will requires a migration to be created for all applications.
+
 #### New date display format helpers
 
 Introduces two new Angular filters: `displayDate` and `displayDateTime`. These format a date
