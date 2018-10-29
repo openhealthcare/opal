@@ -7,6 +7,9 @@ for display according to the setting `DATE_DISPLAY_FORMAT`. This defaults to `D 
 
 New applications will have this setting in their scaffold, existing applications may wish to add it.
 
+All core Opal templates that previously used `shortDate` or `shortDateTime` have been updated to
+use `displayDateX`.
+
 #### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
 
 We no longer use these functions, instead we use an HTML link to the patient detail view.
