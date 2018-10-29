@@ -210,7 +210,7 @@ class ModelColumnTestCase(OpalTestCase):
         )
         value = c.get_template_path(MagicMock('Mock Patient List'))
         self.assertEqual(
-            ps.path.join('records', 'demographics.html'),
+            os.path.join('records', 'demographics.html'),
             value
         )
 
