@@ -49,7 +49,7 @@ another but the data is not naturally tabular.
 
 ```html
 {% load panels %}
-{% aligned_pair model="episode.start_date | shortDate" label="Start Date" %}
+{% aligned_pair model="episode.start_date | displayDate" label="Start Date" %}
 {% aligned_pair model="22" label="Next Data Point" %}
 ```
 

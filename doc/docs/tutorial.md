@@ -188,7 +188,7 @@ Let's take a look at what that did:
 The default detail template simply displays each field on a new line:
 
     <span ng-show="item.job">[[ item.job ]] <br /></span>
-    <span ng-show="item.due_date">[[ item.due_date  | shortDate ]] <br /></span>
+    <span ng-show="item.due_date">[[ item.due_date  | displayDate ]] <br /></span>
     <span ng-show="item.details">[[ item.details ]] <br /></span>
     <span ng-show="item.completed">[[ item.completed ]] <br /></span>
 
