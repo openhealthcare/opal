@@ -23,7 +23,8 @@ class PatientTest(OpalTestCase):
     def test_get_active_episode(self):
         self.patient.create_episode()
         episode2 = self.patient.create_episode()
-        episode2.set_tag_names(['microbiology'], None)
+        episode2.active = True
+        episode2.save()
         self.assertEqual(episode2.id, self.patient.get_active_episode().id)
 
     def test_get_active_episode_with_no_episodes(self):

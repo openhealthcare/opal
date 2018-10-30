@@ -85,13 +85,17 @@ class EpisodeTest(OpalTestCase):
         self.episode.set_tag_names(['carnivore', 'mine'], self.user)
         self.assertEqual(['carnivore'], list(self.episode.get_tag_names(other_user)))
 
-    def test_active_if_tagged_by_non_mine_tag(self):
+    def test_active_unchanged_if_tagged_by_non_mine_tag(self):
+        # Regression test - see github.com/openhealthcare/opal#1578 for details
+        before = self.episode.active
         self.episode.set_tag_names(['carnivore'], self.user)
-        self.assertTrue(self.episode.active)
+        self.assertEqual(before, self.episode.active)
 
-    def test_active_if_only_tagged_by_mine_tag(self):
+    def test_active_unchanged_if_only_tagged_by_mine_tag(self):
+        # Regression test - see github.com/openhealthcare/opal#1578 for details
+        before = self.episode.active
         self.episode.set_tag_names(['mine'], self.user)
-        self.assertTrue(self.episode.active)
+        self.assertEqual(before, self.episode.active)
 
     def test_set_tag_names_from_tagging_dict(self):
         self.episode.set_tag_names_from_tagging_dict({'inpatient': True}, self.user)

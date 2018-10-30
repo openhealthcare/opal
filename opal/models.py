@@ -751,20 +751,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def set_tag_names(self, tag_names, user):
         """
-        1. Set the episode.active status
-        2. Special case mine
-        3. Archive dangling tags not in our current list.
-        4. Add new tags.
-        5. Ensure that we're setting the parents of child tags
-        6. There is no step 6.
+        1. Special case mine
+        2. Archive dangling tags not in our current list.
+        3. Add new tags.
+        4. Ensure that we're setting the parents of child tags
+        5. There is no step 6.
         """
-        if len(tag_names) and not self.active:
-            self.active = True
-            self.save()
-        elif not len(tag_names) and self.active:
-            self.active = False
-            self.save()
-
         if "mine" not in tag_names:
             self.tagging_set.filter(user=user,
                                     value='mine').update(archived=True)
