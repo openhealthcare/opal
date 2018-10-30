@@ -209,14 +209,19 @@ class ModelColumnTestCase(OpalTestCase):
             models.Demographics
         )
         value = c.get_template_path(MagicMock('Mock Patient List'))
-        self.assertEqual('records/demographics.html', value)
+        self.assertEqual(
+            os.path.join('records', 'demographics.html'),
+            value
+        )
 
     def test_get_detail_template_path(self):
         c = patient_lists.ModelColumn(
             models.Demographics
         )
         value = c.get_detail_template_path(MagicMock('Mock Patient List'))
-        self.assertEqual('records/demographics_detail.html', value)
+        self.assertEqual(
+            os.path.join('records', 'demographics_detail.html'),
+            value)
 
 
 
