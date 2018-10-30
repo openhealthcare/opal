@@ -12,14 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='inpatientadmission',
-            options={'verbose_name': 'Inpatient Admissions'},
-        ),
-        migrations.AlterModelOptions(
-            name='tagging',
-            options={'verbose_name': 'Teams'},
-        ),
         migrations.AddField(
             model_name='antimicrobial',
             name='code',
