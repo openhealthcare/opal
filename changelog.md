@@ -8,7 +8,7 @@ for display according to the setting `DATE_DISPLAY_FORMAT`. This defaults to `D 
 New applications will have this setting in their scaffold, existing applications may wish to add it.
 
 All core Opal templates that previously used `shortDate` or `shortDateTime` have been updated to
-use `displayDateX`.
+use `displayDate`.
 
 #### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
 
