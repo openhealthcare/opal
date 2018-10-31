@@ -41,3 +41,7 @@ class MissingTemplateError(Error):
 
 class UnexpectedEpisodeCategoryNameError(Error):
     pass
+
+
+class InvalidDataError(Error):
+    pass

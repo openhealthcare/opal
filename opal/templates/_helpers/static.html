@@ -3,6 +3,6 @@
     {{ label }}
   </label>
   <p class="form-control-static col-sm-8">
-    [[ {{ model }}{% if datep %}|shortDate{% endif %} ]]
+    [[ {{ model }}{% if datep %} | displayDate {% endif %} ]]
   </p>
 </div>

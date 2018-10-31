@@ -8,14 +8,81 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from opal import utils
+from opal.core import exceptions
+
+
+def get_or_create_lookuplist_item(model, name, code, system):
+    """
+    Given a lookuplist MODEL, the NAME of an entry, and possibly
+    the associated CODE and SYSTEM pair, return an instance.
+
+    If a preexisting uncoded entry with this name/display value
+    exists, treat this as an opportunity to code it.
+
+    If there is a preexisting entry with this code which has a
+    different name/display value, raise an exception as we can't
+    guess the correct thing to do in that scenario.
+    """
+    try:
+        instance = model.objects.get(name=name, code=code, system=system)
+        return instance, False
+    except model.DoesNotExist:
+        if code is not None and system is not None:
+            if model.objects.filter(code=code, system=system).count() > 0:
+                msg = 'Tried to create a lookuplist item with value {0} '
+                msg += 'and code {1} but this code already exists with '
+                msg += 'value {2} and code {3}'
+                existing = model.objects.get(code=code, system=system)
+                msg = msg.format(name, code, existing.name, existing.code)
+                raise exceptions.InvalidDataError(msg)
+
+        try:
+            instance = model.objects.get(name=name)
+            instance.code = code
+            instance.system = system
+            instance.save()
+            return instance, False
+        except model.DoesNotExist:
+            instance = model(name=name, code=code, system=system)
+            instance.save()
+            return instance, True
 
 
 def load_lookuplist_item(model, item):
-    from opal.models import Synonym
-    content_type = ContentType.objects.get_for_model(model)
-    instance, created = model.objects.get_or_create(name=item['name'])
-    synonyms_created = 0
+    """
+    Load an individual lookuplist item into the database
 
+    Takes a Lookuplist instance and a dictionary in our
+    expected lookuplist data structure
+    """
+    from opal.models import Synonym
+
+    name = item.get('name', None)
+    if name is None:
+        raise exceptions.InvalidDataError(
+            'Lookuplist entries must have a name'
+        )
+
+    code, system = None, None
+    if item.get('coding', None):
+        try:
+            code   = item['coding']['code']
+            system = item['coding']['system']
+        except KeyError:
+            msg = """
+Coding entries in lookuplists must contain both `coding` and `system` values
+The following lookuplist item was missing one or both values:
+{0}
+""".format(str(item))
+            raise exceptions.InvalidDataError(msg)
+
+    instance, created = get_or_create_lookuplist_item(
+        model, name, code, system
+    )
+
+    # Handle user visible synonyms
+    synonyms_created = 0
+    content_type = ContentType.objects.get_for_model(model)
     for synonym in item.get('synonyms', []):
         syn, created_synonym = Synonym.objects.get_or_create(
             content_type=content_type,
@@ -24,6 +91,7 @@ def load_lookuplist_item(model, item):
         )
         if created_synonym:
             synonyms_created += 1
+
     return int(created), synonyms_created
 
 
@@ -41,12 +109,20 @@ def synonym_exists(lookuplist, name):
 
 
 class LookupList(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    synonyms = GenericRelation('opal.Synonym')
+    # For the purposes of FHIR CodeableConcept, .name is .display
+    # We keep it as .name for Opal backwards compatibility
+    name          = models.CharField(max_length=255, unique=True)
+    synonyms      = GenericRelation('opal.Synonym')
+    system        = models.CharField(max_length=255, blank=True, null=True)
+    code          = models.CharField(max_length=255, blank=True, null=True)
+    # We don't particularly use .version in the current implementation, but we
+    # include here for the sake of FHIR CodeableConcept compatibility
+    version       = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ['name']
         abstract = True
+        unique_together = ('code', 'system')
 
     def __unicode__(self):
         return self.name

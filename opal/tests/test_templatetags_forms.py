@@ -530,7 +530,7 @@ class StaticTestCase(TestCase):
         tpl = Template('{% load forms %}{% static "Demographics.date_of_birth" %}')
         rendered = tpl.render(Context({}))
         self.assertIn('editing.demographics.date_of_birth', rendered)
-        self.assertIn('shortDate', rendered)
+        self.assertIn('displayDate', rendered)
 
 
 class IconTestCase(TestCase):

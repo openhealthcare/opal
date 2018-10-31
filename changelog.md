@@ -14,12 +14,23 @@ The default calculation of `.active` has also changed to be roughly equivalent t
 Applications are now able to easily _change_ this behaviour by overriding the `.is_active`
 method of the relevant `EpisodeCategory`.
 
+#### Coding systems for lookuplists
+
+Lookuplist entries may now have an associated coding system and code value stored against them.
+
+This enables applications to explicitly code entries against e.g. SNOMED value sets.
+
+Note: This will requires a migration to be created for all applications.
+
 #### New date display format helpers
 
 Introduces two new Angular filters: `displayDate` and `displayDateTime`. These format a date
 for display according to the setting `DATE_DISPLAY_FORMAT`. This defaults to `D MMM YYYY`.
 
 New applications will have this setting in their scaffold, existing applications may wish to add it.
+
+All core Opal templates that previously used `shortDate` or `shortDateTime` have been updated to
+use either `displayDate` or `displayDateTime`.
 
 #### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
 
