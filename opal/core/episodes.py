@@ -57,7 +57,7 @@ class EpisodeCategory(DiscoverableFeature):
         The default implementation looks to see whether an end date has
         been set on the episode.
         """
-        return bool(self.episode.end == None)
+        return bool(self.episode.end is None)
 
     def get_stages(self):
         """
