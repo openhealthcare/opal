@@ -28,6 +28,10 @@ class EpisodeTest(OpalTestCase):
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())
 
+    def test_init_sets_original_active_value(self):
+        episode = models.Episode()
+        self.assertEqual(episode.active, episode._Episode__original_active)
+
     def test_save_sets_active_when_category_is_active_is_true(self):
         with patch.object(self.episode.category, 'is_active') as activep:
             activep.return_value = True
@@ -38,6 +42,11 @@ class EpisodeTest(OpalTestCase):
         self.episode.end = datetime.date.today()
         self.episode.save()
         self.assertFalse(self.episode.active)
+
+    def test_user_value_of_active_disagrees_with_category(self):
+        self.episode.active = False
+        with self.assertRaises(ValueError):
+            self.episode.save()
 
     @patch('opal.models.application.get_app')
     @patch('opal.core.episodes.EpisodeCategory')

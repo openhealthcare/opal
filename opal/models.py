@@ -700,6 +700,10 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     objects = managers.EpisodeQueryset.as_manager()
 
+    def __init__(self, *args, **kwargs):
+        super(Episode, self).__init__(*args, **kwargs)
+        self.__original_active = self.active
+
     def __unicode__(self):
         try:
             demographics = self.patient.demographics()
@@ -716,8 +720,31 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
-        self.active = self.category.is_active()
+
+        current_active_value = self.active
+        category_active_value = self.category.is_active()
+
+        if current_active_value != category_active_value:  # Disagreement
+            if current_active_value != self.__original_active:
+                # The value of self.active has been set by some code somewhere
+                # not by __init__() e.g. the original database value at the
+                # time of instance initalization.
+                #
+                # Rather than overriding this silently we should raise a
+                # ValueError.
+                msg = "Value of Episode.active has been set to {} but " \
+                      "category.is_active() returns {}"
+                raise ValueError(
+                    msg.format(current_active_value, category_active_value)
+                )
+
+        self.active = category_active_value
         super(Episode, self).save(*args, **kwargs)
+
+        # Re-set this in case we changed it once post initialization and then
+        # the user subsequently saves this instance again
+        self.__original_active = self.active
+
         if created:
             for subclass in episode_subrecords():
                 if subclass._is_singleton:
