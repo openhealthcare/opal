@@ -7,10 +7,11 @@ import six
 
 from django.contrib.auth.models import User
 
-from opal.core import application, subrecords
+from opal.core import application, exceptions, subrecords
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
+from opal import models
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
@@ -27,10 +28,23 @@ class EpisodeTest(OpalTestCase):
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())
 
+    def test_save_sets_active_when_category_is_active_is_true(self):
+        with patch.object(self.episode.category, 'is_active') as activep:
+            activep.return_value = True
+            self.episode.save()
+            self.assertTrue(self.episode.active)
+
+    def test_save_sets_active_when_category_is_active_is_false(self):
+        self.episode.end = datetime.date.today()
+        self.episode.save()
+        self.assertFalse(self.episode.active)
+
     @patch('opal.models.application.get_app')
-    def test_default_category_name(self, getter):
+    @patch('opal.core.episodes.EpisodeCategory')
+    def test_default_category_name(self, category, getter):
         mock_app = getter.return_value
         mock_app.default_episode_category = 'MyEpisodeCategory'
+        category.filter.return_value = [InpatientEpisode]
         episode = self.patient.create_episode()
         self.assertEqual('MyEpisodeCategory', episode.category_name)
 
@@ -38,6 +52,11 @@ class EpisodeTest(OpalTestCase):
         self.episode.category_name = 'Inpatient'
         self.assertEqual(self.episode.category.__class__, InpatientEpisode)
         self.assertEqual(self.episode.category.episode, self.episode)
+
+    def test_category_name_not_found(self):
+        self.episode.category_name = 'Not A Real Category'
+        with self.assertRaises(exceptions.UnexpectedEpisodeCategoryNameError):
+            cat = self.episode.category
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))

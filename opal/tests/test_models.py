@@ -9,7 +9,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from opal import models
-from opal.core import exceptions, subrecords
+from opal.core import application, exceptions, subrecords
 from opal.models import (
     Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
 )
@@ -64,18 +64,17 @@ class PatientTestCase(OpalTestCase):
         episode_dict = episode.to_dict(self.user)
         self.assertEqual(episode_dict, patient.to_dict(self.user)['episodes'][episode.id])
 
-    @patch("opal.models.application.get_app")
-    def test_created_with_the_default_episode(self, get_app):
-        test_app = MagicMock()
-        test_app.default_episode_category ="testcategory"
-        get_app.return_value = test_app
+    def test_created_with_the_default_episode(self):
         _, episode = self.new_patient_and_episode_please()
-        self.assertEqual(episode.category_name, "testcategory")
+        self.assertEqual(
+            application.get_app().default_episode_category,
+            episode.category_name
+        )
 
     def test_create_episode_category(self):
         patient = models.Patient.objects.create()
-        e = patient.create_episode(category_name='testcategory')
-        self.assertEqual('testcategory', e.category_name)
+        e = patient.create_episode(category_name='Outpatient')
+        self.assertEqual('Outpatient', e.category_name)
 
     def test_bulk_update_patient_subrecords(self):
         original_patient = models.Patient()

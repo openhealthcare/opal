@@ -1,6 +1,8 @@
 """
 Unittests for Patients
 """
+import datetime
+
 from mock import patch
 from opal.core.test import OpalTestCase
 
@@ -31,6 +33,6 @@ class PatientTest(OpalTestCase):
         self.assertIsNone(self.patient.get_active_episode())
 
     def test_get_active_episode_with_no_active_episodes(self):
-        self.patient.create_episode()
-        self.patient.create_episode()
+        self.patient.create_episode(end=datetime.date.today())
+        self.patient.create_episode(end=datetime.date.today())
         self.assertIsNone(self.patient.get_active_episode())

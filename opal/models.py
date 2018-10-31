@@ -716,6 +716,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
+        self.active = self.category.is_active()
         super(Episode, self).save(*args, **kwargs)
         if created:
             for subclass in episode_subrecords():
@@ -725,10 +726,16 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        category = episodes.EpisodeCategory.filter(
+        categories = episodes.EpisodeCategory.filter(
             display_name=self.category_name
-        )[0]
-        return category(self)
+        )
+        if len(categories) == 0:
+            msg = "Unable to find EpisodeCategory for category name {0}"
+            msg = msg.format(self.category_name)
+            raise exceptions.UnexpectedEpisodeCategoryNameError(msg)
+        else:
+            category = categories[0]
+            return category(self)
 
     def visible_to(self, user):
         """

@@ -50,6 +50,15 @@ class EpisodeCategory(DiscoverableFeature):
     def __init__(self, episode):
         self.episode = episode
 
+    def is_active(self):
+        """
+        Predicate function to determine whether this episode is active.
+
+        The default implementation looks to see whether an end date has
+        been set on the episode.
+        """
+        return bool(self.episode.end == None)
+
     def get_stages(self):
         """
         Return the list of string stages for this category
