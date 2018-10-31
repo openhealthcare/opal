@@ -107,9 +107,9 @@ class AlignedPairsTestCase(OpalTestCase):
         template = Template(
             """
             {% load panels %}
-            {% aligned_pair model="episode.start_date | shortDate" label="Start Date"%}
+            {% aligned_pair model="episode.start_date | displayDate" label="Start Date"%}
             """
         )
         result = template.render(Context({}))
-        self.assertIn('[[ episode.start_date | shortDate ]]', result)
+        self.assertIn('[[ episode.start_date | displayDate ]]', result)
         self.assertIn('Start Date', result)
