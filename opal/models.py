@@ -701,18 +701,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
-        try:
-            demographics = self.patient.demographics()
-
-            return '%s | %s | %s' % (demographics.hospital_number,
-                                     demographics.name,
-                                     self.start)
-        except models.ObjectDoesNotExist:
-            return self.start
-        except AttributeError:
-            return 'Episode: {0}'.format(self.pk)
-        except Exception:
-            return self.start
+        return 'Episode {0}: {1} - {2}'.format(
+            self.pk, self.start, self.end
+        )
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
