@@ -357,7 +357,7 @@ class RecordRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_display_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '<span ng-show="item.name">\n    [[ item.name | shortTime ]]\n   <br />\n</span>'
+            '<span ng-show="item.name">\n    [[ item.name | hhmm ]]\n   <br />\n</span>'
         )
 
     @patch.object(Colour, "build_field_schema")
