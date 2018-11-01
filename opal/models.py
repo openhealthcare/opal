@@ -1394,17 +1394,6 @@ class Location(EpisodeSubrecord):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
-        demographics = self.episode.patient.demographics()
-        return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
-            demographics.name,
-            demographics.hospital_number,
-            self.category,
-            self.hospital,
-            self.ward,
-            self.bed
-        )
-
 
 class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
@@ -1465,13 +1454,6 @@ class Diagnosis(EpisodeSubrecord):
         abstract = True
         verbose_name = 'Diagnosis / Issues'
         verbose_name_plural = "Diagnoses"
-
-    def __unicode__(self):
-        return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics().name,
-            self.condition,
-            self.date_of_diagnosis
-        )
 
 
 class PastMedicalHistory(EpisodeSubrecord):
