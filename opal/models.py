@@ -493,7 +493,6 @@ class Patient(models.Model):
     def __unicode__(self):
         return 'Patient {0}'.format(self.id)
 
-
     def demographics(self):
         """
         Shortcut method to return this patient's demographics.
