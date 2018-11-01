@@ -60,8 +60,9 @@ filters.filter('fromNow', function(toMomentFilter){
 		};
 });
 
-filters.filter('shortDate', function(toMomentFilter){
+filters.filter('shortDate', function(toMomentFilter, $log){
     return function(input){
+      $log.warn('shortDate will be removed in Opal 0.14.0')
         if(!input){
             return
         }
@@ -83,9 +84,10 @@ filters.filter('shortDate', function(toMomentFilter){
     }
 });
 
-filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter){
+filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter, $log){
 		return function(input){
-				var datePart = shortDateFilter(input);
+          $log.warn('shortDateTime will be removed in Opal 0.14.0')
+		  var datePart = shortDateFilter(input);
 				var timePart = hhmmFilter(input);
 
 				if(datePart && timePart){
@@ -95,9 +97,10 @@ filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter){
 });
 
 
-filters.filter('shortTime', function(shortDateFilter, hhmmFilter){
+filters.filter('shortTime', function(shortDateFilter, hhmmFilter, $log){
 	return function(input){
-		var toChange;
+      $log.warn('shortTime will be removed in Opal 0.14.0')
+	  var toChange;
 		if(_.isDate(input)){
 			toChange = moment(input);
 		}
