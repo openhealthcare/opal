@@ -5,7 +5,7 @@ import inspect
 import itertools
 import os
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from opal.core import plugins, menus
 
 

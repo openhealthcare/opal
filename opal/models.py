@@ -16,7 +16,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import force_str
 from six import b
@@ -424,7 +424,7 @@ class Filter(models.Model):
     """
     Saved filters for users extracting data.
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     criteria = models.TextField()
 
@@ -451,7 +451,7 @@ class ContactNumber(models.Model):
 
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -604,8 +604,8 @@ class Patient(models.Model):
 
 class PatientRecordAccess(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    user    = models.ForeignKey(User)
-    patient = models.ForeignKey(Patient)
+    user    = models.ForeignKey(User, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
     def to_dict(self, user):
         return dict(
@@ -686,7 +686,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     category_name     = models.CharField(
         max_length=200, default=get_default_episode_type
     )
-    patient           = models.ForeignKey(Patient)
+    patient           = models.ForeignKey(Patient, on_delete=models.CASCADE)
     active            = models.BooleanField(default=False)
     start             = models.DateField(null=True, blank=True)
     end               = models.DateField(blank=True, null=True)
@@ -1026,7 +1026,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
 
 class PatientSubrecord(Subrecord):
-    patient = models.ForeignKey(Patient)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -1034,7 +1034,7 @@ class PatientSubrecord(Subrecord):
 
 class EpisodeSubrecord(Subrecord):
 
-    episode = models.ForeignKey(Episode, null=False)
+    episode = models.ForeignKey(Episode, null=False, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -1044,8 +1044,8 @@ class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
 
-    user     = models.ForeignKey(User, null=True, blank=True)
-    episode  = models.ForeignKey(Episode, null=False)
+    user     = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    episode  = models.ForeignKey(Episode, null=False, on_delete=models.CASCADE)
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
 
@@ -1588,7 +1588,7 @@ class UserProfile(models.Model):
     HELP_PW          = "Force this user to change their password on the " \
                        "next login"
 
-    user                  = models.OneToOneField(User, related_name='profile')
+    user                  = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     force_password_change = models.BooleanField(default=True,
                                                 help_text=b(HELP_PW))
     can_extract           = models.BooleanField(default=False,

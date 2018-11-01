@@ -17,4 +17,4 @@ class AngularCSRFRename(object):
 
 class DjangoReversionWorkaround(object):
     def process_request(self, request):
-        access = request.user.is_authenticated()  # noqa:
+        access = request.user.is_authenticated  # noqa:

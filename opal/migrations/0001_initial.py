@@ -208,7 +208,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=200)),
                 ('criteria', models.TextField()),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -592,7 +592,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255)),
                 ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -602,7 +602,7 @@ class Migration(migrations.Migration):
             name='Tagging',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('episode', models.ForeignKey(to='opal.Episode')),
+                ('episode', models.ForeignKey(to='opal.Episode', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -619,7 +619,7 @@ class Migration(migrations.Migration):
                 ('restricted', models.BooleanField(default=False, help_text=b'Whether this team is restricted to only a subset of users')),
                 ('direct_add', models.BooleanField(default=True)),
                 ('show_all', models.BooleanField(default=False)),
-                ('parent', models.ForeignKey(blank=True, to='opal.Team', null=True)),
+                ('parent', models.ForeignKey(blank=True, to='opal.Team', null=True, on_delete=models.CASCADE)),
                 ('useful_numbers', models.ManyToManyField(to='opal.ContactNumber', blank=True)),
             ],
             options={
@@ -647,7 +647,7 @@ class Migration(migrations.Migration):
                 ('readonly', models.BooleanField(default=False, help_text=b'This user will only be able to read data - they have no write/edit permissions')),
                 ('restricted_only', models.BooleanField(default=False, help_text=b'This user will only see teams that they have been specifically added to')),
                 ('roles', models.ManyToManyField(to='opal.Role')),
-                ('user', models.OneToOneField(related_name=b'profile', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(related_name=b'profile', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -668,13 +668,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tagging',
             name='team',
-            field=models.ForeignKey(blank=True, to='opal.Team', null=True),
+            field=models.ForeignKey(blank=True, to='opal.Team', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='tagging',
             name='user',
-            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -684,7 +684,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='episode',
             name='patient',
-            field=models.ForeignKey(to='opal.Patient'),
+            field=models.ForeignKey(to='opal.Patient', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

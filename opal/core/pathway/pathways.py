@@ -5,7 +5,7 @@ import inspect
 import json
 from collections import defaultdict
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models, transaction
 from django.utils.text import slugify
 from six import string_types
