@@ -491,18 +491,8 @@ class Patient(models.Model):
     objects = managers.PatientQueryset.as_manager()
 
     def __unicode__(self):
-        try:
-            demographics = self.demographics()
-            return '%s | %s %s' % (
-                demographics.hospital_number,
-                demographics.first_name,
-                demographics.surname
-            )
-        except models.ObjectDoesNotExist:
-            return 'Patient {0}'.format(self.id)
-        except:
-            print(self.id)
-            raise
+        return 'Patient {0}'.format(self.id)
+
 
     def demographics(self):
         """

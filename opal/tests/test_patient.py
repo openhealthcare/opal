@@ -16,6 +16,10 @@ class PatientTest(OpalTestCase):
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.patient.famouslastwords_set.count())
 
+    def test__unicode__(self):
+        expected = 'Patient {}'.format(self.patient.pk)
+        self.assertEqual(expected, self.patient.__unicode__())
+
     def test_can_create_episode(self):
         episode = self.patient.create_episode()
         self.assertEqual(Episode, type(episode))
