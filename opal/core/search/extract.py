@@ -222,7 +222,7 @@ def get_data_dictionary():
 def write_data_dictionary(file_name):
     dictionary = get_data_dictionary()
     t = loader.get_template("extract_data_schema.html")
-    ctx = Context(dict(schema=dictionary))
+    ctx = dict(schema=dictionary)
     rendered = t.render(ctx)
     with open(file_name, "w") as f:
         f.write(rendered)

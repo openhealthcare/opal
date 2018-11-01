@@ -59,13 +59,6 @@ test_settings_config = dict(
         'opal.core.pathway.tests.pathway_test',
         'opal.core.pathway',
     ),
-    MIGRATION_MODULES={
-        'auth': 'opal.nomigrations',
-        'contenttypes': 'opal.nomigrations',
-        'staticfiles': 'opal.nomigrations',
-        'reversion': 'opal.nomigrations',
-        'opal': 'opal.nomigrations'
-    },
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
