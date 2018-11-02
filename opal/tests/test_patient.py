@@ -1,6 +1,8 @@
 """
 Unittests for Patients
 """
+import datetime
+
 from mock import patch
 from opal.core.test import OpalTestCase
 
@@ -27,13 +29,14 @@ class PatientTest(OpalTestCase):
     def test_get_active_episode(self):
         self.patient.create_episode()
         episode2 = self.patient.create_episode()
-        episode2.set_tag_names(['microbiology'], None)
+        episode2.active = True
+        episode2.save()
         self.assertEqual(episode2.id, self.patient.get_active_episode().id)
 
     def test_get_active_episode_with_no_episodes(self):
         self.assertIsNone(self.patient.get_active_episode())
 
     def test_get_active_episode_with_no_active_episodes(self):
-        self.patient.create_episode()
-        self.patient.create_episode()
+        self.patient.create_episode(end=datetime.date.today())
+        self.patient.create_episode(end=datetime.date.today())
         self.assertIsNone(self.patient.get_active_episode())

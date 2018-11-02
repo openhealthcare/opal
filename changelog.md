@@ -6,6 +6,20 @@ Due to the upgrade to Django 2.x, Opal no longer supports Python 2.x.
 
 Opal is now tested against Python 3.5, 3.6
 
+#### Episode.active
+
+The field `Episode.active` was previously implicitly set when calling `.set_tag_names()` to
+something equivalent to the value of `bool(len(tag_names) > 0)`.
+
+As of 0.13.0 the value of `Episode.active` is checked whenever `.save()` is called, prior
+to the database call. The correct value is looked up via `Episode.category.is_active()`.
+
+The default calculation of `.active` has also changed to be roughly equivalent to
+` bool(self.episode.end is None)`.
+
+Applications are now able to easily _change_ this behaviour by overriding the `.is_active`
+method of the relevant `EpisodeCategory`.
+
 #### Coding systems for lookuplists
 
 Lookuplist entries may now have an associated coding system and code value stored against them.

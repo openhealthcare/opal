@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.patient_lists
 """
+import datetime
 import os
 
 from django.urls import reverse
@@ -268,7 +269,7 @@ class TestPatientList(OpalTestCase):
 
     def test_to_dict_inactive_episodes(self):
         p, e = self.new_patient_and_episode_please()
-        e.active = False
+        e.end = datetime.date.today()
         e.save()
 
         class All(patient_lists.PatientList):
@@ -454,7 +455,7 @@ class TestTaggedPatientList(OpalTestCase):
         p, e = self.new_patient_and_episode_please()
         e.set_tag_names(['carnivore'], self.user)
         self.assertEqual(e.pk, TaggingTestNotSubTag().to_dict(self.user)[0]['id'])
-        e.active = False
+        e.end = datetime.date.today()
         e.save()
         self.assertEqual(1, len(TaggingTestNotSubTag().to_dict(self.user)))
 
