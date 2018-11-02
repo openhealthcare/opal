@@ -1024,7 +1024,9 @@ class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
 
-    user     = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    user     = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.CASCADE
+    )
     episode  = models.ForeignKey(Episode, null=False, on_delete=models.CASCADE)
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
@@ -1550,7 +1552,10 @@ class UserProfile(models.Model):
     HELP_PW          = "Force this user to change their password on the " \
                        "next login"
 
-    user                  = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
+    user                  = models.OneToOneField(
+        User, related_name='profile',
+        on_delete=models.CASCADE
+    )
     force_password_change = models.BooleanField(default=True,
                                                 help_text=b(HELP_PW))
     can_extract           = models.BooleanField(default=False,

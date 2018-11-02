@@ -158,7 +158,7 @@ class ForeignKeyOrFreeText(property):
             return self
         try:
             foreign_obj = getattr(inst, self.fk_field_name)
-        except:
+        except Exception:
             return 'Unknown Lookuplist Entry'
 #        foreign_obj = getattr(inst, self.fk_field_name)
         if foreign_obj is None:
