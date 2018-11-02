@@ -10,7 +10,7 @@ import os
 import tempfile
 import zipfile
 
-from django.template import Context, loader
+from django.template import loader
 from django.utils.encoding import force_bytes
 from six import text_type
 
