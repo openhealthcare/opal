@@ -32,7 +32,7 @@ test_settings_config = dict(
     OPAL_BRAND_NAME = 'opal',
     INTEGRATING=False,
     DEFAULT_DOMAIN='localhost',
-    MIDDLEWARE_CLASSES=(
+    MIDDLEWARE=(
         'django.middleware.common.CommonMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'opal.middleware.AngularCSRFRename',
@@ -40,8 +40,7 @@ test_settings_config = dict(
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'opal.middleware.DjangoReversionWorkaround',
-        'reversion.middleware.RevisionMiddleware',
-        'axes.middleware.FailedLoginMiddleware',
+        'reversion.middleware.RevisionMiddleware'
     ),
     INSTALLED_APPS=(
         'django.contrib.auth',
