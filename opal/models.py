@@ -491,18 +491,7 @@ class Patient(models.Model):
     objects = managers.PatientQueryset.as_manager()
 
     def __unicode__(self):
-        try:
-            demographics = self.demographics()
-            return '%s | %s %s' % (
-                demographics.hospital_number,
-                demographics.first_name,
-                demographics.surname
-            )
-        except models.ObjectDoesNotExist:
-            return 'Patient {0}'.format(self.id)
-        except:
-            print(self.id)
-            raise
+        return 'Patient {0}'.format(self.id)
 
     def demographics(self):
         """
@@ -701,18 +690,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
-        try:
-            demographics = self.patient.demographics()
-
-            return '%s | %s | %s' % (demographics.hospital_number,
-                                     demographics.name,
-                                     self.start)
-        except models.ObjectDoesNotExist:
-            return self.start
-        except AttributeError:
-            return 'Episode: {0}'.format(self.pk)
-        except Exception:
-            return self.start
+        return 'Episode {0}: {1} - {2}'.format(
+            self.pk, self.start, self.end
+        )
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
@@ -1413,17 +1393,6 @@ class Location(EpisodeSubrecord):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
-        demographics = self.episode.patient.demographics()
-        return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
-            demographics.name,
-            demographics.hospital_number,
-            self.category,
-            self.hospital,
-            self.ward,
-            self.bed
-        )
-
 
 class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
@@ -1484,13 +1453,6 @@ class Diagnosis(EpisodeSubrecord):
         abstract = True
         verbose_name = 'Diagnosis / Issues'
         verbose_name_plural = "Diagnoses"
-
-    def __unicode__(self):
-        return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics().name,
-            self.condition,
-            self.date_of_diagnosis
-        )
 
 
 class PastMedicalHistory(EpisodeSubrecord):
