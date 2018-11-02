@@ -140,7 +140,7 @@ class SerialisableFields(object):
                 t = "One of the {}"
             else:
                 t = "Some of the {}"
-            related = field_type.rel.to
+            related = field_type.remote_field.model
             return t.format(related._meta.verbose_name_plural.title())
 
         enum = cls.get_field_enum(field_name)

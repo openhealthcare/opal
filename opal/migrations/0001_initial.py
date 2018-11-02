@@ -647,7 +647,7 @@ class Migration(migrations.Migration):
                 ('readonly', models.BooleanField(default=False, help_text=b'This user will only be able to read data - they have no write/edit permissions')),
                 ('restricted_only', models.BooleanField(default=False, help_text=b'This user will only see teams that they have been specifically added to')),
                 ('roles', models.ManyToManyField(to='opal.Role')),
-                ('user', models.OneToOneField(related_name=b'profile', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
+                ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
