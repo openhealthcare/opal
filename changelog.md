@@ -13,7 +13,8 @@ Note: This will requires a migration to be created for all applications.
 Introduces two new Angular filters: `displayDate` and `displayDateTime`. These format a date
 for display according to the setting `DATE_DISPLAY_FORMAT`. This defaults to `D MMM YYYY`.
 
-New applications will have this setting in their scaffold, existing applications may wish to add it.
+New applications will have this setting in their scaffold, existing applications may wish to add
+it.
 
 All core Opal templates that previously used `shortDate` or `shortDateTime` have been updated to
 use either `displayDate` or `displayDateTime`.
@@ -71,14 +72,13 @@ This change is not accompanied by a retrospective migration so your existing fk_
 stored in a case sensitive manner. It is recommended you migrate all of your fk_or_ft fields
 as this will give you consistent behaviour.
 
-##### For example.
+##### For example
 
 Prior to this change if I had an allergy for "paracetomol" but an entry in the models.Drug
 table of "Paracetomol", it would be stored as free text in the `Allergies.drug` field, because
 it was case sensitive. Going forward after this change it will be saved as a foreign key. This
 change will not be made retrospecively however so you would need to add a migration that resaved
 the Allergies.drug.
-
 
 #### Misc Changes
 
@@ -88,6 +88,10 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 * Removes the method `.deleteItem` from the `RecordEditor` service.
 
 * Adds in a footer updated/created by to the form base template
+
+#### Updates to the Dependency Graph
+
+* Letter: 0.4.1 -> 0.5
 
 
 ### 0.12.0 (Major Release)
