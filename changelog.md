@@ -1,5 +1,11 @@
 ### 0.13.0 (Major Release)
 
+#### Removes support for Python 2.x
+
+Due to the upgrade to Django 2.x, Opal no longer supports Python 2.x.
+
+Opal is now tested against Python 3.5, 3.6, 3.7
+
 #### Coding systems for lookuplists
 
 Lookuplist entries may now have an associated coding system and code value stored against them.
@@ -91,6 +97,9 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 #### Updates to the Dependency Graph
 
+* Django: 1.10.8 -> 2.0.9
+* Django Rest Framework: 3.4.7 -> 3.7.4
+* Django Reversion: 1.10.2 -> 3.0.1
 * Letter: 0.4.1 -> 0.5
 
 
