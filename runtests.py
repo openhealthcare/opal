@@ -123,8 +123,6 @@ if 'TRAVIS' in os.environ:
         }
     }
 
-
-
 settings.configure(**test_settings_config)
 
 from opal.tests import dummy_opal_application  # NOQA

@@ -11,35 +11,12 @@ from opal.core import exceptions
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
-
+from opal.tests.models import DatingModel, UpdatableModelInstance, GetterModel, SerialisableModel
 from opal.models import (
     UpdatesFromDictMixin, SerialisableFields, ToDictMixin
 )
 
 
-class DatingModel(UpdatesFromDictMixin, models.Model):
-    datetime = models.DateTimeField()
-    consistency_token = None
-
-
-class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
-    foo = models.CharField(max_length=200, blank=True, null=True)
-    bar = models.CharField(max_length=200, blank=True, null=True)
-    pid = models.CharField(max_length=200, blank=True, null=True)
-    hatty = ForeignKeyOrFreeText(test_models.Hat)
-    pid_fields = 'pid', 'hatty'
-
-
-class GetterModel(ToDictMixin, models.Model):
-    foo = models.CharField(max_length=200, blank=True, null=True)
-
-    def get_foo(self, user):
-        return "gotten"
-
-
-class SerialisableModel(SerialisableFields, models.Model):
-    pid = models.CharField(max_length=200, blank=True, null=True)
-    hatty = ForeignKeyOrFreeText(test_models.Hat)
 
 
 class SerialisableFieldsTestCase(OpalTestCase):
