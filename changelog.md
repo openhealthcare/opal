@@ -4,7 +4,7 @@
 
 Due to the upgrade to Django 2.x, Opal no longer supports Python 2.x.
 
-Opal is now tested against Python 3.5, 3.6, 3.7
+Opal is now tested against Python 3.5, 3.6
 
 #### Coding systems for lookuplists
 
