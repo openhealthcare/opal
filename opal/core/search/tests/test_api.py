@@ -21,10 +21,10 @@ class LoginRequredTestCase(OpalTestCase):
         self.patient, self.episode = self.new_patient_and_episode_please()
         self.request = self.rf.get("/")
 
-    def test_403(self):
+    def test_401(self):
         url = reverse('extract-schema-list', request=self.request)
         response = self.client.get(url)
         self.assertEqual(
             response.status_code,
-            status.HTTP_403_FORBIDDEN
+            401
         )

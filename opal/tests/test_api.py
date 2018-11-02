@@ -59,12 +59,12 @@ class LoginRequredTestCase(OpalTestCase):
             )
         ]
 
-    def test_403(self):
+    def test_401(self):
         for url in self.get_urls():
             response = self.client.get(url)
             self.assertEqual(
                 response.status_code,
-                status.HTTP_403_FORBIDDEN
+                401
             )
 
 
