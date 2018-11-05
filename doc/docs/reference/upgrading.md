@@ -17,6 +17,7 @@ you have specified them in for instance, a requirements.txt.
     # requirements.txt
     opal==0.10.0
     letter==0.5
+    requests=2.20.0
 
 #### Free text or foreign key fields are now, by default case insensitive
 

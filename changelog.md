@@ -106,6 +106,7 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 #### Updates to the Dependency Graph
 
 * Letter: 0.4.1 -> 0.5
+* Requests: 2.18.4 -> 2.20.0
 
 
 ### 0.12.0 (Major Release)
