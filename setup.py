@@ -54,7 +54,7 @@ setup(
         'django-axes==1.7.0',
         'djangorestframework==3.4.7',
         'django-compressor==2.2',
-        'python-dateutil==2.4.2',
+        'python-dateutil==2.7.5',
         'django-celery==3.2.2',
         'celery==3.1.25',
         'six>=1.10.0',
