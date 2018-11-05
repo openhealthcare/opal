@@ -1,6 +1,6 @@
 mock
 pytz
-python-dateutil==2.4.2
+python-dateutil==2.7.5
 coverage
 coveralls
 celery==3.1.25
