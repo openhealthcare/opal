@@ -65,6 +65,17 @@ InpatientEpisode(episode).has_stage('Inpatient')
 # -> True
 ```
 
+### EpisodeCategory.is_active()
+
+Predicate function to determine whether this episode is active.
+
+The default implementation looks to see whether an end date has
+been set on the episode.
+
+```python
+InpatientEpisode(Episode()).is_active()
+# -> True
+```
 
 ### EpisodeCategory.set_stage(stage, user, data)
 

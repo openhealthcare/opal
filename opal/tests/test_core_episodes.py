@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.episodes
 """
+import datetime
+
 from django.contrib.auth.models import User
 
 from opal.core import test
@@ -17,7 +19,7 @@ class EpisodeCategoryTestCase(test.OpalTestCase):
         )
         self.patient = Patient.objects.create()
         self.inpatient_episode = self.patient.create_episode(
-            category_name=episodes.InpatientEpisode
+            category_name=episodes.InpatientEpisode.display_name
         )
 
     def test_episode_categories(self):
@@ -41,6 +43,15 @@ class EpisodeCategoryTestCase(test.OpalTestCase):
     def test_for_category(self):
         self.assertEqual(episodes.InpatientEpisode,
                          episodes.EpisodeCategory.get('inpatient'))
+
+    def test_is_active(self):
+        category = episodes.InpatientEpisode(self.inpatient_episode)
+        self.assertTrue(category.is_active())
+
+    def test_is_active_end_date_set(self):
+        self.inpatient_episode.end = datetime.date.today()
+        category = episodes.InpatientEpisode(self.inpatient_episode)
+        self.assertFalse(category.is_active())
 
     def test_get_stages(self):
         stages = [
