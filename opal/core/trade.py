@@ -140,9 +140,6 @@ def patient_id_to_json(patient_id, user=None, excludes=None):
 
     data = patient.to_dict(user)
 
-    # Active episode is not a concept which makes sense for a second system
-    del data['active_episode_id']
-
     # Remove all "id", and consistency data
     data = remove_keys(
         data, 'id', 'patient_id', 'episode_id',

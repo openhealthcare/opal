@@ -117,8 +117,8 @@ class CreateEpisodeForPatientTestCase(OpalTestCase):
 
         episode = patient.episode_set.get()
 
-        self.assertEqual(datetime.date(2018, 02, 22), episode.start)
-        self.assertEqual(datetime.date(2018, 02, 28), episode.end)
+        self.assertEqual(datetime.date(2018, 2, 22), episode.start)
+        self.assertEqual(datetime.date(2018, 2, 28), episode.end)
 
         colours = [c.name for c in episode.colour_set.all()]
         for c in ['Blue', 'Red', 'Green']:
@@ -139,8 +139,8 @@ class ImportPatientTestCase(AbstractSpikeMilliganTestCase):
         )
         episode = patient.episode_set.get()
 
-        self.assertEqual(datetime.date(2018, 02, 22), episode.start)
-        self.assertEqual(datetime.date(2018, 02, 28), episode.end)
+        self.assertEqual(datetime.date(2018, 2, 22), episode.start)
+        self.assertEqual(datetime.date(2018, 2, 28), episode.end)
 
         numbers = [f.number for f in patient.favouritenumber_set.all()]
         for i in [23, 7, 13]:
@@ -173,8 +173,8 @@ class ImportPatientTestCase(AbstractSpikeMilliganTestCase):
 
         episode = patient.episode_set.last()
 
-        self.assertEqual(datetime.date(2018, 02, 22), episode.start)
-        self.assertEqual(datetime.date(2018, 02, 28), episode.end)
+        self.assertEqual(datetime.date(2018, 2, 22), episode.start)
+        self.assertEqual(datetime.date(2018, 2, 28), episode.end)
 
         numbers = [f.number for f in patient.favouritenumber_set.all()]
         for i in [23, 7, 13]:
@@ -210,8 +210,8 @@ class PatientIDToJSONTestCase(AbstractSpikeMilliganTestCase):
         p.favouritenumber_set.create(number=7)
         p.favouritenumber_set.create(number=13)
         p.famouslastwords_set.update(words='I told you I was ill.')
-        e.start = datetime.date(2018, 02, 22)
-        e.end   = datetime.date(2018, 02, 28)
+        e.start = datetime.date(2018, 2, 22)
+        e.end   = datetime.date(2018, 2, 28)
         e.id = 239789
         e.save()
         e.colour_set.create(name='Blue')
@@ -223,8 +223,8 @@ class PatientIDToJSONTestCase(AbstractSpikeMilliganTestCase):
 
         self.assertEqual('Spike', data['demographics'][0]['first_name'])
         self.assertEqual('Milligan', data['demographics'][0]['surname'])
-        self.assertEqual(datetime.date(2018, 02, 22), data['episodes'][239789]['start'])
-        self.assertEqual(datetime.date(2018, 02, 28), data['episodes'][239789]['end'])
+        self.assertEqual(datetime.date(2018, 2, 22), data['episodes'][239789]['start'])
+        self.assertEqual(datetime.date(2018, 2, 28), data['episodes'][239789]['end'])
         self.assertEqual(
             [
                 {'name': 'Blue'}, {'name': 'Red'}, {'name': 'Green'}
@@ -276,8 +276,8 @@ class EpisodeIDToJSONTestCase(OpalTestCase):
         p.favouritenumber_set.create(number=7)
         p.favouritenumber_set.create(number=13)
         p.famouslastwords_set.update(words='I told you I was ill.')
-        e.start = datetime.date(2018, 02, 22)
-        e.end   = datetime.date(2018, 02, 28)
+        e.start = datetime.date(2018, 2, 22)
+        e.end   = datetime.date(2018, 2, 28)
         e.save()
         e.colour_set.create(name='Blue')
         e.colour_set.create(name='Red')
@@ -287,8 +287,8 @@ class EpisodeIDToJSONTestCase(OpalTestCase):
 
         self.assertEqual('Spike', data['demographics'][0]['first_name'])
         self.assertEqual('Milligan', data['demographics'][0]['surname'])
-        self.assertEqual(datetime.date(2018, 02, 22), data['episodes'][e.id]['start'])
-        self.assertEqual(datetime.date(2018, 02, 28), data['episodes'][e.id]['end'])
+        self.assertEqual(datetime.date(2018, 2, 22), data['episodes'][e.id]['start'])
+        self.assertEqual(datetime.date(2018, 2, 28), data['episodes'][e.id]['end'])
         self.assertEqual(
             [
                 {'name': 'Blue'}, {'name': 'Red'}, {'name': 'Green'}
