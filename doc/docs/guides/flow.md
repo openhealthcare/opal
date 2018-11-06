@@ -34,7 +34,7 @@ wish to be called.
     enter: function(){
             return {
                 'controller': 'HospitalNumberCtrl',
-                'template'  : '/templates/modals/hospital_number.html/'
+                'template'  : '/templates/hospital_number_modal.html/'
             }
         }
 
@@ -64,6 +64,6 @@ that acts differently for deceased patients might look as follows
           }
           return {
               'controller': 'DischargeEpisodeCtrl',
-              'template'  : '/templates/modals/discharge_episode.html/'
+              'template'  : '/templates/discharge_episode_modal.html'
           }
         }

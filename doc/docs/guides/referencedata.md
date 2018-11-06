@@ -106,6 +106,27 @@ Once this data is stored in the lookuplists file, we can batch load it into our 
 python manage.py load_lookup_lists
 ```
 
+## Coding lookuplist values
+
+Often applications wish to use coded reference data from a pre-existing terminology such as SNOMED.
+
+This can be easily accomplished by adding coding values to the lookuplist JSON data.
+
+```JSON
+{
+    "name_of_lookuplist": [
+        {
+            "name": "Value of lookuplist item",
+            "synonyms": ["Synonym 1",],
+            "coding": {
+                "system": "SNOMED CT",
+                "code": "3428473"
+            }
+        },
+    ]
+}
+```
+
 ## Management commands
 
 Opal ships with some management commands for importing and exporting lookup lists

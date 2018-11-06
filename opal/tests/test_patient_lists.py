@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.patient_lists
 """
+import datetime
 import os
 
 from django.core.urlresolvers import reverse
@@ -139,25 +140,90 @@ class ColumnTestCase(OpalTestCase):
         with self.assertRaises(ValueError):
             patient_lists.Column(title='Foo', name='foo')
 
+    def test_get_template_path(self):
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        value = c.get_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual('foo/bar', value)
+
+    def test_get_detail_template_path(self):
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        value = c.get_detail_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual('car/dar', value)
+
+    def test_to_dict(self):
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        as_dict = c.to_dict(MagicMock('Mock Patient List'))
+        self.assertEqual(as_dict['name'], 'foo')
+        self.assertEqual(as_dict['title'], 'Foo')
+        self.assertEqual(as_dict['single'], True)
+        self.assertEqual(as_dict['icon'], 'fa-ya')
+        self.assertEqual(as_dict['list_limit'], 5)
+        self.assertEqual(as_dict['template_path'], 'foo/bar')
+        self.assertEqual(as_dict['detail_template_path'], 'car/dar')
+
+
 class ModelColumnTestCase(OpalTestCase):
 
     def test_sets_model(self):
         c = patient_lists.ModelColumn(
-            MagicMock(name='mock list'),
             models.Demographics
         )
         self.assertEqual(models.Demographics, c.model)
 
     def test_pass_in_not_a_model(self):
         with self.assertRaises(ValueError):
-            patient_lists.ModelColumn(None, OpalTestCase)
+            patient_lists.ModelColumn(OpalTestCase)
 
     def test_to_dict_sets_model_column(self):
         c = patient_lists.ModelColumn(
-            MagicMock(name='mock list'),
             models.Demographics
         )
-        self.assertEqual(True, c.to_dict()['model_column'])
+        as_dict = c.to_dict(MagicMock('Mock Patient List'))
+        self.assertEqual(True, as_dict['model_column'])
+
+    def test_get_template_path(self):
+        c = patient_lists.ModelColumn(
+            models.Demographics
+        )
+        value = c.get_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual(
+            os.path.join('records', 'demographics.html'),
+            value
+        )
+
+    def test_get_detail_template_path(self):
+        c = patient_lists.ModelColumn(
+            models.Demographics
+        )
+        value = c.get_detail_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual(
+            os.path.join('records', 'demographics_detail.html'),
+            value)
+
 
 
 class TestPatientList(OpalTestCase):
@@ -180,6 +246,7 @@ class TestPatientList(OpalTestCase):
     def test_get_display_name(self):
         self.assertEqual('Herbivores', TaggingTestPatientList.get_display_name())
 
+
     # list()
     def test_order_respected_by_list(self):
         expected = [
@@ -191,6 +258,31 @@ class TestPatientList(OpalTestCase):
             IconicList
         ]
         self.assertEqual(expected, list(PatientList.list()))
+
+    def test_get_queryset_default(self):
+        mock_queryset = MagicMock('Mock Queryset')
+        with patch.object(PatientList, 'queryset',
+                          new_callable=PropertyMock) as queryset:
+            queryset.return_value = mock_queryset
+            self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+    @patch('opal.models.Episode.objects.serialised')
+    def test_to_dict_passes_queryset(self, serialised):
+        serialised.return_value = {}
+        with patch.object(PatientList, 'get_queryset') as gq:
+            with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as q:
+                dicted = PatientList().to_dict('my_user')
+                gq.assert_called_with(user='my_user')
+                self.assertEqual({}, dicted)
+
+    def test_to_dict_inactive_episodes(self):
+        p, e = self.new_patient_and_episode_please()
+        e.end = datetime.date.today()
+        e.save()
+
+        class All(patient_lists.PatientList):
+            display_name = 'all'
+            queryset = Episode.objects.all()
 
     def test_known_abstract_subclasses_not_in_list(self):
         lists = list(PatientList.list())
@@ -405,12 +497,14 @@ class TestTaggedPatientList(OpalTestCase):
         self.assertEqual(set(taglist), expected)
 
     def test_to_dict_inactive_episodes(self):
+        # Older vesions of Opal only serialised active episodes here
+        # Explicitly test to prevent a reversion
         p, e = self.new_patient_and_episode_please()
         e.set_tag_names(['carnivore'], self.user)
         self.assertEqual(e.pk, TaggingTestNotSubTag().to_dict(self.user)[0]['id'])
-        e.active = False
+        e.end = datetime.date.today()
         e.save()
-        self.assertEqual(0, len(TaggingTestNotSubTag().to_dict(self.user)))
+        self.assertEqual(1, len(TaggingTestNotSubTag().to_dict(self.user)))
 
 
 class TabbedPatientListGroupTestCase(OpalTestCase):

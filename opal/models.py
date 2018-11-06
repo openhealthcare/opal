@@ -491,18 +491,7 @@ class Patient(models.Model):
     objects = managers.PatientQueryset.as_manager()
 
     def __unicode__(self):
-        try:
-            demographics = self.demographics()
-            return '%s | %s %s' % (
-                demographics.hospital_number,
-                demographics.first_name,
-                demographics.surname
-            )
-        except models.ObjectDoesNotExist:
-            return 'Patient {0}'.format(self.id)
-        except:
-            print(self.id)
-            raise
+        return 'Patient {0}'.format(self.id)
 
     def demographics(self):
         """
@@ -577,12 +566,10 @@ class Patient(models.Model):
                                              force=force)
 
     def to_dict(self, user):
-        active_episode = self.get_active_episode()
         d = {
             'id': self.id,
             'episodes': {episode.id: episode.to_dict(user) for episode in
-                         self.episode_set.all()},
-            'active_episode_id': active_episode.id if active_episode else None,
+                         self.episode_set.all()}
         }
 
         for model in patient_subrecords():
@@ -702,23 +689,42 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     objects = managers.EpisodeQueryset.as_manager()
 
-    def __unicode__(self):
-        try:
-            demographics = self.patient.demographics()
+    def __init__(self, *args, **kwargs):
+        super(Episode, self).__init__(*args, **kwargs)
+        self.__original_active = self.active
 
-            return '%s | %s | %s' % (demographics.hospital_number,
-                                     demographics.name,
-                                     self.start)
-        except models.ObjectDoesNotExist:
-            return self.start
-        except AttributeError:
-            return 'Episode: {0}'.format(self.pk)
-        except Exception:
-            return self.start
+    def __unicode__(self):
+        return 'Episode {0}: {1} - {2}'.format(
+            self.pk, self.start, self.end
+        )
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
+
+        current_active_value = self.active
+        category_active_value = self.category.is_active()
+
+        if current_active_value != category_active_value:  # Disagreement
+            if current_active_value != self.__original_active:
+                # The value of self.active has been set by some code somewhere
+                # not by __init__() e.g. the original database value at the
+                # time of instance initalization.
+                #
+                # Rather than overriding this silently we should raise a
+                # ValueError.
+                msg = "Value of Episode.active has been set to {} but " \
+                      "category.is_active() returns {}"
+                raise ValueError(
+                    msg.format(current_active_value, category_active_value)
+                )
+
+        self.active = category_active_value
         super(Episode, self).save(*args, **kwargs)
+
+        # Re-set this in case we changed it once post initialization and then
+        # the user subsequently saves this instance again
+        self.__original_active = self.active
+
         if created:
             for subclass in episode_subrecords():
                 if subclass._is_singleton:
@@ -727,10 +733,16 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        category = episodes.EpisodeCategory.filter(
+        categories = episodes.EpisodeCategory.filter(
             display_name=self.category_name
-        )[0]
-        return category(self)
+        )
+        if len(categories) == 0:
+            msg = "Unable to find EpisodeCategory for category name {0}"
+            msg = msg.format(self.category_name)
+            raise exceptions.UnexpectedEpisodeCategoryNameError(msg)
+        else:
+            category = categories[0]
+            return category(self)
 
     def visible_to(self, user):
         """
@@ -753,20 +765,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def set_tag_names(self, tag_names, user):
         """
-        1. Set the episode.active status
-        2. Special case mine
-        3. Archive dangling tags not in our current list.
-        4. Add new tags.
-        5. Ensure that we're setting the parents of child tags
-        6. There is no step 6.
+        1. Special case mine
+        2. Archive dangling tags not in our current list.
+        3. Add new tags.
+        4. Ensure that we're setting the parents of child tags
+        5. There is no step 6.
         """
-        if len(tag_names) and not self.active:
-            self.active = True
-            self.save()
-        elif not len(tag_names) and self.active:
-            self.active = False
-            self.save()
-
         if "mine" not in tag_names:
             self.tagging_set.filter(user=user,
                                     value='mine').update(archived=True)
@@ -895,13 +899,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def get_display_name(cls):
-        if hasattr(cls, '_title'):
-            w = "_title has been deprecated and will be removed in v0.12.0, "
-            w = w + "please use verbose_name in Meta instead for {}"
-            logging.warning(
-                w.format(cls.__name__)
-            )
-            return cls._title
         if cls._meta.verbose_name.islower():
             return cls._meta.verbose_name.title()
         return cls._meta.verbose_name
@@ -1042,7 +1039,6 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
-    _clonable = True
 
     episode = models.ForeignKey(Episode, null=False)
 
@@ -1423,17 +1419,6 @@ class Location(EpisodeSubrecord):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
-        demographics = self.episode.patient.demographics()
-        return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
-            demographics.name,
-            demographics.hospital_number,
-            self.category,
-            self.hospital,
-            self.ward,
-            self.bed
-        )
-
 
 class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
@@ -1494,13 +1479,6 @@ class Diagnosis(EpisodeSubrecord):
         abstract = True
         verbose_name = 'Diagnosis / Issues'
         verbose_name_plural = "Diagnoses"
-
-    def __unicode__(self):
-        return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics().name,
-            self.condition,
-            self.date_of_diagnosis
-        )
 
 
 class PastMedicalHistory(EpisodeSubrecord):

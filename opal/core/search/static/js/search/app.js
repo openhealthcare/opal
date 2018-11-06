@@ -6,6 +6,7 @@
       'ngRoute',
       'ngProgressLite',
       'ngCookies',
+      'opal.config',
       'opal.filters',
       'opal.services',
       'opal.directives',

@@ -34,7 +34,6 @@ class PatientSummary(object):
         self.episode_ids = set([episode.id])
         self.patient_id = episode.patient.id
         self.categories = set([episode.category_name])
-        self.id = episode.patient.demographics().id
 
     def update(self, episode):
         if not self.start:
@@ -54,7 +53,7 @@ class PatientSummary(object):
 
     def to_dict(self):
         result = {k: getattr(self, k) for k in [
-            "patient_id", "start", "end", "id"
+            "patient_id", "start", "end"
         ]}
         result["categories"] = sorted(self.categories)
         result["count"] = len(self.episode_ids)

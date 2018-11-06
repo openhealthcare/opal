@@ -108,6 +108,30 @@ filters.filter('shortTime', function(shortDateFilter, hhmmFilter){
 	};
 });
 
+filters.filter('displayDate', function(toMomentFilter, $injector){
+  return function(input){
+    if(!input){
+      return
+    };
+    var DATE_DISPLAY_FORMAT = $injector.get('DATE_DISPLAY_FORMAT');
+    m = toMomentFilter(input);
+    return m.format(DATE_DISPLAY_FORMAT);
+  }
+})
+
+filters.filter('displayDateTime', function(displayDateFilter, hhmmFilter){
+  return function(input){
+    if(!input){
+      return
+    };
+    var datePart = displayDateFilter(input);
+    var timePart = hhmmFilter(input);
+    if (datePart && timePart) {
+      return datePart + " " + timePart;
+    }
+  }
+})
+
 filters.filter('momentDateFormat', function(toMomentFilter){
 	return function(input, format){
 			if(!input){

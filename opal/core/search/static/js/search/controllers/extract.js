@@ -343,9 +343,4 @@ angular.module('opal.controllers').controller(
         $scope.filters.push(result);
       });
     };
-
-    $scope.jumpToEpisode = function(episode){
-        window.open('#/episode/'+episode.id, '_blank');
-    };
-
 });

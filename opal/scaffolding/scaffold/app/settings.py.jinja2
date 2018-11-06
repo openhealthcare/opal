@@ -60,6 +60,20 @@ MIDDLEWARE_CLASSES = [
 ROOT_URLCONF = '{{ name }}.urls'
 APPEND_SLASH = False
 
+LOADERS = [(
+                # TODO: Django 1.11 makes turns this loader on by default, so
+                # this section and `debug` can be removed then.
+                'django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ],
+            )]
+if DEBUG:
+    LOADERS = (
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            )
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -79,14 +93,7 @@ TEMPLATES = [
                 'opal.context_processors.models',
                 'opal.core.pathway.context_processors.pathways',
             ],
-            'loaders': [(
-                # TODO: Django 1.11 makes turns this loader on by default, so
-                # this section and `debug` can be removed then.
-                'django.template.loaders.cached.Loader', [
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ],
-            )],
+            'loaders': LOADERS
         },
     },
 ]
@@ -161,6 +168,7 @@ SITE_ID = 1
 DATETIME_FORMAT = 'd/m/Y H:i:s'
 DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
 DATE_FORMAT = 'd/m/Y'
+DATE_DISPLAY_FORMAT = 'D MMM YYYY'
 DATE_INPUT_FORMATS = ['%d/%m/%Y']
 TIME_FORMAT = "H:i:s"
 

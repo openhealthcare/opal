@@ -18,7 +18,7 @@ From there, Opal provides you with a common batteries-included architecture for 
 applications, and a composable modular framework that takes advantage of generic, re-usable components.
 
 Opal is entirely open ([source](https://github.com/openhealthcare/opal) &
-[Governance](https://github.com/openhealthcare/opal/issues)) as are the wide library of plugins.
+[governance](https://github.com/openhealthcare/opal/issues)) as are the wide library of plugins.
 
 Opal was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.
 

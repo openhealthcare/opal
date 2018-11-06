@@ -52,7 +52,9 @@ class CreateSingletonsTestCase(OpalTestCase):
             file_writer.assert_has_calls(calls, any_order=True)
 
     def test_handle(self):
-        sympt = Symptom.objects.create(name='Headache')
+        sympt = Symptom.objects.create(
+            name='Headache', code='HED', system='TLA'
+        )
         Synonym.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(Symptom),
             object_id=sympt.id,
