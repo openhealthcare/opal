@@ -14,6 +14,16 @@ Mapping      = collections.namedtuple(
 )
 
 
+class FieldConverter(object):
+
+    def __init__(self, convert, target_fieldname):
+        self.convert          = convert
+        self.target_fieldname = target_fieldname
+
+    def get_value(self, raw_data):
+        return self.convert(raw_data)
+
+
 class Matcher(object):
     direct_match_field     = None
     attribute_match_fields = []
@@ -41,6 +51,9 @@ class Matcher(object):
             if isinstance(field, Mapping):
                 value = self.data[field.data_fieldname]
                 demographics[field.demographics_fieldname] = value
+            elif isinstance(field, FieldConverter):
+                value = field.get_value(self.data)
+                demographics[field.target_fieldname] = value
             else:
                 demographics[field] = self.data[field]
         return demographics
