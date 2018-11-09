@@ -105,6 +105,8 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Adds an index argument to `PatientList.as_menuitem()` and `Pathway.as_menuitem()`
 
+* Adds a `get_absolute_url()` method to `Patient` and `Episode`
+
 #### Updates to the Dependency Graph
 
 * Letter: 0.4.1 -> 0.5
