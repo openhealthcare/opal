@@ -32,6 +32,10 @@ class EpisodeTest(OpalTestCase):
         episode = models.Episode()
         self.assertEqual(episode.active, episode._Episode__original_active)
 
+    def test_get_absolute_url(self):
+        expected = '/#/patient/{}/{}'.format(self.patient.id, self.episode.id)
+        self.assertEqual(expected, self.episode.get_absolute_url())
+
     def test_save_sets_active_when_category_is_active_is_true(self):
         with patch.object(self.episode.category, 'is_active') as activep:
             activep.return_value = True
