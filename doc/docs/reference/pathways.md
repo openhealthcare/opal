@@ -39,7 +39,7 @@ If set, this template will be used if your pathway is opened in a modal. If its 
 
 ### Class Methods
 
-#### `Pathway.as_menuitem(href=None, activepattern=None, icon=None, display=None)`
+#### `Pathway.as_menuitem(href=None, activepattern=None, icon=None, display=None, index=None)`
 
 Return an instance of `opal.core.menus.MenuItem` that will direct the user to this pathway.
 

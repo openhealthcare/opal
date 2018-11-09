@@ -314,6 +314,10 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(menu.icon, 'fa-foo')
         self.assertEqual(menu.display, 'Foo')
 
+    def test_as_menuitem_set_index(self):
+        menu = TaggingTestPatientList.as_menuitem(index=-30)
+        self.assertEqual(-30, menu.index)
+
     def test_as_menuitem_uses_getter_for_icon(self):
         menu = IconicList.as_menuitem()
         self.assertEqual('fa-james-dean', menu.icon)

@@ -91,20 +91,7 @@
 
   </head>
   <body>
-    {% block application %}{% endblock %}
-    <script>
-      // temporary for try outs
-      jQuery(function($){
-
-      // Touch Device Detection
-      var isTouchDevice = 'ontouchstart' in document.documentElement;
-      if( isTouchDevice ) {
-      $('body').addClass('touch');
-      }
-
-      });
-    </script>
-
+    {% block application %}{% endblock %}  
     <!-- google analytics -->
     {% block analytics %}
       <script>
