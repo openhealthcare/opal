@@ -103,6 +103,8 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Adds in a footer updated/created by to the form base template
 
+* Adds an index argument to `PatientList.as_menuitem()` and `Pathway.as_menuitem()`
+
 #### Updates to the Dependency Graph
 
 * Letter: 0.4.1 -> 0.5

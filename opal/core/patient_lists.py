@@ -158,6 +158,7 @@ class PatientList(discoverable.DiscoverableFeature,
             activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
             icon=kwargs.get('icon', kls.get_icon()),
             display=kwargs.get('display', kls.get_display_name()),
+            index=kwargs.get('index', '')
         )
 
     def get_template_prefixes(self):
