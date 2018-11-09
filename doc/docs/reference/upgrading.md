@@ -17,6 +17,7 @@ you have specified them in for instance, a requirements.txt.
     # requirements.txt
     opal==0.10.0
     letter==0.5
+    psycopg==2.7.5
     python-dateutil==2.7.5
     requests=2.20.0
 
