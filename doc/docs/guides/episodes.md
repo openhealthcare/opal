@@ -43,6 +43,12 @@ print episode.category.detail_template
 # detail/inpatient.html
 ```
 
+The Episode Category template does not comprise the entire
+[Patient detail view](/patient_detail_views.md). This is made of multiple episodes
+and by default will display some basic demographic details as well as other episodes.
+More detail on customising the rest of the detail tempalte is found in the detail view
+[Template selection docs](/patient_detail_views.md#template-selection).
+
 ## Default Category
 
 The default category of episodes in an Opal application is set by the
