@@ -44,10 +44,10 @@ print episode.category.detail_template
 ```
 
 The Episode Category template does not comprise the entire
-[Patient detail view](/patient_detail_views.md). This is made of multiple episodes
+[Patient detail view](/guides/patient_detail_views/). This is made of multiple episodes
 and by default will display some basic demographic details as well as other episodes.
 More detail on customising the rest of the detail tempalte is found in the detail view
-[Template selection docs](/patient_detail_views.md#template-selection).
+[Template selection docs](/guides/patient_detail_views#template-selection).
 
 ## Default Category
 
