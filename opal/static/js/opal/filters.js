@@ -97,9 +97,8 @@ filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter, $log){
 });
 
 
-filters.filter('shortTime', function(shortDateFilter, hhmmFilter, $log){
+filters.filter('shortTime', function(shortDateFilter, hhmmFilter){
 	return function(input){
-      $log.warn('shortTime will be removed in Opal 0.14.0')
 	  var toChange;
 		if(_.isDate(input)){
 			toChange = moment(input);

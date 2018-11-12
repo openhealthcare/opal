@@ -7,7 +7,7 @@
    {% elif f['type'] == 'date_time' %}
     [[ item.{{ f['name'] }} | displayDateTime ]]
    {% elif f['type'] == 'time' %}
-    [[ item.{{ f['name'] }} | hhmm ]]
+    [[ item.{{ f['name'] }} | shortTime ]]
    {% else %}
     [[ item.{{ f['name'] }} ]]
    {% endif %}

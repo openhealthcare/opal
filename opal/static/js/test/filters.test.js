@@ -193,20 +193,13 @@ describe('filters', function() {
   });
 
   describe('shortTime', function(){
-    var shortTime, log;
+    var shortTime;
 
     beforeEach(function(){
       inject(function($injector){
         shortTime  = $injector.get('shortTimeFilter');
-        log  = $injector.get('$log');
       });
 
-      spyOn(log, 'warn');
-    });
-
-    it('should log a warning message', function() {
-      shortTime()
-      expect(log.warn).toHaveBeenCalledWith('shortTime will be removed in Opal 0.14.0')
     });
 
     it('should display the time as hh:mm from string', function(){
