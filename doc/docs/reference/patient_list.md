@@ -91,7 +91,7 @@ MyList.get_display_name()
 ```
 
 
-#### `PatientList.as_menuitem(href=None, activepattern=None, icon=None, display=None)`
+#### `PatientList.as_menuitem(href=None, activepattern=None, icon=None, display=None, index=None)`
 
 Return an instance of `opal.core.menus.MenuItem` that will direct the user to this
 patient list.

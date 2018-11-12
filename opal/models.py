@@ -493,6 +493,12 @@ class Patient(models.Model):
     def __unicode__(self):
         return 'Patient {0}'.format(self.id)
 
+    def get_absolute_url(self):
+        """
+        Return the URL for this patient
+        """
+        return '/#/patient/{}'.format(self.id)
+
     def demographics(self):
         """
         Shortcut method to return this patient's demographics.
@@ -697,6 +703,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return 'Episode {0}: {1} - {2}'.format(
             self.pk, self.start, self.end
         )
+
+    def get_absolute_url(self):
+        """
+        Return the URL for this Episode
+        """
+        return '/#/patient/{}/{}'.format(self.patient_id, self.id)
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)

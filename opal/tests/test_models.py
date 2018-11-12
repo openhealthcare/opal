@@ -39,6 +39,11 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    def test_get_absolute_url(self):
+        patient = models.Patient.objects.create()
+        expected = '/#/patient/{}'.format(patient.id)
+        self.assertEqual(expected, patient.get_absolute_url())
+
     def test_demographics(self):
         patient = models.Patient.objects.create()
         self.assertEqual(patient.demographics_set.get(), patient.demographics())

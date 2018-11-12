@@ -103,11 +103,15 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Adds in a footer updated/created by to the form base template
 
+* Adds an index argument to `PatientList.as_menuitem()` and `Pathway.as_menuitem()`
+
+* Adds a `get_absolute_url()` method to `Patient` and `Episode`
+
 #### Updates to the Dependency Graph
 
 * Letter: 0.4.1 -> 0.5
-* Requests: 2.18.4 -> 2.20.0
-* Psycopg2: 2.7 -> 2.7.5
+* Requests: 2.18.4 -> 2.20.1
+* Psycopg2: 2.7 -> 2.7.6.1
 * Python Dateutil: 2.4.2 -> 2.7.5
 
 ### 0.12.0 (Major Release)
