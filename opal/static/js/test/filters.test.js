@@ -154,6 +154,22 @@ describe('filters', function() {
   });
 
   describe('shortDate', function() {
+    var log;
+
+    beforeEach(function(){
+      inject(function($injector){
+        log  = $injector.get('$log');
+      });
+
+      spyOn(log, 'warn');
+    });
+
+    it('should log a warning message', function() {
+       inject(function(shortDateFilter) {
+         shortDateFilter();
+         expect(log.warn).toHaveBeenCalledWith('shortDate will be removed in Opal 0.14.0');
+       });
+    });
 
     it('should return undefined for no input',
        inject(function(shortDateFilter) {
@@ -183,6 +199,7 @@ describe('filters', function() {
       inject(function($injector){
         shortTime  = $injector.get('shortTimeFilter');
       });
+
     });
 
     it('should display the time as hh:mm from string', function(){
@@ -295,13 +312,21 @@ describe('filters', function() {
   });
 
   describe('shortDateTime', function(){
-    var shortDateTime;
+    var shortDateTime, log;
 
     beforeEach(function(){
       inject(function($injector){
         shortDateTime = $injector.get('shortDateTimeFilter');
+        log  = $injector.get('$log');
       });
+      spyOn(log, 'warn');
     });
+
+    it('should log a warning message', function() {
+      shortDateTime()
+      expect(log.warn).toHaveBeenCalledWith('shortDateTime will be removed in Opal 0.14.0')
+    });
+
 
     it('should return undefined if no input', function(){
       expect(shortDateTime(null)).toBe(undefined);
