@@ -236,11 +236,6 @@ class StartprojectTestCase(OpalTestCase):
         routes = self.path/'testapp/testapp/static/js/testapp/routes.js'
         self.assertTrue(routes.is_file)
 
-    def test_js_has_flow(self, call_command, subpr):
-        scaffold.start_project(self.args, self.path)
-        flow = self.path/'testapp/testapp/static/js/testapp/flow.js'
-        self.assertTrue(flow.is_file)
-
     def test_has_named_templates_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         templates = self.path/'testapp/testapp/templates/testapp'
