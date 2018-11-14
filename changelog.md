@@ -109,6 +109,8 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Adds in a footer updated/created by to the form base template
 
+* Changes the default value of `_ft` fields on `ForeignKeyOrFreeTextField` from b'' to ''. This requires a migration
+
 #### Updates to the Dependency Graph
 
 * Django: 1.10.8 -> 2.0.9

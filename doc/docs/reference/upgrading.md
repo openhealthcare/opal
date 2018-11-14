@@ -3,7 +3,7 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-### 0.13.0 -> 0.12.0 - 0.11.2
+### 0.12.0 - 0.11.2 -> 0.13.0
 
 #### Python versions
 
