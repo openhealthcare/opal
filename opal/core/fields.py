@@ -83,7 +83,7 @@ class ForeignKeyOrFreeText(property):
         )
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = models.CharField(
-            max_length=255, blank=True, null=True, default=b('')
+            max_length=255, blank=True, null=True, default=''
         )
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
