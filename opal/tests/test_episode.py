@@ -57,9 +57,9 @@ class EpisodeTest(OpalTestCase):
         episode = self.patient.create_episode()
         self.assertEqual('MyEpisodeCategory', episode.category_name)
 
-    def test__unicode__(self):
+    def test__str__(self):
         expected = 'Episode {}: None - None'.format(self.episode.pk)
-        self.assertEqual(expected, self.episode.__unicode__())
+        self.assertEqual(expected, self.episode.__str__())
 
     def test_category(self):
         self.episode.category_name = 'Inpatient'

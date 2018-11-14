@@ -445,7 +445,7 @@ class ContactNumber(models.Model):
     name = models.CharField(max_length=255)
     number = models.CharField(max_length=255)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0}: {1}'.format(self.name, self.number)
 
 
@@ -458,7 +458,7 @@ class Synonym(models.Model):
     class Meta:
         unique_together = (('name', 'content_type'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -474,7 +474,7 @@ class Macro(models.Model):
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @classmethod
@@ -490,7 +490,7 @@ class Patient(models.Model):
 
     objects = managers.PatientQueryset.as_manager()
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Patient {0}'.format(self.id)
 
     def demographics(self):
@@ -693,7 +693,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         super(Episode, self).__init__(*args, **kwargs)
         self.__original_active = self.active
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Episode {0}: {1} - {2}'.format(
             self.pk, self.start, self.end
         )
@@ -881,7 +881,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         if self.created:
             return '{0}: {1} {2}'.format(
                 self.get_api_name(), self.id, self.created
@@ -1061,7 +1061,7 @@ class Tagging(TrackedModel, models.Model):
         unique_together = (('value', 'episode', 'user'))
         verbose_name = "Teams"
 
-    def __unicode__(self):
+    def __str__(self):
         if self.user is not None:
             return 'User: %s - %s - archived: %s' % (
                 self.user.username, self.value, self.archived
@@ -1561,8 +1561,8 @@ class Investigation(EpisodeSubrecord):
 class Role(models.Model):
     name = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return str(self.name)
+    def __str__(self):
+        return self.name
 
 
 class UserProfile(models.Model):

@@ -111,6 +111,8 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Changes the default value of `_ft` fields on `ForeignKeyOrFreeTextField` from b'' to ''. This requires a migration
 
+* `__unicode__` model methods have been renamed `__str__`
+
 #### Updates to the Dependency Graph
 
 * Django: 1.10.8 -> 2.0.9
