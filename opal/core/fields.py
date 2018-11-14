@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from six import b
 from django.db.models.signals import pre_delete
 from opal.utils import _itersubclasses
 
