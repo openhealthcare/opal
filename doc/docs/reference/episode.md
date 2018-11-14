@@ -36,7 +36,11 @@ A (automatically generated) hash of the above fields. This is used for detecting
 
 The Episode model has the following methods:
 
-### Episode.to_dict
+### `Episode.get_absolute_url()`
+
+Return the URL for this Episode
+
+### `Episode.to_dict(user)`
 
 Return a dictionary of field value pairs for this episode
 

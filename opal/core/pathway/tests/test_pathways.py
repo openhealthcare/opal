@@ -481,6 +481,10 @@ class TestPathwayMethods(OpalTestCase):
         self.assertEqual('fa-sea', menu.icon)
         self.assertEqual('Bleu', menu.display)
 
+    def test_as_menuitem_set_index(self):
+        menu = ColourPathway.as_menuitem(index=-30)
+        self.assertEqual(-30, menu.index)
+
     def test_as_menuitem_uses_getter_for_icon(self):
         menu = OveridePathway.as_menuitem()
         self.assertEqual('fa-django', menu.icon)

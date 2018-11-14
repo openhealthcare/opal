@@ -29,6 +29,9 @@ you have specified them in for instance, a requirements.txt.
     django-reversion==3.0.1
     djangorestframework==3.7.4
     letter==0.5
+    psycopg==2.7.6.1
+    python-dateutil==2.7.5
+    requests=2.20.1
 
 #### Free text or foreign key fields are now, by default case insensitive
 
