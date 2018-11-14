@@ -19,7 +19,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import force_str
-from six import b
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -468,8 +467,8 @@ class Macro(models.Model):
     enter "github-style" #foo text blocks from an admin defined
     list and then have them expand to cover frequent entries.
     """
-    HELP_TITLE = b("The text that will display in the dropdown. No spaces!")
-    HELP_EXPANDED = b("This is the text that it will expand to.")
+    HELP_TITLE = "The text that will display in the dropdown. No spaces!"
+    HELP_EXPANDED = "This is the text that it will expand to."
 
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
@@ -1365,10 +1364,10 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(
         max_length=255, blank=True,
-        help_text=b("The unique identifier for this patient at the hospital.")
+        help_text="The unique identifier for this patient at the hospital."
     )
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name=b("NHS Number")
+        max_length=255, blank=True, null=True, verbose_name="NHS Number"
     )
 
     surname = models.CharField(max_length=255, blank=True)
@@ -1376,24 +1375,24 @@ class Demographics(PatientSubrecord):
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
     date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name=b("Date of Birth")
+        null=True, blank=True, verbose_name="Date of Birth"
     )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(
-        null=True, blank=True, verbose_name=b("Date of Death")
+        null=True, blank=True, verbose_name="Date of Death"
     )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
         max_length=20, blank=True, null=True,
-        verbose_name=b("GP Practice Code")
+        verbose_name="GP Practice Code"
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name=b("Country of Birth"))
+                                       verbose_name="Country of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(
         default=False,
-        help_text=b("This field will be True if the patient is deceased.")
+        help_text="This field will be True if the patient is deceased."
     )
 
     sex = ForeignKeyOrFreeText(Gender)
@@ -1434,7 +1433,7 @@ treatment."
     route         = ForeignKeyOrFreeText(Drugroute)
     start_date    = models.DateField(
         null=True, blank=True,
-        help_text=b(HELP_START)
+        help_text=HELP_START
     )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
@@ -1450,8 +1449,8 @@ Defaults to False."
 
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(
-        default=False, verbose_name=b("Suspected?"),
-        help_text=b(HELP_PROVISIONAL)
+        default=False, verbose_name="Suspected?",
+        help_text=HELP_PROVISIONAL
     )
     details     = models.CharField(max_length=255, blank=True)
 
@@ -1471,8 +1470,8 @@ class Diagnosis(EpisodeSubrecord):
     condition         = ForeignKeyOrFreeText(Condition)
     provisional       = models.BooleanField(
         default=False,
-        verbose_name=b("Provisional?"),
-        help_text=b("True if the diagnosis is provisional. Defaults to False")
+        verbose_name="Provisional?",
+        help_text="True if the diagnosis is provisional. Defaults to False"
     )
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
@@ -1583,13 +1582,13 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE
     )
     force_password_change = models.BooleanField(default=True,
-                                                help_text=b(HELP_PW))
+                                                help_text=HELP_PW)
     can_extract           = models.BooleanField(default=False,
-                                                help_text=b(HELP_EXTRACT))
+                                                help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False,
-                                                help_text=b(HELP_READONLY))
+                                                help_text=HELP_READONLY)
     restricted_only       = models.BooleanField(default=False,
-                                                help_text=b(HELP_RESTRICTED))
+                                                help_text=HELP_RESTRICTED)
     roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
@@ -1715,7 +1714,7 @@ class PatientConsultation(EpisodeSubrecord):
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(
         max_length=255, blank=True,
-        help_text=b("The initials of the user who gave the consult.")
+        help_text="The initials of the user who gave the consult."
     )
     reason_for_interaction = ForeignKeyOrFreeText(
         PatientConsultationReasonForInteraction
@@ -1742,14 +1741,14 @@ class SymptomComplex(EpisodeSubrecord):
         Symptom, related_name="symptoms", blank=True
     )
     DURATION_CHOICES = (
-        (b('3 days or less'), b('3 days or less')),
-        (b('4-10 days'), b('4-10 days')),
-        (b('11-21 days'), b('11-21 days')),
-        (b('22 days to 3 months'), b('22 days to 3 months')),
-        (b('over 3 months'), b('over 3 months'))
+        ('3 days or less', '3 days or less'),
+        ('4-10 days', '4-10 days'),
+        ('11-21 days', '11-21 days'),
+        ('22 days to 3 months', '22 days to 3 months'),
+        ('over 3 months', 'over 3 months')
     )
-    HELP_DURATION = b("The duration for which the patient had been experiencing \
-these symptoms when recorded.")
+    HELP_DURATION = "The duration for which the patient had been experiencing \
+these symptoms when recorded."
 
     duration = models.CharField(
         max_length=255,
