@@ -190,18 +190,25 @@ class LookupListQueryset(models.QuerySet):
             return "name__iexact"
         return "name"
 
-    def search(self, some_str, contains=False, case_sensitive=False):
+    def search(self, *some_strs, **kwargs):
         """
         Searches through a lookup list and its synonyms for a value.
+
+        If passed multiple terms the result will be the union of
+        all results.
 
         contains runs a contains query rather than an exactly equal
         query.
         """
-        return self.search_many(
-            [some_str], contains=contains, case_sensitive=case_sensitive
-        )
 
-    def search_many(self, some_strs, contains=False, case_sensitive=False):
+        contains = kwargs.pop("contains", False)
+        case_sensitive = kwargs.pop("case_sensitive", False)
+
+        if kwargs:
+            raise TypeError("search got unexpected arguments {}".format(
+               kwargs.keys()
+            ))
+
         ids_with_relevant_synonyms = self.find_ids_from_synonyms(
             some_strs,
             contains=contains,

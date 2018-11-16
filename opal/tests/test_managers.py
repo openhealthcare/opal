@@ -342,23 +342,14 @@ class LookupListQuerysetTestCase(OpalTestCase):
             query_arg, "name__contains"
         )
 
-    def test_search(self):
-        with mock.patch("opal.managers.LookupListQueryset.search_many") as s:
-            test_models.Hat.objects.search("hello")
-        s.assert_called_once_with(
-            ["hello"], contains=False, case_sensitive=False
+    def test_search_one(self):
+        self.create_model_and_synonym(
+            "Bowler", "Bob Hat", "Bob Cap"
         )
 
-        with mock.patch("opal.managers.LookupListQueryset.search_many") as s:
-            test_models.Hat.objects.search("hello", contains=True)
-        s.assert_called_once_with(
-            ["hello"], contains=True, case_sensitive=False
-        )
-
-        with mock.patch("opal.managers.LookupListQueryset.search_many") as s:
-            test_models.Hat.objects.search("hello", case_sensitive=True)
-        s.assert_called_once_with(
-            ["hello"], contains=False, case_sensitive=True
+        hat = test_models.Hat.objects.search("bob hat").get()
+        self.assertEqual(
+            hat.name, "Bowler"
         )
 
     def test_search_many(self):
@@ -368,7 +359,7 @@ class LookupListQuerysetTestCase(OpalTestCase):
         self.create_model_and_synonym(
             "other", "unused"
         )
-        hats = test_models.Hat.objects.search_many(["bob hat", "top hat"])
+        hats = test_models.Hat.objects.search("bob hat", "top hat")
         self.assertTrue(
             hats.filter(id=bowler.id).exists()
         )
@@ -386,8 +377,8 @@ class LookupListQuerysetTestCase(OpalTestCase):
         self.create_model_and_synonym(
             "other", "unused"
         )
-        hats = test_models.Hat.objects.search_many(
-            ["Bob Hat", "Top Hat"], case_sensitive=True
+        hats = test_models.Hat.objects.search(
+            "Bob Hat", "Top Hat", case_sensitive=True
         )
         self.assertTrue(
             hats.filter(id=bowler.id).exists()
@@ -401,12 +392,12 @@ class LookupListQuerysetTestCase(OpalTestCase):
         if settings.DATABASES["default"]["ENGINE"].endswith("sqlite3"):
             return
 
-        hats = test_models.Hat.objects.search_many(
+        hats = test_models.Hat.objects.search(
             ["bob hat", "top hat"], case_sensitive=False
         )
         self.assertTrue(hats.exists())
 
-        hats = test_models.Hat.objects.search_many(
+        hats = test_models.Hat.objects.search(
             ["bob hat", "top hat"], case_sensitive=True
         )
         self.assertFalse(hats.exists())
@@ -418,8 +409,8 @@ class LookupListQuerysetTestCase(OpalTestCase):
         self.create_model_and_synonym(
             "other", "unused"
         )
-        hats = test_models.Hat.objects.search_many(
-            ["hat", "cap"], contains=True
+        hats = test_models.Hat.objects.search(
+            "hat", "cap", contains=True
         )
         self.assertTrue(
             hats.filter(id=bowler.id).exists()
@@ -432,5 +423,11 @@ class LookupListQuerysetTestCase(OpalTestCase):
         )
 
     def test_multiple_search_missing_results(self):
-        result = test_models.Hat.objects.search_many(["High Hat", "Bob Cap"])
+        result = test_models.Hat.objects.search("High Hat", "Bob Cap")
         self.assertEqual(result.get(), self.hat)
+
+    def test_raises_an_error_on_unknown_args(self):
+        with self.assertRaises(TypeError) as e:
+            test_models.Hat.objects.search("pajamas", top=True, floral=True)
+
+        self.assertEqual(str(e.exception), "search got unexpected arguments ['floral', 'top']")
