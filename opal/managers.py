@@ -201,7 +201,7 @@ class LookupListQueryset(models.QuerySet):
         query.
         """
 
-        contains = kwargs.pop("contains", False)
+        contains = kwargs.pop("contains", True)
         case_sensitive = kwargs.pop("case_sensitive", False)
 
         if kwargs:

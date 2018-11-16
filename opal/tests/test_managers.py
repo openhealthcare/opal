@@ -431,3 +431,17 @@ class LookupListQuerysetTestCase(OpalTestCase):
             test_models.Hat.objects.search("pajamas", top=True, floral=True)
 
         self.assertEqual(str(e.exception), "search got unexpected arguments ['floral', 'top']")
+
+    def test_default_arguments(self):
+        bowler = self.create_model_and_synonym(
+            "Bowler", "Bob Hat", "Bob Cap"
+        )
+        self.create_model_and_synonym(
+            "other", "unused"
+        )
+        hats = test_models.Hat.objects.search(
+            "bowler"
+        )
+        self.assertEqual(
+            hats.get().id, bowler.id
+        )
