@@ -418,7 +418,7 @@ class LookupListQuerysetTestCase(OpalTestCase):
         self.assertTrue(
             hats.filter(id=self.hat.id).exists()
         )
-        self.assertTrue(
+        self.assertEqual(
             hats.count(), 2
         )
 
