@@ -153,9 +153,6 @@ class EpisodeQueryset(models.QuerySet):
 
 
 class LookupListQueryset(models.QuerySet):
-    def get_content_type(self):
-        return ContentType.objects.get_for_model(self.model)
-
     def find_ids_from_synonyms(
         self, some_strs, contains=False, case_sensitive=False
     ):
@@ -168,7 +165,7 @@ class LookupListQueryset(models.QuerySet):
         we would return ValuesList(top_hat.id)
         """
         from opal.models import Synonym
-        content_type = self.get_content_type()
+        content_type = ContentType.objects.get_for_model(self.model)
         query_arg = self.get_query_arg(contains, case_sensitive)
         q_objects = []
         for some_str in some_strs:

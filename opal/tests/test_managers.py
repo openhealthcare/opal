@@ -234,12 +234,6 @@ class LookupListQuerysetTestCase(OpalTestCase):
             self.create_synonym(instance, synonym)
         return instance
 
-    def test_get_content_type(self):
-        ct = ContentType.objects.get_for_model(test_models.Hat)
-        self.assertEqual(
-            ct, test_models.Hat.objects.get_content_type()
-        )
-
     def test_find_ids_from_synonyms(self):
         ids = test_models.Hat.objects.find_ids_from_synonyms(
             ["high hat"]
@@ -433,6 +427,9 @@ class LookupListQuerysetTestCase(OpalTestCase):
         self.assertEqual(str(e.exception), "search got unexpected arguments ['floral', 'top']")
 
     def test_default_arguments(self):
+        """
+        Tests that the default arguments are contains=True
+        """
         bowler = self.create_model_and_synonym(
             "Bowler", "Bob Hat", "Bob Cap"
         )
