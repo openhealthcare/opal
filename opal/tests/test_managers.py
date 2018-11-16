@@ -217,21 +217,15 @@ class LookupListQuerysetTestCase(OpalTestCase):
         super(LookupListQuerysetTestCase, self).setUp(*args, **kwargs)
         self.hat = self.create_model_and_synonym("Top Hat", "High Hat")
 
-    def create_synonym(self, instance, synonym):
-        ct = ContentType.objects.get_for_model(test_models.Hat)
-        return Synonym.objects.create(
-            name=synonym,
-            object_id=instance.id,
-            content_type=ct
-        )
-
-    def create_instance(self, name):
-        return test_models.Hat.objects.create(name=name)
-
     def create_model_and_synonym(self, name, *synonyms):
-        instance = self.create_instance(name)
+        instance = test_models.Hat.objects.create(name=name)
+        ct = ContentType.objects.get_for_model(test_models.Hat)
         for synonym in synonyms:
-            self.create_synonym(instance, synonym)
+            Synonym.objects.create(
+                name=synonym,
+                object_id=instance.id,
+                content_type=ct
+            )
         return instance
 
     def test_find_ids_from_synonyms(self):
