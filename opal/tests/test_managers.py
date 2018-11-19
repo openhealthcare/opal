@@ -381,12 +381,12 @@ class LookupListQuerysetTestCase(OpalTestCase):
             return
 
         hats = test_models.Hat.objects.search(
-            ["bob hat", "top hat"], case_sensitive=False
+            "bob hat", "top hat", case_sensitive=False
         )
         self.assertTrue(hats.exists())
 
         hats = test_models.Hat.objects.search(
-            ["bob hat", "top hat"], case_sensitive=True
+            "bob hat", "top hat", case_sensitive=True
         )
         self.assertFalse(hats.exists())
 
