@@ -203,7 +203,7 @@ class LookupListQueryset(models.QuerySet):
 
         if kwargs:
             raise TypeError("search got unexpected arguments {}".format(
-               kwargs.keys()
+                kwargs.keys()
             ))
 
         ids_with_relevant_synonyms = self.find_ids_from_synonyms(
