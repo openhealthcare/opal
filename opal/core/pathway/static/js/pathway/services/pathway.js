@@ -1,5 +1,5 @@
 angular.module('opal.services').service('Pathway', function(
-    $http, FieldTranslater, $q, $controller, $window, $rootScope
+    $http, FieldTranslator, $q, $controller, $window, $rootScope
 ){
     "use strict";
     var Pathway = function(pathwayDefinition, episode){
@@ -88,12 +88,12 @@ angular.module('opal.services').service('Pathway', function(
             if(_.isArray(val)){
               result = _.map(val, function(x){
                 delete x._client;
-                return FieldTranslater.jsToSubrecord(x, key);
+                return FieldTranslator.jsToSubrecord(x, key);
               });
             }
             else{
               delete val._client;
-              result = [FieldTranslater.jsToSubrecord(val, key)];
+              result = [FieldTranslator.jsToSubrecord(val, key)];
             }
             return _.filter(result, function(subrecord){
                 return _.size(subrecord);
