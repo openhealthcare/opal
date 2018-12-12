@@ -1,4 +1,4 @@
-angular.module('opal.services').service('FieldTranslater', function($rootScope){
+angular.module('opal.services').service('FieldTranslator', function($rootScope){
   "use strict";
   /* this service provides translation to js, ie casting date fields and datetime
   * fields to moments

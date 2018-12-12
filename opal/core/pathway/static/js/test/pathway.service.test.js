@@ -1,7 +1,7 @@
 describe('Pathway', function() {
   "use strict";
   var pathway, Pathway, $httpBackend, $rootScope;
-  var FieldTranslater, pathwayScope, $window;
+  var FieldTranslator, pathwayScope, $window;
 
   var pathwayDefinition = {
     icon: undefined,
@@ -36,7 +36,7 @@ describe('Pathway', function() {
       Pathway = $injector.get('Pathway');
       $httpBackend = $injector.get('$httpBackend');
       $rootScope = $injector.get('$rootScope');
-      FieldTranslater = $injector.get('FieldTranslater');
+      FieldTranslator = $injector.get('FieldTranslator');
     });
 
     pathwayScope = $rootScope.$new();
@@ -134,7 +134,7 @@ describe('Pathway', function() {
 
   describe('finish', function(){
     beforeEach(function(){
-      spyOn(FieldTranslater, "jsToSubrecord").and.returnValue({
+      spyOn(FieldTranslator, "jsToSubrecord").and.returnValue({
         "interesting": true
       });
     });

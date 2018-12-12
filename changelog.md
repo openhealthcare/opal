@@ -118,6 +118,8 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 * Adds a `get_absolute_url()` method to `Patient` and `Episode
 
 
+* Renames the (undocumented, internal) Angular service `FieldTranslater` to `FieldTranslator`
+
 #### Updates to the Dependency Graph
 
 * Django: 1.10.8 -> 2.0.9

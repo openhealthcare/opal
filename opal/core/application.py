@@ -67,7 +67,7 @@ class OpalApplication(object):
             "js/opal/services/episode_resource.js",
             "js/opal/services/record_editor.js",
             "js/opal/services/patientlist_loader.js",
-            'js/opal/services/fields_translater.js',
+            'js/opal/services/fields_translator.js',
             'js/opal/services/referencedata.js',
             'js/opal/services/metadata.js',
             'js/opal/services/patient_consultation_record.js',
