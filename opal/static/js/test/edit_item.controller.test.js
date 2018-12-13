@@ -159,12 +159,27 @@ describe('EditItemCtrl', function (){
 
         it('should open the delete modal', function() {
             spyOn($modal, 'open');
-            $scope.delete();
+            var promiseResolved = false;
+            $modal.open.and.returnValue({
+                result: {
+                    then: function(x){
+                        x();
+                    }
+                }
+            });
+            spyOn($q, "defer").and.returnValue({
+                resolve: function(){
+                    promiseResolved = true;
+                }
+            });
+
+            $scope.delete("delete");
             expect($modal.open).toHaveBeenCalled()
             var args = $modal.open.calls.mostRecent().args[0];
             expect(args.templateUrl).toEqual('/templates/delete_item_confirmation_modal.html');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
             expect(args.resolve.item()).toEqual(item)
+            expect(promiseResolved).toBe(true);
         });
 
     });
