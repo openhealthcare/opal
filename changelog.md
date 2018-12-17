@@ -110,7 +110,7 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 * Renames the (undocumented, internal) Angular service `FieldTranslater` to `FieldTranslator`
 
 * If an item is deleted from the edit item modal, RecordEditor.openEditItemModal will now resolve after
-  the delete item modal is closed with 'delete'
+  the delete item modal is closed with 'deleted'
 
 #### Updates to the Dependency Graph
 
