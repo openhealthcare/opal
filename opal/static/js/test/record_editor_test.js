@@ -203,6 +203,42 @@ describe('RecordEditor', function(){
               expect($rootScope.state).toBe('normal');
           });
 
+          it("should handle the result of it is not a promise", function(){
+            var deferred;
+            var called = false
+
+            deferred = $q.defer();
+            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
+            episode.recordEditor.editItem('demographics', 0).then(function(modalResult){
+                called = modalResult == "save";
+            });
+
+            deferred.resolve('save');
+            $rootScope.$apply();
+
+            expect($rootScope.state).toBe('normal');
+            expect(called).toBe(true);
+          });
+
+          it("should handle the result if it is a promise", function(){
+            var deferred, nestedDeferred;
+            var called = false
+
+            deferred = $q.defer();
+            nestedDeferred = $q.defer()
+
+            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
+            episode.recordEditor.editItem('demographics', 0).then(function(modalResult){
+                called = modalResult == "delete";
+            });
+
+            nestedDeferred.resolve("delete")
+            deferred.resolve(nestedDeferred.promise);
+            $rootScope.$apply();
+
+            expect($rootScope.state).toBe('normal');
+            expect(called).toBe(true);
+          });
       });
 
     });
