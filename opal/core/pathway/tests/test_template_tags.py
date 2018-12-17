@@ -28,13 +28,12 @@ class MultSaveTest(OpalTestCase):
         self.assertFalse(rendered.strip().endswith("editing.colour"))
 
     def test_nested_template_context(self, get_form_template):
-        template = Template('{% load pathways %}{% multisave models.Colour %}')
-        models = dict(models=dict(Colour=Colour), some_test_var="onions")
-        template.render(Context(models))
-        self.assertEqual(
-            get_form_template.render.call_args[0][0]["some_test_var"],
-            'onions'
+        template = Template(
+            '{% load pathways %}{% multisave models.Colour %}OMG: {{ some_test_var }}'
         )
+        models = dict(models=dict(Colour=Colour), some_test_var="onions")
+        resp = template.render(Context(models))
+        self.assertIn('OMG: onions', resp)
 
     def test_add_common_context(self, get_form_template):
         ctx = template_tags.add_common_context({}, Colour)

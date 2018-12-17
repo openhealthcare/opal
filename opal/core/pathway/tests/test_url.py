@@ -1,5 +1,5 @@
 from opal.core.test import OpalTestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class PathwayReverseUrlTests(OpalTestCase):

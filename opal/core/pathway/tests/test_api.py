@@ -1,6 +1,6 @@
 import json
 from opal.core.test import OpalTestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from mock import patch, MagicMock
 from opal.core.pathway.tests.pathway_test import pathways as test_pathways
 

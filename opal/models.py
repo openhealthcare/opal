@@ -16,10 +16,9 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import force_str
-from six import b
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -140,7 +139,7 @@ class SerialisableFields(object):
                 t = "One of the {}"
             else:
                 t = "Some of the {}"
-            related = field_type.rel.to
+            related = field_type.remote_field.model
             return t.format(related._meta.verbose_name_plural.title())
 
         enum = cls.get_field_enum(field_name)
@@ -424,7 +423,7 @@ class Filter(models.Model):
     """
     Saved filters for users extracting data.
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     criteria = models.TextField()
 
@@ -445,20 +444,20 @@ class ContactNumber(models.Model):
     name = models.CharField(max_length=255)
     number = models.CharField(max_length=255)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0}: {1}'.format(self.name, self.number)
 
 
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
     class Meta:
         unique_together = (('name', 'content_type'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -468,13 +467,13 @@ class Macro(models.Model):
     enter "github-style" #foo text blocks from an admin defined
     list and then have them expand to cover frequent entries.
     """
-    HELP_TITLE = b("The text that will display in the dropdown. No spaces!")
-    HELP_EXPANDED = b("This is the text that it will expand to.")
+    HELP_TITLE = "The text that will display in the dropdown. No spaces!"
+    HELP_EXPANDED = "This is the text that it will expand to."
 
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @classmethod
@@ -490,7 +489,7 @@ class Patient(models.Model):
 
     objects = managers.PatientQueryset.as_manager()
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Patient {0}'.format(self.id)
 
     def get_absolute_url(self):
@@ -599,8 +598,8 @@ class Patient(models.Model):
 
 class PatientRecordAccess(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    user    = models.ForeignKey(User)
-    patient = models.ForeignKey(Patient)
+    user    = models.ForeignKey(User, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
     def to_dict(self, user):
         return dict(
@@ -681,7 +680,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     category_name     = models.CharField(
         max_length=200, default=get_default_episode_type
     )
-    patient           = models.ForeignKey(Patient)
+    patient           = models.ForeignKey(Patient, on_delete=models.CASCADE)
     active            = models.BooleanField(default=False)
     start             = models.DateField(null=True, blank=True)
     end               = models.DateField(blank=True, null=True)
@@ -699,7 +698,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         super(Episode, self).__init__(*args, **kwargs)
         self.__original_active = self.active
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Episode {0}: {1} - {2}'.format(
             self.pk, self.start, self.end
         )
@@ -893,7 +892,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         if self.created:
             return '{0}: {1} {2}'.format(
                 self.get_api_name(), self.id, self.created
@@ -1044,7 +1043,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
 
 class PatientSubrecord(Subrecord):
-    patient = models.ForeignKey(Patient)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -1052,7 +1051,7 @@ class PatientSubrecord(Subrecord):
 
 class EpisodeSubrecord(Subrecord):
 
-    episode = models.ForeignKey(Episode, null=False)
+    episode = models.ForeignKey(Episode, null=False, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -1062,8 +1061,10 @@ class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
 
-    user     = models.ForeignKey(User, null=True, blank=True)
-    episode  = models.ForeignKey(Episode, null=False)
+    user     = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.CASCADE
+    )
+    episode  = models.ForeignKey(Episode, null=False, on_delete=models.CASCADE)
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
 
@@ -1071,7 +1072,7 @@ class Tagging(TrackedModel, models.Model):
         unique_together = (('value', 'episode', 'user'))
         verbose_name = "Teams"
 
-    def __unicode__(self):
+    def __str__(self):
         if self.user is not None:
             return 'User: %s - %s - archived: %s' % (
                 self.user.username, self.value, self.archived
@@ -1375,10 +1376,10 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(
         max_length=255, blank=True,
-        help_text=b("The unique identifier for this patient at the hospital.")
+        help_text="The unique identifier for this patient at the hospital."
     )
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name=b("NHS Number")
+        max_length=255, blank=True, null=True, verbose_name="NHS Number"
     )
 
     surname = models.CharField(max_length=255, blank=True)
@@ -1386,24 +1387,24 @@ class Demographics(PatientSubrecord):
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
     date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name=b("Date of Birth")
+        null=True, blank=True, verbose_name="Date of Birth"
     )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(
-        null=True, blank=True, verbose_name=b("Date of Death")
+        null=True, blank=True, verbose_name="Date of Death"
     )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
         max_length=20, blank=True, null=True,
-        verbose_name=b("GP Practice Code")
+        verbose_name="GP Practice Code"
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name=b("Country of Birth"))
+                                       verbose_name="Country of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(
         default=False,
-        help_text=b("This field will be True if the patient is deceased.")
+        help_text="This field will be True if the patient is deceased."
     )
 
     sex = ForeignKeyOrFreeText(Gender)
@@ -1444,7 +1445,7 @@ treatment."
     route         = ForeignKeyOrFreeText(Drugroute)
     start_date    = models.DateField(
         null=True, blank=True,
-        help_text=b(HELP_START)
+        help_text=HELP_START
     )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
@@ -1460,8 +1461,8 @@ Defaults to False."
 
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(
-        default=False, verbose_name=b("Suspected?"),
-        help_text=b(HELP_PROVISIONAL)
+        default=False, verbose_name="Suspected?",
+        help_text=HELP_PROVISIONAL
     )
     details     = models.CharField(max_length=255, blank=True)
 
@@ -1481,8 +1482,8 @@ class Diagnosis(EpisodeSubrecord):
     condition         = ForeignKeyOrFreeText(Condition)
     provisional       = models.BooleanField(
         default=False,
-        verbose_name=b("Provisional?"),
-        help_text=b("True if the diagnosis is provisional. Defaults to False")
+        verbose_name="Provisional?",
+        help_text="True if the diagnosis is provisional. Defaults to False"
     )
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
@@ -1571,8 +1572,8 @@ class Investigation(EpisodeSubrecord):
 class Role(models.Model):
     name = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return str(self.name)
+    def __str__(self):
+        return self.name
 
 
 class UserProfile(models.Model):
@@ -1588,15 +1589,18 @@ class UserProfile(models.Model):
     HELP_PW          = "Force this user to change their password on the " \
                        "next login"
 
-    user                  = models.OneToOneField(User, related_name='profile')
+    user                  = models.OneToOneField(
+        User, related_name='profile',
+        on_delete=models.CASCADE
+    )
     force_password_change = models.BooleanField(default=True,
-                                                help_text=b(HELP_PW))
+                                                help_text=HELP_PW)
     can_extract           = models.BooleanField(default=False,
-                                                help_text=b(HELP_EXTRACT))
+                                                help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False,
-                                                help_text=b(HELP_READONLY))
+                                                help_text=HELP_READONLY)
     restricted_only       = models.BooleanField(default=False,
-                                                help_text=b(HELP_RESTRICTED))
+                                                help_text=HELP_RESTRICTED)
     roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
@@ -1722,7 +1726,7 @@ class PatientConsultation(EpisodeSubrecord):
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(
         max_length=255, blank=True,
-        help_text=b("The initials of the user who gave the consult.")
+        help_text="The initials of the user who gave the consult."
     )
     reason_for_interaction = ForeignKeyOrFreeText(
         PatientConsultationReasonForInteraction
@@ -1749,14 +1753,14 @@ class SymptomComplex(EpisodeSubrecord):
         Symptom, related_name="symptoms", blank=True
     )
     DURATION_CHOICES = (
-        (b('3 days or less'), b('3 days or less')),
-        (b('4-10 days'), b('4-10 days')),
-        (b('11-21 days'), b('11-21 days')),
-        (b('22 days to 3 months'), b('22 days to 3 months')),
-        (b('over 3 months'), b('over 3 months'))
+        ('3 days or less', '3 days or less'),
+        ('4-10 days', '4-10 days'),
+        ('11-21 days', '11-21 days'),
+        ('22 days to 3 months', '22 days to 3 months'),
+        ('over 3 months', 'over 3 months')
     )
-    HELP_DURATION = b("The duration for which the patient had been experiencing \
-these symptoms when recorded.")
+    HELP_DURATION = "The duration for which the patient had been experiencing \
+these symptoms when recorded."
 
     duration = models.CharField(
         max_length=255,

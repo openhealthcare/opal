@@ -1,7 +1,7 @@
 """
 Module entrypoint for core Opal views
 """
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
 from django.http import HttpResponseForbidden, HttpResponseNotFound

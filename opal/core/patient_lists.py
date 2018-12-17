@@ -352,7 +352,7 @@ class TaggedPatientListMetadata(metadata.Metadata):
         tag_slugs = {}
         tag_list = [i for i in TaggedPatientList.for_user(user)]
 
-        if user.is_authenticated():
+        if user.is_authenticated:
             for taglist in tag_list:
                 slug = taglist().get_slug()
                 tag = taglist.tag

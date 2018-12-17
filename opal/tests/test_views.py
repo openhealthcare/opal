@@ -4,7 +4,7 @@ Unittests for opal.views
 import os
 
 from django import http
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import QueryDict
 from django.test import TestCase
 from django.test.client import RequestFactory

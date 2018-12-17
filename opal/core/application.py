@@ -5,7 +5,7 @@ import inspect
 import itertools
 import os
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from opal.core import plugins, menus
 
 
@@ -134,7 +134,7 @@ class OpalApplication(object):
         items = []
         items += klass.menuitems
         if user:
-            if not user.is_authenticated():
+            if not user.is_authenticated:
                 return []
             else:
                 items.append(logout)

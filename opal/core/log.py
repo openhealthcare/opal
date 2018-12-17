@@ -23,7 +23,7 @@ class ConfidentialEmailer(AdminEmailHandler):
             # In case the error occurrs before the authentication middleware
             # has run we need to check that the request has a user
             if hasattr(record.request, "user"):
-                if record.request.user.is_authenticated():
+                if record.request.user.is_authenticated:
                     user = record.request.user.username
 
             m = "Request to host {0} on application {1} from user {2} with {3}"

@@ -62,6 +62,12 @@ class TestForeignKeyOrFreeText(OpalTestCase):
         result = field.__get__(self, ForeignKeyOrFreeText)
         self.assertEqual(result, 'Unknown Lookuplist Entry')
 
+    def test_unset_value(self):
+        patient, episode = self.new_patient_and_episode_please()
+        demographics = test_models.Demographics(patient=patient)
+        demographics.save()
+        self.assertEqual('', demographics.title)
+
     def test_synonyms_addition(self):
         ct = ContentType.objects.get_for_model(
             test_models.Dog

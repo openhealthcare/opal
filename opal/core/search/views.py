@@ -45,7 +45,7 @@ class ExtractTemplateView(LoginRequiredMixin, TemplateView):
 def ajax_login_required(view):
     @wraps(view)
     def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             raise PermissionDenied
         return view(request, *args, **kwargs)
     return wrapper
@@ -54,7 +54,7 @@ def ajax_login_required(view):
 def ajax_login_required_view(view):
     @wraps(view)
     def wrapper(self, *args, **kwargs):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise PermissionDenied
         return view(self, *args, **kwargs)
     return wrapper
@@ -159,7 +159,11 @@ class DownloadSearchView(View):
         )
         episodes = query.get_episodes()
         fname = zip_archive(episodes, query.description(), self.request.user)
-        resp = HttpResponse(open(fname, 'rb').read())
+
+        with open(fname, 'rb') as download:
+            content = download.read()
+
+        resp = HttpResponse(content)
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp

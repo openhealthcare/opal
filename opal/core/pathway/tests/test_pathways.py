@@ -5,7 +5,7 @@ import datetime
 from opal.core.exceptions import InitializationError
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from opal.core import exceptions
 from opal.core.test import OpalTestCase
 from opal.core.views import OpalSerializer

@@ -30,7 +30,7 @@ urlpatterns = [
 
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     # Template views
     url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$',

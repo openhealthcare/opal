@@ -82,14 +82,14 @@ class TestInferFromSubrecordPath(TestCase):
 
     def test_infer_element_name(self):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
-        self.assertEquals(
+        self.assertEqual(
             ctx["element_name"],
             "editing.birthday._client.id + '_birth_date'"
         )
 
     def test_infer_element_type_number(self):
         ctx = infer_from_subrecord_field_path("FavouriteNumber.number")
-        self.assertEquals(
+        self.assertEqual(
             ctx["element_type"],
             "number"
         )
