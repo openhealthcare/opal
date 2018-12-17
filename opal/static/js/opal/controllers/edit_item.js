@@ -77,7 +77,7 @@ angular.module('opal.controllers').controller(
                 });
             };
 
-            $scope.delete = function(result){
+            $scope.delete = function(){
                 var deferred = $q.defer();
                 $modalInstance.close(deferred.promise);
                 var deleteModal =  $modal.open({
@@ -89,7 +89,7 @@ angular.module('opal.controllers').controller(
                         }
                     }
                 });
-                deleteModal.result.then(function(){
+                deleteModal.result.then(function(result){
                     deferred.resolve(result)
                 });
             };
