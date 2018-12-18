@@ -52,7 +52,7 @@ setup(
         'requests==2.20.1',
         'django-axes==1.7.0',
         'djangorestframework==3.7.4',
-        'django-reversion==3.0.1',
+        'django-reversion==3.0.2',
         'django-compressor==2.2',
         'python-dateutil==2.7.5',
         'django-celery==3.2.2',
