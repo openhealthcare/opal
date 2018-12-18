@@ -68,6 +68,10 @@ class TestForeignKeyOrFreeText(OpalTestCase):
         demographics.save()
         self.assertEqual('', demographics.title)
 
+    def test_get_default_when_callable(self):
+        field = ForeignKeyOrFreeText(test_models.Demographics, default=lambda: 'Nope')
+        self.assertEqual('Nope', field.get_default())
+
     def test_synonyms_addition(self):
         ct = ContentType.objects.get_for_model(
             test_models.Dog
