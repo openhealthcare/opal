@@ -3,7 +3,16 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-### 0.13.0 -> 0.12.0 - 0.11.2
+### 0.12.0 - 0.11.2 -> 0.13.0
+
+#### Python versions
+
+Opal 0.13.0 drops support for Python 2.x
+If you have not already done so, you will need to upgrade your application to Python 3
+in order to upgrade.
+
+You may also like to run the tests for your application with the 'show warnings'
+flag e.g.  `python -Wd manage.py test`
 
 #### Upgrading Opal
 
@@ -16,6 +25,9 @@ you have specified them in for instance, a requirements.txt.
 
     # requirements.txt
     opal==0.10.0
+    django==2.0.9
+    django-reversion==3.0.1
+    djangorestframework==3.7.4
     letter==0.5
     psycopg==2.7.6.1
     python-dateutil==2.7.5

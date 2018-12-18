@@ -1,5 +1,11 @@
 ### 0.13.0 (Major Release)
 
+#### Removes support for Python 2.x
+
+Due to the upgrade to Django 2.x, Opal no longer supports Python 2.x.
+
+Opal is now tested against Python 3.5, 3.6
+
 #### Episode.active
 
 The field `Episode.active` was previously implicitly set when calling `.set_tag_names()` to
@@ -103,9 +109,14 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Adds in a footer updated/created by to the form base template
 
+* Changes the default value of `_ft` fields on `ForeignKeyOrFreeTextField` from b'' to ''. This requires a migration
+
+* `__unicode__` model methods have been renamed `__str__`
+
 * Adds an index argument to `PatientList.as_menuitem()` and `Pathway.as_menuitem()`
 
-* Adds a `get_absolute_url()` method to `Patient` and `Episode`
+* Adds a `get_absolute_url()` method to `Patient` and `Episode
+
 
 * Renames the (undocumented, internal) Angular service `FieldTranslater` to `FieldTranslator`
 
@@ -114,6 +125,9 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 #### Updates to the Dependency Graph
 
+* Django: 1.10.8 -> 2.0.9
+* Django Rest Framework: 3.4.7 -> 3.7.4
+* Django Reversion: 1.10.2 -> 3.0.1
 * Letter: 0.4.1 -> 0.5
 * Requests: 2.18.4 -> 2.20.1
 * Psycopg2: 2.7 -> 2.7.6.1

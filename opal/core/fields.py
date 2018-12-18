@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from six import b
 from django.db.models.signals import pre_delete
 from opal.utils import _itersubclasses
 
@@ -83,7 +82,7 @@ class ForeignKeyOrFreeText(property):
         )
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = models.CharField(
-            max_length=255, blank=True, null=True, default=b('')
+            max_length=255, blank=True, null=True, default=''
         )
         ft_field.contribute_to_class(cls, self.ft_field_name)
 

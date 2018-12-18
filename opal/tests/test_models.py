@@ -826,3 +826,31 @@ class ExternalSystemTestCase(OpalTestCase):
             ExternalSubRecord.get_modal_footer_template(),
             "partials/_sourced_modal_footer.html"
         )
+
+
+class ContactNumberTestCase(OpalTestCase):
+
+    def test_str(self):
+        c = models.ContactNumber(name='Jane Doe', number='0777383828')
+        self.assertEqual('Jane Doe: 0777383828', c.__str__())
+
+
+class SynonymTestCase(OpalTestCase):
+
+    def test_str(self):
+        s = models.Synonym(name='Name')
+        self.assertEqual('Name', s.__str__())
+
+
+class MacroTestCase(OpalTestCase):
+
+    def test_str(self):
+        m = models.Macro(title='My Macro')
+        self.assertEqual('My Macro', m.__str__())
+
+
+class RoleTestCase(OpalTestCase):
+
+    def test_str(self):
+        r = models.Role(name='Doctor')
+        self.assertEqual('Doctor', r.__str__())

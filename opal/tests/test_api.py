@@ -19,7 +19,9 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Demographics
+from opal.tests.models import (
+    Colour, PatientColour, HatWearer, Hat, Demographics
+)
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import json_response
@@ -59,12 +61,12 @@ class LoginRequredTestCase(OpalTestCase):
             )
         ]
 
-    def test_403(self):
+    def test_401(self):
         for url in self.get_urls():
             response = self.client.get(url)
             self.assertEqual(
                 response.status_code,
-                status.HTTP_403_FORBIDDEN
+                401
             )
 
 
@@ -279,11 +281,58 @@ class SubrecordTestCase(OpalTestCase):
             response = self.client.post(url, data=data)
 
     def test_retrieve(self):
-        with patch.object(self.model.objects, 'get') as mockget:
-            mockget.return_value.to_dict.return_value = 'serialized colour'
+        colour = Colour.objects.create(
+            episode=self.episode
+        )
+        expected = {
+            u'consistency_token': u'',
+            u'created'          : None,
+            u'created_by_id'    : None,
+            u'episode_id'       : self.episode.id,
+            u'id'               : colour.id,
+            u'name'             : None,
+            u'updated'          : None,
+            u'updated_by_id'    : None
+        }
+        response = self.viewset().retrieve(MagicMock(name='request'), pk=colour.id)
+        response_decoded = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(expected, response_decoded)
 
-            response = self.viewset().retrieve(MagicMock(name='request'), pk=1)
-            self.assertEqual('serialized colour', response.data)
+    def test_retrieve_with_empty_fk_or_ft(self):
+        self.maxDiff = None
+        instance = self.patient.demographics_set.get()
+        class DemographicsViewSet(api.SubrecordViewSet):
+            base_name = 'demographics'
+            model     = Demographics
+
+        expected = {
+            u'consistency_token': u'',
+            u'created'          : None,
+            u'created_by_id'    : None,
+            u'patient_id'       : self.patient.id,
+            u'id'               : instance.id,
+            u'updated'          : None,
+            u'updated_by_id'    : None,
+            u'date_of_birth'    : None,
+            u'date_of_death'    : None,
+            u'death_indicator'  : False,
+            u'ethnicity'        : '',
+            u'birth_place'      : '',
+            u'first_name'       : '',
+            u'gp_practice_code' : None,
+            u'hospital_number'  : '',
+            u'marital_status'   : '',
+            u'middle_name'      : None,
+            u'nhs_number'       : None,
+            u'post_code'        : None,
+            u'religion'         : None,
+            u'sex'              : '',
+            u'surname'          : '',
+            u'title'            : ''
+        }
+        response = DemographicsViewSet().retrieve(MagicMock(name='request'), pk=instance.id)
+        response_decoded = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(expected, response_decoded)
 
     def test_with_defined_api_name(self):
         with patch.object(self.model, "get_api_name") as mock_api_name:

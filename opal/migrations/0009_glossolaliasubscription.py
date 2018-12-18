@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('subscription_type', models.CharField(default=b'all_information', max_length=2, choices=[(b'all_information', b'All Information'), (b'core_demographics', b'Core Demographics')])),
                 ('gloss_id', models.IntegerField()),
-                ('patient', models.ForeignKey(to='opal.Patient')),
+                ('patient', models.ForeignKey(to='opal.Patient', on_delete=models.CASCADE)),
             ],
         ),
     ]
