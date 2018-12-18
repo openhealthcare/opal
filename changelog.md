@@ -1,3 +1,5 @@
+### 0.14.0 (Major Release)
+
 ### 0.13.0 (Major Release)
 
 #### Episode.active
