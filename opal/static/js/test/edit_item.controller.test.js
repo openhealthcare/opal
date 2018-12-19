@@ -159,6 +159,13 @@ describe('EditItemCtrl', function (){
 
         it('should open the delete modal', function() {
             spyOn($modal, 'open');
+            $modal.open.and.returnValue({
+                result: {
+                    then: function(x){
+                        x("cancelled");
+                    }
+                }
+            });
             $scope.delete();
             expect($modal.open).toHaveBeenCalled()
             var args = $modal.open.calls.mostRecent().args[0];
