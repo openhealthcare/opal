@@ -1,3 +1,7 @@
+### 0.12.1 (Minor Release)
+* If an item is deleted from the edit item modal, RecordEditor.openEditItemModal will now resolve after the delete item modal is closed with 'deleted'
+
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes

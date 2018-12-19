@@ -159,14 +159,40 @@ describe('EditItemCtrl', function (){
 
         it('should open the delete modal', function() {
             spyOn($modal, 'open');
+            $modal.open.and.returnValue({
+                result: {
+                    then: function(x){
+                        x("cancelled");
+                    }
+                }
+            });
             $scope.delete();
             expect($modal.open).toHaveBeenCalled()
             var args = $modal.open.calls.mostRecent().args[0];
-            expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
+            expect(args.templateUrl).toEqual('/templates/delete_item_confirmation_modal.html');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
             expect(args.resolve.item()).toEqual(item)
         });
 
+        it('should return the output of the delete modal', function(){
+            spyOn($modal, 'open');
+            var promiseResolved = false;
+            $modal.open.and.returnValue({
+                result: {
+                    then: function(x){
+                        x("cancelled");
+                    }
+                }
+            });
+            spyOn($q, "defer").and.returnValue({
+                resolve: function(result){
+                    promiseResolved = result;
+                }
+            });
+
+            $scope.delete("delete");
+            expect(promiseResolved).toBe("cancelled");
+        });
     });
 
     describe('cancel()', function(){

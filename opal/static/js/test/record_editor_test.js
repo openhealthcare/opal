@@ -203,63 +203,44 @@ describe('RecordEditor', function(){
               expect($rootScope.state).toBe('normal');
           });
 
+          it("should handle the result of it is not a promise", function(){
+            var deferred;
+            var called = false
+
+            deferred = $q.defer();
+            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
+            episode.recordEditor.editItem('demographics', 0).then(function(modalResult){
+                called = modalResult == "save";
+            });
+
+            deferred.resolve('save');
+            $rootScope.$apply();
+
+            expect($rootScope.state).toBe('normal');
+            expect(called).toBe(true);
+          });
+
+          it("should handle the result if it is a promise", function(){
+            var deferred, nestedDeferred;
+            var called = false
+
+            deferred = $q.defer();
+            nestedDeferred = $q.defer()
+
+            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
+            episode.recordEditor.editItem('demographics', 0).then(function(modalResult){
+                called = modalResult == "delete";
+            });
+
+            nestedDeferred.resolve("delete")
+            deferred.resolve(nestedDeferred.promise);
+            $rootScope.$apply();
+
+            expect($rootScope.state).toBe('normal');
+            expect(called).toBe(true);
+          });
       });
 
-      describe('delete item', function(){
-          it('should open the DeleteItemConfirmationCtrl', function(){
-                var deferred, callArgs;
-                deferred = $q.defer();
-                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-                episode.recordEditor.deleteItem('diagnosis', 0);
-                $scope.$digest();
-                callArgs = $modal.open.calls.mostRecent().args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
-                expect(callArgs[0].templateUrl).toBe(
-                  '/templates/modals/delete_item_confirmation.html/'
-                );
-              var resolves = callArgs[0].resolve;
-              expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 0));
-              expect(resolves.profile(null)).toEqual(profile);
-            });
-
-            describe('for a readonly user', function(){
-                beforeEach(function(){
-                    profile.readonly = true;
-                });
-
-                it('should return just return an empty promise', function(){
-                    var deferred, callArgs;
-                    deferred = $q.defer();
-                    spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-                    episode.recordEditor.deleteItem('diagnosis', 0);
-                    $scope.$digest();
-                    expect($modal.open.calls.count()).toBe(0);
-                });
-
-                afterEach(function(){
-                    profile.readonly = false;
-                });
-            });
-
-            it('should change state to "normal" when the modal is closed', function() {
-                var deferred;
-                deferred = $q.defer();
-                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-                episode.recordEditor.deleteItem('diagnosis', 0);
-                deferred.resolve('save');
-                $scope.$digest();
-            });
-
-            it('should not delete singletons', function(){
-              var deferred, callArgs;
-              deferred = $q.defer();
-              spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-              episode.recordEditor.deleteItem('demographics', 0);
-              $scope.$digest();
-              expect($modal.open.calls.count()).toBe(0);
-            });
-      });
     });
 
     describe("get item", function(){
