@@ -16,23 +16,7 @@ urlpatterns = [
         views.PathwayTemplateView.as_view(), name="pathway_template"
     ),
     url(
-        r'^pathway/detail/{}$'.format(PATHWAY_REGEX),
-        api.PathwayApi.as_view({
-            'post': 'create',
-            'get': 'retrieve'
-        }),
-        name="pathway"
-    ),
-    url(
-        r'^pathway/detail/{0}/{1}$'.format(PATHWAY_REGEX, PATIENT_ID_REGEX),
-        api.PathwayApi.as_view({
-            'post': 'create',
-            'get': 'retrieve'
-        }),
-        name="pathway"
-    ),
-    url(
-        r'^pathway/detail/{0}/{1}/{2}$'.format(
+        r'^pathway/detail/{0}(?:/{1})?(?:/{2})?$'.format(
             PATHWAY_REGEX, PATIENT_ID_REGEX, EPISODE_ID_REGEX
         ),
         api.PathwayApi.as_view({
