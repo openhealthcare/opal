@@ -26,6 +26,7 @@ class Pathway(discoverable.DiscoverableFeature):
     pathway_service    = "Pathway"
     finish_button_text = "Save"
     finish_button_icon = "fa fa-save"
+    base_url = "{name}"
     icon               = None
     display_name       = None
 
@@ -84,6 +85,13 @@ class Pathway(discoverable.DiscoverableFeature):
         if is_modal:
             return self.modal_template
         return self.template
+
+    def get_initial_data(
+        self, user=None, patient=None, episode=None
+    ):
+        if episode:
+            return episode.to_dict(user)
+        return None
 
     def save_url(self, patient=None, episode=None):
         kwargs = dict(name=self.slug)
@@ -191,6 +199,11 @@ class Pathway(discoverable.DiscoverableFeature):
 
         return dict(
             steps=steps_info,
+            initial_data=self.get_initial_data(
+                user=user,
+                episode=episode,
+                patient=patient
+            ),
             finish_button_text=self.finish_button_text,
             finish_button_icon=self.finish_button_icon,
             display_name=self.get_display_name(),

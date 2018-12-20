@@ -27,12 +27,7 @@
                 	referencedata: function(Referencedata) { return Referencedata.load(); },
                 	metadata: function(Metadata) { return Metadata.load(); },
                   recordLoader: function(recordLoader){ return recordLoader.load(); },
-                  episode: function($route, episodeLoader){
-                    if($route.current.params.episode_id){
-                      return episodeLoader($route.current.params.episode_id);
-                    }
-                  },
-                  pathwayDefinition: function($route, pathwayLoader){
+                  pathwayDefinition: function($route, $window, pathwayLoader){
                     return pathwayLoader.load(
                       $route.current.params.pathway,
                       $route.current.params.patient_id,
