@@ -56,7 +56,7 @@ describe('ModalPathwayCtrl', function() {
   });
 
   it('should log analytics with episode category if provided', function(){
-    pathwayDefinition.initial_data = {
+    pathwayDefinition.episode = {
       category_name: "some category",
       demographics: [{
         hospital_number: 1,
