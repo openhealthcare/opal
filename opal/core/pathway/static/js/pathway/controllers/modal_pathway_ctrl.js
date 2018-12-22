@@ -2,19 +2,22 @@ angular.module('opal.controllers').controller('ModalPathwayCtrl', function(
     $scope,
     $modalInstance,
     $analytics,
-    episode,
     pathwayDefinition,
     pathwayCallback,
     pathwayName,
     referencedata,
     metadata,
     $injector,
-    $window
+    $window,
+    Episode
 ){
     "use strict";
     $scope.metadata = metadata;
     _.extend($scope, referencedata.toLookuplists());
-    $scope.episode = episode;
+    var episode;
+    if(pathwayDefinition.episode){
+        episode = new Episode(pathwayDefinition.episode);
+    }
     var pathwayService = $injector.get(
         pathwayDefinition.pathway_service
     );

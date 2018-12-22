@@ -523,6 +523,25 @@ class TestPathwayMethods(OpalTestCase):
             user=self.user, patient=patient, episode=None
         )
 
+    def test_get_episode_data_with_episode(self):
+        pathway = PathwayExample()
+        patient, episode = self.new_patient_and_episode_please()
+        with mock.patch.object(episode, "to_dict") as to_dicted:
+            to_dicted.return_value = "episode data"
+            result = pathway.get_episode_data(
+                user=self.user, patient=patient, episode=episode
+            )
+
+        to_dicted.assert_called_once_with(
+            self.user
+        )
+        self.assertEqual(result, "episode data")
+
+    def test_get_episode_data_without_episode(self):
+        pathway = PathwayExample()
+        result = pathway.get_episode_data()
+        self.assertIsNone(result)
+
     def test_to_dict_with_episode_and_patient(self):
         pathway = PathwayExample()
         patient, episode = self.new_patient_and_episode_please()

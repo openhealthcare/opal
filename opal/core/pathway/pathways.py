@@ -86,6 +86,13 @@ class Pathway(discoverable.DiscoverableFeature):
             return self.modal_template
         return self.template
 
+    def get_episode_data(
+        self, user=None, patient=None, episode=None
+    ):
+        if episode:
+            return episode.to_dict(user)
+        return None
+
     def save_url(self, patient=None, episode=None):
         kwargs = dict(name=self.slug)
 
@@ -192,6 +199,9 @@ class Pathway(discoverable.DiscoverableFeature):
 
         return dict(
             steps=steps_info,
+            episode=self.get_episode_data(
+                user=user, episode=episode, patient=patient
+            ),
             finish_button_text=self.finish_button_text,
             finish_button_icon=self.finish_button_icon,
             display_name=self.get_display_name(),
@@ -214,3 +224,4 @@ class PagePathway(Pathway, AbstractBase):
     """
     template = "pathway/templates/page_pathway.html"
     modal_template = "pathway/templates/modal_page_pathway.html"
+
