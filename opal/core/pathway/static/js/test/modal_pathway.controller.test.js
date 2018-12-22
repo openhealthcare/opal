@@ -20,7 +20,8 @@ describe('ModalPathwayCtrl', function() {
 
     $scope = $rootScope.$new();
     pathwayDefinition = {
-      pathway_service: "Pathway"
+      pathway_service: "Pathway",
+      initial_data: null,
     };
 
     metadata = {"fake": "metadata"};
@@ -55,9 +56,15 @@ describe('ModalPathwayCtrl', function() {
   });
 
   it('should log analytics with episode category if provided', function(){
+    pathwayDefinition.initial_data = {
+      category_name: "some category",
+      demographics: [{
+        hospital_number: 1,
+        patient_id: 1
+      }]
+    };
     $controller('ModalPathwayCtrl', {
         $scope: $scope,
-        episode: {category_name: "some category"},
         referencedata: referencedata,
         metadata: metadata,
         pathwayDefinition: pathwayDefinition,

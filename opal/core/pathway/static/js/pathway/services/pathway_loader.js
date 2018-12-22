@@ -9,7 +9,7 @@ angular.module('opal.services')
               url = url + "/" + patientId + "/" + episodeId;
             }
 
-            $http({ cache: true, url: url, method: 'GET'}).then(
+            $http({ cache: false, url: url, method: 'GET'}).then(
               function(resource) {
       		        deferred.resolve(resource.data);
               },
