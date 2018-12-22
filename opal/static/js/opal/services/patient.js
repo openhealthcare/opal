@@ -1,8 +1,8 @@
-angular.module('opal.services').service('Patient', function(Episode, FieldTranslater) {
+angular.module('opal.services').service('Patient', function(Episode, FieldTranslator) {
   "use strict";
   var Patient = function(patientData){
     var self = this;
-    _.extend(this, FieldTranslater.patientToJs(patientData));
+    _.extend(this, FieldTranslator.patientToJs(patientData));
     this.episodes = _.map(this.episodes, function(resource) {
       return new Episode(resource);
     });

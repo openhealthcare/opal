@@ -6,7 +6,7 @@
         <small>
           {% block subheading %}
           [[ episode.demographics[0].hospital_number ]]
-          [[ episode.demographics[0].date_of_birth | shortDate ]]
+          [[ episode.demographics[0].date_of_birth | displayDate ]]
           {% endblock %}
         </small>
       </h1>

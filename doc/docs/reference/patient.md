@@ -10,6 +10,10 @@ Returns the relevant Demographics instance for the patient.
 
 Returns a new `Episode` for this patient.
 
+#### `Patient.get_absolute_url()`
+
+Return the URL for this patient
+
 #### to_dict
 
 Return the dictionary representation of this patient - suitable for serialization.

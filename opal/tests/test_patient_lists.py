@@ -1,9 +1,10 @@
 """
 Unittests for opal.core.patient_lists
 """
+import datetime
 import os
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
 
@@ -139,25 +140,90 @@ class ColumnTestCase(OpalTestCase):
         with self.assertRaises(ValueError):
             patient_lists.Column(title='Foo', name='foo')
 
+    def test_get_template_path(self):
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        value = c.get_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual('foo/bar', value)
+
+    def test_get_detail_template_path(self):
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        value = c.get_detail_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual('car/dar', value)
+
+    def test_to_dict(self):
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        as_dict = c.to_dict(MagicMock('Mock Patient List'))
+        self.assertEqual(as_dict['name'], 'foo')
+        self.assertEqual(as_dict['title'], 'Foo')
+        self.assertEqual(as_dict['single'], True)
+        self.assertEqual(as_dict['icon'], 'fa-ya')
+        self.assertEqual(as_dict['list_limit'], 5)
+        self.assertEqual(as_dict['template_path'], 'foo/bar')
+        self.assertEqual(as_dict['detail_template_path'], 'car/dar')
+
+
 class ModelColumnTestCase(OpalTestCase):
 
     def test_sets_model(self):
         c = patient_lists.ModelColumn(
-            MagicMock(name='mock list'),
             models.Demographics
         )
         self.assertEqual(models.Demographics, c.model)
 
     def test_pass_in_not_a_model(self):
         with self.assertRaises(ValueError):
-            patient_lists.ModelColumn(None, OpalTestCase)
+            patient_lists.ModelColumn(OpalTestCase)
 
     def test_to_dict_sets_model_column(self):
         c = patient_lists.ModelColumn(
-            MagicMock(name='mock list'),
             models.Demographics
         )
-        self.assertEqual(True, c.to_dict()['model_column'])
+        as_dict = c.to_dict(MagicMock('Mock Patient List'))
+        self.assertEqual(True, as_dict['model_column'])
+
+    def test_get_template_path(self):
+        c = patient_lists.ModelColumn(
+            models.Demographics
+        )
+        value = c.get_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual(
+            os.path.join('records', 'demographics.html'),
+            value
+        )
+
+    def test_get_detail_template_path(self):
+        c = patient_lists.ModelColumn(
+            models.Demographics
+        )
+        value = c.get_detail_template_path(MagicMock('Mock Patient List'))
+        self.assertEqual(
+            os.path.join('records', 'demographics_detail.html'),
+            value)
+
 
 
 class TestPatientList(OpalTestCase):
@@ -203,7 +269,7 @@ class TestPatientList(OpalTestCase):
 
     def test_to_dict_inactive_episodes(self):
         p, e = self.new_patient_and_episode_please()
-        e.active = False
+        e.end = datetime.date.today()
         e.save()
 
         class All(patient_lists.PatientList):
@@ -232,6 +298,10 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(menu.activepattern, '/f')
         self.assertEqual(menu.icon, 'fa-foo')
         self.assertEqual(menu.display, 'Foo')
+
+    def test_as_menuitem_set_index(self):
+        menu = TaggingTestPatientList.as_menuitem(index=-30)
+        self.assertEqual(-30, menu.index)
 
     def test_as_menuitem_uses_getter_for_icon(self):
         menu = IconicList.as_menuitem()
@@ -384,12 +454,14 @@ class TestTaggedPatientList(OpalTestCase):
         self.assertEqual(set(taglist), expected)
 
     def test_to_dict_inactive_episodes(self):
+        # Older vesions of Opal only serialised active episodes here
+        # Explicitly test to prevent a reversion
         p, e = self.new_patient_and_episode_please()
         e.set_tag_names(['carnivore'], self.user)
         self.assertEqual(e.pk, TaggingTestNotSubTag().to_dict(self.user)[0]['id'])
-        e.active = False
+        e.end = datetime.date.today()
         e.save()
-        self.assertEqual(0, len(TaggingTestNotSubTag().to_dict(self.user)))
+        self.assertEqual(1, len(TaggingTestNotSubTag().to_dict(self.user)))
 
 
 class TabbedPatientListGroupTestCase(OpalTestCase):

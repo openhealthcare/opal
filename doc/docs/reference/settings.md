@@ -31,3 +31,13 @@ to set the `href` attribute for the favicon tag in the default application `<hea
 
 The version number of your application. Displayed in the header by default.
 Scaffolded applications start at `<0.0.1`.
+
+## DATE_DISPLAY_FORMAT
+
+The format string to use when rendering dates using the `displayDate` Angular filter.
+This defaults to `D MMM YYYY`.
+
+Note that as formatting is performed by calling the Moment.js `.format()` method, the
+date formatting syntax is neither Python `strftime` nor Django date formatting syntax.
+
+For full details consult https://momentjs.com/docs/#/displaying/format/

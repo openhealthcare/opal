@@ -18,4 +18,4 @@ class FKorFTTest(TestCase):
         instance = self.Model()
         instance.dog = None
 
-        self.assertEqual(b(''), instance.dog)
+        self.assertEqual('', instance.dog)

@@ -9,7 +9,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from opal import models
-from opal.core import exceptions, subrecords
+from opal.core import application, exceptions, subrecords
 from opal.models import (
     Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
 )
@@ -39,6 +39,11 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    def test_get_absolute_url(self):
+        patient = models.Patient.objects.create()
+        expected = '/#/patient/{}'.format(patient.id)
+        self.assertEqual(expected, patient.get_absolute_url())
+
     def test_demographics(self):
         patient = models.Patient.objects.create()
         self.assertEqual(patient.demographics_set.get(), patient.demographics())
@@ -64,18 +69,17 @@ class PatientTestCase(OpalTestCase):
         episode_dict = episode.to_dict(self.user)
         self.assertEqual(episode_dict, patient.to_dict(self.user)['episodes'][episode.id])
 
-    @patch("opal.models.application.get_app")
-    def test_created_with_the_default_episode(self, get_app):
-        test_app = MagicMock()
-        test_app.default_episode_category ="testcategory"
-        get_app.return_value = test_app
+    def test_created_with_the_default_episode(self):
         _, episode = self.new_patient_and_episode_please()
-        self.assertEqual(episode.category_name, "testcategory")
+        self.assertEqual(
+            application.get_app().default_episode_category,
+            episode.category_name
+        )
 
     def test_create_episode_category(self):
         patient = models.Patient.objects.create()
-        e = patient.create_episode(category_name='testcategory')
-        self.assertEqual('testcategory', e.category_name)
+        e = patient.create_episode(category_name='Outpatient')
+        self.assertEqual('Outpatient', e.category_name)
 
     def test_bulk_update_patient_subrecords(self):
         original_patient = models.Patient()
@@ -282,16 +286,6 @@ class SubrecordTestCase(OpalTestCase):
             "a_subrecord_b"
         ])
         self.assertEqual(result, "found")
-
-    @patch('opal.models.logging')
-    def test_get_display_name_from_property(self, logging):
-        display_name = EntitledHatWearer.get_display_name()
-        self.assertEqual('Entitled Wearer of Hats', display_name)
-        self.assertTrue(logging.warning)
-        logging.warning.assert_called_once_with(
-            "_title has been deprecated and will be removed in v0.12.0, please \
-use verbose_name in Meta instead for EntitledHatWearer"
-        )
 
     def test_get_display_name_from_meta_verbose_name(self):
         self.assertEqual(
@@ -832,3 +826,31 @@ class ExternalSystemTestCase(OpalTestCase):
             ExternalSubRecord.get_modal_footer_template(),
             "partials/_sourced_modal_footer.html"
         )
+
+
+class ContactNumberTestCase(OpalTestCase):
+
+    def test_str(self):
+        c = models.ContactNumber(name='Jane Doe', number='0777383828')
+        self.assertEqual('Jane Doe: 0777383828', c.__str__())
+
+
+class SynonymTestCase(OpalTestCase):
+
+    def test_str(self):
+        s = models.Synonym(name='Name')
+        self.assertEqual('Name', s.__str__())
+
+
+class MacroTestCase(OpalTestCase):
+
+    def test_str(self):
+        m = models.Macro(title='My Macro')
+        self.assertEqual('My Macro', m.__str__())
+
+
+class RoleTestCase(OpalTestCase):
+
+    def test_str(self):
+        r = models.Role(name='Doctor')
+        self.assertEqual('Doctor', r.__str__())

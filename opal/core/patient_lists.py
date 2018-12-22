@@ -14,12 +14,12 @@ class Column(object):
         Set up initial properties from either models or explicit arguments
         """
 
-        self.name = name
-        self.title = title
-        self.single = singleton
-        self.icon = icon
-        self.list_limit = limit
-        self.template_path = template_path
+        self.name                 = name
+        self.title                = title
+        self.single               = singleton
+        self.icon                 = icon
+        self.list_limit           = limit
+        self.template_path        = template_path
         self.detail_template_path = detail_template_path
 
         required = ['title', 'template_path']
@@ -28,41 +28,65 @@ class Column(object):
                 raise ValueError(
                     'Column must have a {0}'.format(attr))
 
-    def to_dict(self, **kwargs):
+    def get_template_path(self, patient_list):
+        """
+        Getter method for the template path for this column
+        """
+        return self.template_path
+
+    def get_detail_template_path(self, patient_list):
+        """
+        Getter method for the detail template path for this column
+        """
+        return self.detail_template_path
+
+    def to_dict(self, patient_list=None, **kwargs):
         return dict(
             name=self.name,
             title=self.title,
             single=self.single,
             icon=self.icon,
             list_limit=self.list_limit,
-            template_path=self.template_path,
-            detail_template_path=self.detail_template_path
+            template_path=self.get_template_path(patient_list),
+            detail_template_path=self.get_detail_template_path(patient_list)
         )
 
 
 class ModelColumn(Column):
 
-    def __init__(self, patient_list, model):
+    def __init__(self, model):
         self.model = model
-        self.patient_list = patient_list
+
         from opal.models import Subrecord
         if not issubclass(model, Subrecord):
             raise ValueError('Model must be a opal.models.Subrecord subclass')
 
-        self.name = model.get_api_name()
-        self.title = model.get_display_name()
-        self.single = model._is_singleton
-        self.icon = getattr(model, '_icon', '')
+        self.name       = model.get_api_name()
+        self.title      = model.get_display_name()
+        self.single     = model._is_singleton
+        self.icon       = getattr(model, '_icon', '')
         self.list_limit = getattr(model, '_list_limit', None)
-        self.template_path = model.get_display_template(
-            prefixes=self.patient_list().get_template_prefixes()
-        )
-        self.detail_template_path = model.get_detail_template(
-            prefixes=self.patient_list().get_template_prefixes()
+
+    def get_template_path(self, patient_list):
+        """
+        Getter method for the template path for this column
+        """
+        return self.model.get_display_template(
+            patient_list().get_template_prefixes()
         )
 
-    def to_dict(self, **kwargs):
-        dicted = super(ModelColumn, self).to_dict(**kwargs)
+    def get_detail_template_path(self, patient_list):
+        """
+        Getter method for the detail template path for this column
+        """
+        return self.model.get_detail_template(
+            prefixes=patient_list().get_template_prefixes()
+        )
+
+    def to_dict(self, patient_list=None, **kwargs):
+        dicted = super(ModelColumn, self).to_dict(
+            patient_list=patient_list, **kwargs
+        )
         dicted['model_column'] = True
         return dicted
 
@@ -134,11 +158,13 @@ class PatientList(discoverable.DiscoverableFeature,
             activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
             icon=kwargs.get('icon', kls.get_icon()),
             display=kwargs.get('display', kls.get_display_name()),
+            index=kwargs.get('index', '')
         )
 
     def get_template_prefixes(self):
-        """ a patient list can return templates particular to themselves
-            or indeed used by other patient lists
+        """
+        A patient list can return templates particular to themselves
+        or indeed used by other patient lists
         """
         return []
 
@@ -154,7 +180,7 @@ class PatientList(discoverable.DiscoverableFeature,
             if isinstance(column, Column):
                 columns.append(column.to_dict())
             else:
-                columns.append(ModelColumn(klass, column).to_dict())
+                columns.append(ModelColumn(column).to_dict(patient_list=klass))
         return columns
 
     @property
@@ -232,11 +258,6 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         if hasattr(self, 'subtag'):
             possible.append("{0}.{1}".format(self.tag, self.subtag))
         return possible
-
-    def to_dict(self, user):
-        # As opposed to general lists, we only ever want active episodes
-        # for tagged lists
-        return self.get_queryset(user=user).serialised_active(user)
 
 
 """
@@ -331,7 +352,7 @@ class TaggedPatientListMetadata(metadata.Metadata):
         tag_slugs = {}
         tag_list = [i for i in TaggedPatientList.for_user(user)]
 
-        if user.is_authenticated():
+        if user.is_authenticated:
             for taglist in tag_list:
                 slug = taglist().get_slug()
                 tag = taglist.tag

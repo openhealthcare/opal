@@ -5,7 +5,7 @@ import datetime
 import json
 import os
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import override_settings
 from mock import mock_open, patch, Mock, MagicMock
 

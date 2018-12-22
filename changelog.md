@@ -1,3 +1,138 @@
+### 0.13.0 (Major Release)
+
+#### Removes support for Python 2.x
+
+Due to the upgrade to Django 2.x, Opal no longer supports Python 2.x.
+
+Opal is now tested against Python 3.5, 3.6
+
+#### Episode.active
+
+The field `Episode.active` was previously implicitly set when calling `.set_tag_names()` to
+something equivalent to the value of `bool(len(tag_names) > 0)`.
+
+As of 0.13.0 the value of `Episode.active` is checked whenever `.save()` is called, prior
+to the database call. The correct value is looked up via `Episode.category.is_active()`.
+
+The default calculation of `.active` has also changed to be roughly equivalent to
+` bool(self.episode.end is None)`.
+
+Applications are now able to easily _change_ this behaviour by overriding the `.is_active`
+method of the relevant `EpisodeCategory`.
+
+#### Coding systems for lookuplists
+
+Lookuplist entries may now have an associated coding system and code value stored against them.
+
+This enables applications to explicitly code entries against e.g. SNOMED value sets.
+
+Note: This will requires a migration to be created for all applications.
+
+#### New date display format helpers
+
+Introduces two new Angular filters: `displayDate` and `displayDateTime`. These format a date
+for display according to the setting `DATE_DISPLAY_FORMAT`. This defaults to `D MMM YYYY`.
+
+New applications will have this setting in their scaffold, existing applications may wish to add
+it.
+
+All core Opal templates that previously used `shortDate` or `shortDateTime` have been updated to
+use either `displayDate` or `displayDateTime`.
+
+#### Removes scope.jumpToEpisode and scope.getEpisodeId from Search and Extract
+
+We no longer use these functions, instead we use an HTML link to the patient detail view.
+
+#### Removes Patient.to_dict().active_episode_id
+
+We no longer include a value for "active_episode_id" as part of the Patient to_dict serialisation.
+
+This is effectively meaningless since we moved to an episode model that allows for multiple
+concurrent episodes.
+
+#### Removes CopyToCategory
+
+Removes the entire CopyToCategory flow from Opal Core. If applications continue to rely on it,
+they are advised to implement at application level.
+
+In general application developers are advised to find alternative ways to display subrecords
+from multiple episodes rather than copying them however, as this is known to cause duplication
+of data that is hard to trace back later on.
+
+This includes the API endpoint at `episode/$id/actions/copyto/$category/`, the template
+`copy_to_category.html`, the Angular controller `CopyToCategoryCtrl` and service
+`CopyToCategory` and Subrecord property `_clonable`.
+
+#### Lookuplist data format
+
+Lookuplist entries in data files are no longer required to have an empty synonyms list
+if the entry doesn't have a synonym. This reduces the file size and makes it easier to
+hand craft data files for new applications.
+
+#### TaggedPatientList Episode serialisation
+
+Alters the default serialisation of TaggedPatientList serialisation to no longer filter out
+'inactive' episodes. Given that 'active' was always true when an episode had a tag, this
+was effectivly a no-op anyway unless applications were altering the `get_queryset` for
+these patient lists somehow.
+
+#### Removes the deprecated Model._title property
+
+Use of `Model._title` to set a display name of a subrecord has issued a warning for several
+releases - this has now been removed and will no longer work.
+
+
+#### Free text or foreign key fields are now, by default case insensitive
+
+This can be adjusted with a flag on the field.
+
+Existing fk_or_ft fields could therefore still have the field set as free text.
+
+This change is not accompanied by a retrospective migration so your existing fk_or_ft may be
+stored in a case sensitive manner. It is recommended you migrate all of your fk_or_ft fields
+as this will give you consistent behaviour.
+
+##### For example
+
+Prior to this change if I had an allergy for "paracetomol" but an entry in the models.Drug
+table of "Paracetomol", it would be stored as free text in the `Allergies.drug` field, because
+it was case sensitive. Going forward after this change it will be saved as a foreign key. This
+change will not be made retrospecively however so you would need to add a migration that resaved
+the Allergies.drug.
+
+#### Misc Changes
+
+* The undocumented Reopen Episode flow included in Opal < 0.8.0 has now been completely removed,
+including the `reopen_episode_modal.html` template and the url/view at `templates/modals/reopen_episode.html/`.
+
+* Removes the method `.deleteItem` from the `RecordEditor` service.
+
+* Adds in a footer updated/created by to the form base template
+
+* Changes the default value of `_ft` fields on `ForeignKeyOrFreeTextField` from b'' to ''. This requires a migration
+
+* `__unicode__` model methods have been renamed `__str__`
+
+* Adds an index argument to `PatientList.as_menuitem()` and `Pathway.as_menuitem()`
+
+* Adds a `get_absolute_url()` method to `Patient` and `Episode
+
+
+* Renames the (undocumented, internal) Angular service `FieldTranslater` to `FieldTranslator`
+
+* If an item is deleted from the edit item modal, RecordEditor.openEditItemModal will now resolve after
+  the delete item modal is closed with 'deleted'
+
+#### Updates to the Dependency Graph
+
+* Django: 1.10.8 -> 2.0.9
+* Django Rest Framework: 3.4.7 -> 3.7.4
+* Django Reversion: 1.10.2 -> 3.0.1
+* Letter: 0.4.1 -> 0.5
+* Requests: 2.18.4 -> 2.20.1
+* Psycopg2: 2.7 -> 2.7.6.1
+* Python Dateutil: 2.4.2 -> 2.7.5
+
 ### 0.12.0 (Major Release)
 
 #### Misc Changes

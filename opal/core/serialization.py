@@ -1,6 +1,7 @@
 """
 Opal [de]seralization helpers
 """
+import collections
 import datetime
 
 from django.conf import settings
@@ -55,6 +56,25 @@ def deserialize_date(value):
     return dt.date()
 
 
+def _temporal_thing_to_string(thing):
+    """
+    If THING is a time, date, or datetime, return a string representation of it
+    otherwise, return THING unchanged.
+    """
+    if isinstance(thing, datetime.time):
+        return format(thing, settings.TIME_FORMAT)
+    elif isinstance(thing, datetime.datetime):
+        return format(thing, settings.DATETIME_FORMAT)
+    elif isinstance(thing, datetime.date):
+        return format(
+            datetime.datetime.combine(
+                thing, datetime.datetime.min.time()
+            ), settings.DATE_FORMAT
+        )
+    else:
+        return thing
+
+
 class OpalSerializer(DjangoJSONEncoder):
     """
     Render a dict as JSON
@@ -62,14 +82,22 @@ class OpalSerializer(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, six.binary_type):
             return o.decode('utf-8')
-        if isinstance(o, datetime.time):
-            return format(o, settings.TIME_FORMAT)
-        elif isinstance(o, datetime.datetime):
-            return format(o, settings.DATETIME_FORMAT)
-        elif isinstance(o, datetime.date):
-            return format(
-                datetime.datetime.combine(
-                    o, datetime.datetime.min.time()
-                ), settings.DATE_FORMAT
-            )
+
+        if isinstance(o, list) or isinstance(o, tuple):
+            return [_temporal_thing_to_string(i) for i in o]
+
+        if isinstance(o, collections.Mapping):
+            return {
+                _temporal_thing_to_string(k): _temporal_thing_to_string(v)
+                for k, v in o.items()
+            }
+
+        old_type = type(o)
+        o = _temporal_thing_to_string(o)
+        if type(o) != old_type:
+            # We converted a date / time / datetime so return now without super
+            return o
+
+        # o is not a type we know how to handle so we
+        # fall back to DjangoJSONEncoder
         super(OpalSerializer, self).default(o)

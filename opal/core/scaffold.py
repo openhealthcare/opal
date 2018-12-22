@@ -245,8 +245,6 @@ def start_project(name, USERLAND_HERE):
     css.mkdir()
     nix.mv(app_dir/'static/js/app/routes.js',
            app_dir/'static/js/{0}/routes.js'.format(name))
-    nix.mv(app_dir/'static/js/app/flow.js',
-           app_dir/'static/js/{0}/flow.js'.format(name))
 
     templates = app_dir/'templates'/name
     templates.mkdir()

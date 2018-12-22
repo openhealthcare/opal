@@ -5,7 +5,7 @@ import inspect
 import itertools
 import os
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from opal.core import plugins, menus
 
 
@@ -66,9 +66,8 @@ class OpalApplication(object):
             "js/opal/services/patient_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/record_editor.js",
-            "js/opal/services/copy_to_category.js",
             "js/opal/services/patientlist_loader.js",
-            'js/opal/services/fields_translater.js',
+            'js/opal/services/fields_translator.js',
             'js/opal/services/referencedata.js',
             'js/opal/services/metadata.js',
             'js/opal/services/patient_consultation_record.js',
@@ -86,7 +85,6 @@ class OpalApplication(object):
             "js/opal/controllers/account.js",
             "js/opal/controllers/discharge.js",
             "js/opal/controllers/undischarge.js",
-            "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/keyboard_shortcuts.js",
             "js/opal/controllers/patient_access_log.js",
             "js/opal/controllers/lookup_list_reference.js"
@@ -136,7 +134,7 @@ class OpalApplication(object):
         items = []
         items += klass.menuitems
         if user:
-            if not user.is_authenticated():
+            if not user.is_authenticated:
                 return []
             else:
                 items.append(logout)

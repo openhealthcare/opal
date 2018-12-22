@@ -5,7 +5,7 @@ import inspect
 import json
 from collections import defaultdict
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models, transaction
 from django.utils.text import slugify
 from six import string_types
@@ -71,6 +71,7 @@ class Pathway(discoverable.DiscoverableFeature):
             activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
             icon=kwargs.get('icon', kls.get_icon()),
             display=kwargs.get('display', kls.get_display_name()),
+            index=kwargs.get('index', '')
         )
 
     def get_pathway_service(self, is_modal):

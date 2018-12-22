@@ -5,7 +5,7 @@ import datetime
 from opal.core.exceptions import InitializationError
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from opal.core import exceptions
 from opal.core.test import OpalTestCase
 from opal.core.views import OpalSerializer
@@ -480,6 +480,10 @@ class TestPathwayMethods(OpalTestCase):
         self.assertEqual('/B', menu.activepattern)
         self.assertEqual('fa-sea', menu.icon)
         self.assertEqual('Bleu', menu.display)
+
+    def test_as_menuitem_set_index(self):
+        menu = ColourPathway.as_menuitem(index=-30)
+        self.assertEqual(-30, menu.index)
 
     def test_as_menuitem_uses_getter_for_icon(self):
         menu = OveridePathway.as_menuitem()

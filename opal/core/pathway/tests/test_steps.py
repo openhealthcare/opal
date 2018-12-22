@@ -1,7 +1,7 @@
 """
 unittests for opal.core.pathway.steps
 """
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from mock import MagicMock
 
 from opal.core import exceptions

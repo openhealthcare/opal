@@ -20,12 +20,12 @@ class MenuItem(object):
         if not isinstance(other, MenuItem):
             return NotImplemented
 
-        return (self.template_name == other.template_name and
-                self.activepattern == other.activepattern and
-                self.href == other.href and
-                self.icon == other.icon and
-                self.display == other.display and
-                self.index == other.index)
+        return all([self.template_name == other.template_name,
+                    self.activepattern == other.activepattern,
+                    self.href == other.href,
+                    self.icon == other.icon,
+                    self.display == other.display,
+                    self.index == other.index])
 
     def __ne__(self, other):
         if not isinstance(other, MenuItem):

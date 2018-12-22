@@ -1,10 +1,10 @@
 mock
 pytz
-python-dateutil==2.4.2
+python-dateutil==2.7.5
 coverage
 coveralls
 celery==3.1.25
 django-celery==3.2.2
-flake8==3.2.1
-requests==2.18.4
-psycopg2==2.7
+flake8==3.6.0
+requests==2.20.1
+psycopg2==2.7.6.1

@@ -58,16 +58,6 @@ Name of the field by which we want to sort these records when displaying.
         _sort = 'start_date'
 ```
 
-#### Subrecord._clonable
-
-A Boolean that is True by default used by `opal.views.EpisodeCopyToCategoryView`
-to determine if instances of this record should be copied across.
-
-```python
-    class Antimicrobial(EpisodeSubrecord):
-        _clonable = 'False'
-```
-
 #### Subrecord._exclude_from_extract
 
 Boolean to specify that this subrecord should be excluded from any standard data extract.
@@ -104,7 +94,7 @@ Classmethod that returns the display name of the subrecord.
 This is used as the user visible title of subrecord panels and modals amongst other places.
 
 By default this uses the Django
-[Meta verbose_name](https://docs.djangoproject.com/en/dev/ref/models/options/#verbose-name) 
+[Meta verbose_name](https://docs.djangoproject.com/en/dev/ref/models/options/#verbose-name)
 property
 
 ```python

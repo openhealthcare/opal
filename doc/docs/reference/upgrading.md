@@ -3,6 +3,58 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.12.0 - 0.11.2 -> 0.13.0
+
+#### Python versions
+
+Opal 0.13.0 drops support for Python 2.x
+If you have not already done so, you will need to upgrade your application to Python 3
+in order to upgrade.
+
+You may also like to run the tests for your application with the 'show warnings'
+flag e.g.  `python -Wd manage.py test`
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application. You will need to
+update both the Opal version, and versions of upgraded dependencies if
+you have specified them in for instance, a requirements.txt.
+
+(This will be the case if you use the requirements.txt originally provided by
+`opal startproject`)
+
+    # requirements.txt
+    opal==0.10.0
+    django==2.0.9
+    django-reversion==3.0.1
+    djangorestframework==3.7.4
+    letter==0.5
+    psycopg==2.7.6.1
+    python-dateutil==2.7.5
+    requests=2.20.1
+
+#### Free text or foreign key fields are now, by default case insensitive
+
+It is recommended you resave all model values for fk_or_ft fields as this will give you
+consistent behaviour. Otherwise fk_ft values wihch differ from fkt values only by
+case prior to this upgrade will be stored as ft and those afterwards will be stored as
+the relevant fk.
+
+
+#### Migrations
+
+You will need to run the migrations for Opal 0.13.0
+
+    $ python manage.py migrate opal
+
+As Opal 0.13.0 contains changes to the definition of lookuplists, you will
+need to run a makemigrations command to update your lookuplists to enable code
+values and change case sensitivity.
+
+    python manage.py makemigrations yourapp
+    python manage.py migrate yourapp
+
+
 ### 0.11.1 -> 0.11.2
 
 This bugfix release should be entirely backwards compatible.
@@ -15,7 +67,8 @@ This bugfix release should be entirely backwards compatible.
 
 Please upgrade django-compressor version to 2.2, ie update your requirements to
 
-# requirements.txt
+##### requirements.txt
+
 django-compressor==2.2
 
 ### 0.10.0 -> 0.10.1

@@ -11,35 +11,14 @@ from opal.core import exceptions
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
-
+from opal.tests.models import (
+    DatingModel, Dinner, UpdatableModelInstance, GetterModel, SerialisableModel
+)
 from opal.models import (
     UpdatesFromDictMixin, SerialisableFields, ToDictMixin
 )
 
 
-class DatingModel(UpdatesFromDictMixin, models.Model):
-    datetime = models.DateTimeField()
-    consistency_token = None
-
-
-class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
-    foo = models.CharField(max_length=200, blank=True, null=True)
-    bar = models.CharField(max_length=200, blank=True, null=True)
-    pid = models.CharField(max_length=200, blank=True, null=True)
-    hatty = ForeignKeyOrFreeText(test_models.Hat)
-    pid_fields = 'pid', 'hatty'
-
-
-class GetterModel(ToDictMixin, models.Model):
-    foo = models.CharField(max_length=200, blank=True, null=True)
-
-    def get_foo(self, user):
-        return "gotten"
-
-
-class SerialisableModel(SerialisableFields, models.Model):
-    pid = models.CharField(max_length=200, blank=True, null=True)
-    hatty = ForeignKeyOrFreeText(test_models.Hat)
 
 
 class SerialisableFieldsTestCase(OpalTestCase):
@@ -182,6 +161,30 @@ class SerialisableFieldsTestCase(OpalTestCase):
 class ToDictMixinTestCase(OpalTestCase):
     def setUp(self):
         self.model_instance = GetterModel(foo="blah")
+
+    def test_to_dict(self):
+        patient, episode = self.new_patient_and_episode_please()
+        dinner = Dinner.objects.create(episode=episode)
+        as_dict = dinner.to_dict(self.user)
+        expected = {
+            'food':              None,
+            'time':              None,
+            'id':                dinner.id,
+            'episode_id':        episode.id,
+            'consistency_token': '',
+            'created':           None,
+            'created_by_id':     None,
+            'updated':           None,
+            'updated_by_id':     None
+        }
+        self.assertEqual(expected, as_dict)
+
+    def test_to_dict_empty_fk_ft_fields(self):
+        patient, episode = self.new_patient_and_episode_please()
+        demographics = patient.demographics_set.get()
+        as_dict = demographics.to_dict(self.user)
+        for field in ['title', 'sex', 'ethnicity']:
+            self.assertEqual('', as_dict[field])
 
     def test_getter_is_used(self):
         self.assertEqual(

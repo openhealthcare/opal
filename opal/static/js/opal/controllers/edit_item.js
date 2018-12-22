@@ -77,16 +77,20 @@ angular.module('opal.controllers').controller(
                 });
             };
 
-            $scope.delete = function(result){
-                $modalInstance.close(result);
-                var modal = $modal.open({
-                    templateUrl: '/templates/modals/delete_item_confirmation.html/',
+            $scope.delete = function(){
+                var deferred = $q.defer();
+                $modalInstance.close(deferred.promise);
+                var deleteModal =  $modal.open({
+                    templateUrl: '/templates/delete_item_confirmation_modal.html',
                     controller: 'DeleteItemConfirmationCtrl',
                     resolve: {
                         item: function() {
                             return item;
                         }
                     }
+                });
+                deleteModal.result.then(function(result){
+                    deferred.resolve(result)
                 });
             };
 
@@ -122,7 +126,7 @@ angular.module('opal.controllers').controller(
 
             $scope.undischarge = function() {
                 undischargeMoadal = $modal.open({
-                    templateUrl: '/templates/modals/undischarge.html/',
+                    templateUrl: '/templates/undischarge_modal.html',
                     controller: 'UndischargeCtrl',
                     resolve: {episode: function(){ return episode } }
                 }

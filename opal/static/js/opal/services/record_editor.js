@@ -5,40 +5,6 @@ angular.module('opal.services').factory('RecordEditor', function(
   var RecordEditor = function(episode){
     var self = this;
 
-    self.deleteItem = function(name, iix){
-      var item = self.getItem(name, iix);
-      var deferred = $q.defer();
-
-      if (!angular.isDefined(item) || item.isReadOnly() || item.isSingleton()) {
-        // Cannot delete 'Add'
-        deferred.resolve();
-        return deferred.promise;
-      }
-
-      $rootScope.state = 'modal';
-
-      UserProfile.load().then(function(profile){
-        if(profile.readonly){
-            deferred.resolve();
-            return deferred.promise;
-        }
-
-        var modal = $modal.open({
-          templateUrl: '/templates/modals/delete_item_confirmation.html/',
-          controller: 'DeleteItemConfirmationCtrl',
-          resolve: {
-            item: function() { return item; },
-            profile: function(){ return profile; }
-          }
-        }).result.then(function(result) {
-          $rootScope.state = 'normal';
-          deferred.resolve(result);
-        });
-      });
-
-      return deferred.promise;
-    };
-
     self.getItem = function(name, iix){
       if (episode[name] && episode[name][iix] && episode[name][iix].columnName) {
           return episode[name][iix];
@@ -78,8 +44,10 @@ angular.module('opal.services').factory('RecordEditor', function(
           var modal = $modal.open(modal_opts);
 
           modal.result.then(function(result) {
-            $rootScope.state = 'normal';
-            deferred.resolve(result);
+            $q.when(result).then(function(x){
+              $rootScope.state = 'normal';
+              deferred.resolve(result);
+            });
           });
         }
       });

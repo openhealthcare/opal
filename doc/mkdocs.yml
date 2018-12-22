@@ -1,5 +1,6 @@
 site_name: Opal
 docs_dir: docs
+
 pages:
   - Home: index.md
   - installation.md
@@ -110,17 +111,19 @@ pages:
 
 
 
-theme: mkdocs
-theme: cerulean
-theme: cosmo
-theme_dir: 'custom_theme'
+#theme: mkdocs
+theme:
+  name: cosmo
+  custom_dir: 'custom_theme/'
 
+extra_css:
+  - opaldocs.css
 
 dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.12.0
+  version: v0.13.0
 
 markdown_extensions:
     - fenced_code

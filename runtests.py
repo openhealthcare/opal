@@ -32,7 +32,7 @@ test_settings_config = dict(
     OPAL_BRAND_NAME = 'opal',
     INTEGRATING=False,
     DEFAULT_DOMAIN='localhost',
-    MIDDLEWARE_CLASSES=(
+    MIDDLEWARE=(
         'django.middleware.common.CommonMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'opal.middleware.AngularCSRFRename',
@@ -40,8 +40,7 @@ test_settings_config = dict(
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'opal.middleware.DjangoReversionWorkaround',
-        'reversion.middleware.RevisionMiddleware',
-        'axes.middleware.FailedLoginMiddleware',
+        'reversion.middleware.RevisionMiddleware'
     ),
     INSTALLED_APPS=(
         'django.contrib.auth',
@@ -59,13 +58,6 @@ test_settings_config = dict(
         'opal.core.pathway.tests.pathway_test',
         'opal.core.pathway',
     ),
-    MIGRATION_MODULES={
-        'auth': 'opal.nomigrations',
-        'contenttypes': 'opal.nomigrations',
-        'staticfiles': 'opal.nomigrations',
-        'reversion': 'opal.nomigrations',
-        'opal': 'opal.nomigrations'
-    },
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -111,6 +103,12 @@ test_settings_config = dict(
                 'propagate': True,
             },
         }
+    },
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.TokenAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
+        )
     }
 )
 
@@ -124,8 +122,6 @@ if 'TRAVIS' in os.environ:
             'HOST': 'localhost',
         }
     }
-
-
 
 settings.configure(**test_settings_config)
 
