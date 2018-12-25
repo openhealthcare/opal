@@ -737,6 +737,49 @@ describe('OPAL Directives', function(){
         });
     });
 
+    describe("dateWrapper", function(){
+        var markup = "<div date-wrapper='editing.subrecordName'>some field</div";
+
+        it("should translate a string to a date", function(){
+            var today = "12/11/2017 12:23"
+            scope.editing = {subrecordName: today};
+            $compile(markup)(scope);
+            scope.$digest();
+            var expected = new Date(2017, 10, 12, 12, 23)
+            expect(scope.editing.subrecordName).toEqual(expected);
+        });
+
+        it("should translate a moment to a date", function(){
+            var today = moment();
+            scope.editing = {subrecordName: today};
+            $compile(markup)(scope);
+            scope.$digest();
+            expect(scope.editing.subrecordName).toEqual(today.toDate());
+        });
+
+        it("should not translate a date", function(){
+            var today = new Date();
+            scope.editing = {subrecordName: today};
+            $compile(markup)(scope);
+            scope.$digest();
+            expect(scope.editing.subrecordName).toBe(today);
+        });
+
+        it("a none should remain a null", function(){
+            scope.editing = {subrecordName: null};
+            $compile(markup)(scope);
+            scope.$digest();
+            expect(scope.editing.subrecordName).toBe(null);
+        });
+
+        it("an empty dictionary should be a null", function(){
+            // if scope.editing is null, return null
+            $compile(markup)(scope);
+            scope.$digest();
+            expect(scope.editing).toBe(undefined);
+        });
+    })
+
     describe('timeSet', function(){
       var markup = "<div time-set-change='someFun()' time-set='editing.subrecord.someField'><div>[[ internal.time_field ]]</div></div>";
 

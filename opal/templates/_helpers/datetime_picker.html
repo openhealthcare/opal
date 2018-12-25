@@ -1,6 +1,6 @@
 {% load forms %}
 {% datepicker label=date_label change=change model=model data=date_picker_args style=style %}
-<div class="form-group"
+<div date-wrapper="{{ model }}" class="form-group"
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
   <label class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">{{ time_label }}</label>

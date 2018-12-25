@@ -476,6 +476,36 @@ directives.directive('avatarForUser', function(User){
     }
 });
 
+directives.directive('dateWrapper', function($parse, toMomentFilter){
+    return {
+        restrict: 'A',
+        scope: true,
+        link: function(scope, element, attrs){
+            var getter = $parse(attrs.dateWrapper);
+
+            var current = getter(scope);
+
+            // if its already a date, leave it
+            // its could be being
+            // in multiple places, e.g. datetime pickers
+
+            if(!_.isDate(current)){
+                if(moment.isMoment(current)){
+                    current = current.toDate();
+                }
+                else{
+                    var currentMoment = toMomentFilter(current)
+                    if(currentMoment){
+                        current = currentMoment.toDate();
+                    }
+                }
+            }
+            var setter = getter.assign;
+            setter(scope, current);
+        }
+    }
+});
+
 directives.directive("timeSet", function ($parse) {
   return {
     restrict: 'A',

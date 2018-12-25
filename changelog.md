@@ -81,6 +81,9 @@ these patient lists somehow.
 Use of `Model._title` to set a display name of a subrecord has issued a warning for several
 releases - this has now been removed and will no longer work.
 
+#### DatePicker/DateTimePicker will now cast the js variable to a date
+
+The template tags `datetimepicker` and `datepicker` will now have the `model` attribute passed to them automatically cast to a date if it not already a date. This is done by the new directive `dateWrapper`
 
 #### Free text or foreign key fields are now, by default case insensitive
 
