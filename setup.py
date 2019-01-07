@@ -48,7 +48,7 @@ setup(
         'ffs>=0.0.8.2',
         'letter==0.5',
         'jinja2==2.10',
-        'django==2.0.9',
+        'django==2.1.5',
         'requests==2.20.1',
         'django-axes==1.7.0',
         'djangorestframework==3.7.4',
