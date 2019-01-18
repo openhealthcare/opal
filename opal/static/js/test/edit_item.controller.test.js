@@ -174,6 +174,25 @@ describe('EditItemCtrl', function (){
             expect(args.resolve.item()).toEqual(item)
         });
 
+        it('should return the output of the delete modal', function(){
+            spyOn($modal, 'open');
+            var promiseResolved = false;
+            $modal.open.and.returnValue({
+                result: {
+                    then: function(x){
+                        x("cancelled");
+                    }
+                }
+            });
+            spyOn($q, "defer").and.returnValue({
+                resolve: function(result){
+                    promiseResolved = result;
+                }
+            });
+
+            $scope.delete("delete");
+            expect(promiseResolved).toBe("cancelled");
+        });
     });
 
     describe('cancel()', function(){
