@@ -78,8 +78,10 @@ angular.module('opal.services').factory('RecordEditor', function(
           var modal = $modal.open(modal_opts);
 
           modal.result.then(function(result) {
-            $rootScope.state = 'normal';
-            deferred.resolve(result);
+            $q.when(result).then(function(x){
+              $rootScope.state = 'normal';
+              deferred.resolve(result);
+            });
           });
         }
       });
