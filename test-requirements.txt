@@ -7,4 +7,4 @@ celery==3.1.25
 django-celery==3.2.2
 flake8==3.6.0
 requests==2.20.1
-psycopg2==2.7.6.1
+psycopg2==2.7.7
