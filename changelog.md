@@ -117,6 +117,9 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 
 * Adds a `get_absolute_url()` method to `Patient` and `Episode
 
+* Adds `btn-cancel`, `btn-save` and `btn-delete` classes to the respective form buttons.
+
+* Moves the cancel button by default to be left of the save button.
 
 * Renames the (undocumented, internal) Angular service `FieldTranslater` to `FieldTranslator`
 
