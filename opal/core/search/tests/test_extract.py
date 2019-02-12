@@ -21,23 +21,6 @@ from six import u
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
 
 
-class TestEncodeToUTF8(OpalTestCase):
-    def test_with_str(self):
-        d = u('\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111')
-        r = b"\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91"
-        self.assertEqual(
-            extract._encode_to_utf8(d),
-            r
-        )
-
-    def test_with_other(self):
-        d = 2
-        self.assertEqual(
-            extract._encode_to_utf8(d),
-            d
-        )
-
-
 class TestViewPOSTTestCase(OpalTestCase):
 
     def test_check_view(self):
@@ -330,7 +313,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 self.assertEqual(renderer.get_headers.call_count, 1)
                 self.assertEqual(csv.writer().writerow.call_count, 2)
                 self.assertEqual(csv.writer().writerow.mock_calls[0][1][0], ["header"])
-                self.assertEqual(csv.writer().writerow.mock_calls[1][1][0], [b"row"])
+                self.assertEqual(csv.writer().writerow.mock_calls[1][1][0], ["row"])
 
 
 class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
