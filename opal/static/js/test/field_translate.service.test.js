@@ -1,7 +1,7 @@
 describe('services', function() {
     "use strict";
 
-    var $rootScope, FieldTranslater, patientData, jsPatientData;
+    var $rootScope, FieldTranslator, patientData, jsPatientData;
     var opalTestHelper;
 
     beforeEach(function(){
@@ -9,7 +9,7 @@ describe('services', function() {
       module('opal.test');
       inject(function($injector){
           $rootScope   = $injector.get('$rootScope');
-          FieldTranslater = $injector.get('FieldTranslater');
+          FieldTranslator = $injector.get('FieldTranslator');
           opalTestHelper = $injector.get('opalTestHelper')
       })
 
@@ -60,12 +60,12 @@ describe('services', function() {
 
     describe('translateFieldsToJs()', function() {
         it('should convert dates to moments', function() {
-            var f = FieldTranslater.translateFieldsToJs({type:'date'}, new Date(2014, 2, 3));
+            var f = FieldTranslator.translateFieldsToJs({type:'date'}, new Date(2014, 2, 3));
             expect(moment.isMoment(f)).toEqual(true);
         });
 
         it('should convert date times to moments', function() {
-            var f = FieldTranslater.translateFieldsToJs(
+            var f = FieldTranslator.translateFieldsToJs(
                 {type:'date_time'}, new Date(2014, 2, 3, 11, 45, 9)
             );
             expect(moment.isMoment(f)).toEqual(true);
@@ -74,7 +74,7 @@ describe('services', function() {
 
     describe("jsToPatient", function(){
       it("should cast date and datetime fields", function(){
-          var result = FieldTranslater.jsToPatient(jsPatientData);
+          var result = FieldTranslator.jsToPatient(jsPatientData);
           expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
@@ -84,7 +84,7 @@ describe('services', function() {
 
           patientData.demographics[0].age = "35";
           patientData.demographics[0].weight = "12.2";
-          var result = FieldTranslater.jsToPatient(jsPatientData);
+          var result = FieldTranslator.jsToPatient(jsPatientData);
           expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
@@ -95,7 +95,7 @@ describe('services', function() {
 
             patientData.demographics[0].age = undefined;
             patientData.demographics[0].weight = undefined;
-            var result = FieldTranslater.jsToPatient(jsPatientData);
+            var result = FieldTranslator.jsToPatient(jsPatientData);
             expect(result.demographics).toEqual(patientData.demographics[0]);
         });
       });
@@ -107,7 +107,7 @@ describe('services', function() {
 
         patientData.demographics[0].age = undefined;
         patientData.demographics[0].weight = undefined;
-        var result = FieldTranslater.jsToPatient(jsPatientData);
+        var result = FieldTranslator.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
@@ -118,41 +118,41 @@ describe('services', function() {
 
         patientData.demographics[0].age = null;
         patientData.demographics[0].weight = null;
-        var result = FieldTranslater.jsToPatient(jsPatientData);
+        var result = FieldTranslator.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       })
 
 
       it('should handle strings with trailing spaces passed to dates', function(){
         jsPatientData.demographics.date_of_birth = "31/07/1980 ";
-        var result = FieldTranslater.jsToPatient(jsPatientData);
+        var result = FieldTranslator.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
       it('should handle strings with trailing spaces passed to date times', function(){
         jsPatientData.demographics.created = "07/04/2015 11:45:00 ";
-        var result = FieldTranslater.jsToPatient(jsPatientData);
+        var result = FieldTranslator.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
       it('should handle spaces  passed to dates', function(){
         jsPatientData.demographics.date_of_birth = "  ";
         patientData.demographics[0].date_of_birth = undefined;
-        var result = FieldTranslater.jsToPatient(jsPatientData);
+        var result = FieldTranslator.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
       it('should handle spaces  passed to date times', function(){
         jsPatientData.demographics.created = "  ";
         patientData.demographics[0].created = undefined;
-        var result = FieldTranslater.jsToPatient(jsPatientData);
+        var result = FieldTranslator.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       });
     });
 
     describe("patientToJs", function(){
       it("should cast date and datetime fields to moments", function(){
-          var result = FieldTranslater.patientToJs(patientData);
+          var result = FieldTranslator.patientToJs(patientData);
           expect(result.id).toEqual(123);
           var dob = result.demographics[0].date_of_birth.toDate()
           expect(dob).toEqual(new Date(1980, 6, 31));

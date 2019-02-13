@@ -4,7 +4,7 @@
 angular.module('opal.services')
     .factory('Episode', function(
         $http, $q, $rootScope, $routeParams, $window,
-        Item, RecordEditor, FieldTranslater) {
+        Item, RecordEditor, FieldTranslator) {
         "use strict";
 
         // TODO: Set this with a more idiomatic Angular way, and set it once.
@@ -273,7 +273,7 @@ recently changed it - refresh the page and try again');
                 if(!result.patients.length){
                     callbacks.newPatient(result);
                 }else if(result.patients.length == 1){
-                    var patient = FieldTranslater.patientToJs(result.patients[0]);
+                    var patient = FieldTranslator.patientToJs(result.patients[0]);
                     callbacks.newForPatient(patient)
                 }else{
                     callbacks.error();

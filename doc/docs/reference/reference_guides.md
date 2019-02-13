@@ -3,7 +3,8 @@
 The following reference guides are available:
 
 ### Models
-|
+
+|||
 -|-
 [opal.models.Episode](episode.md)| The central Episode model
 [opal.models.Patient](patient.md) | The Patient model
@@ -12,7 +13,8 @@ The following reference guides are available:
 [opal.models.*](mixins.md) | Mixin helpers for useful functionality
 
 ### Opal Core
-|
+
+|||
 -|-
 [opal.core.application](opal_application.md) | Opal Application objects|
 [opal.core.detail](detail_views.md)|Detail Views - Custom views over one or many episodes.|
@@ -29,7 +31,8 @@ The following reference guides are available:
 [opal.core.subrecords](core_subrecords.md) | Helpers for working with subrecords
 
 ### Angular Services
-|
+
+|||
 -|-
 [Patient](javascript/patient_service.md) | Patient objects
 [Episode](javascript/episode_service.md) | Episode objects
@@ -42,7 +45,7 @@ The following reference guides are available:
 
 ### Helper libraries
 
-|
+|||
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for Opal forms
 [The panels Templatetag library](panels_templatetags.md) | Rendering record panels
@@ -52,7 +55,7 @@ The following reference guides are available:
 
 ### Opal core modules
 
-|
+|||
 -|-
 [Making Search Queries](search_queries.md) | Search query backends and helper functions
 [Pathway](pathways.md)|Simple or complicated multilayed forms|
@@ -60,7 +63,7 @@ The following reference guides are available:
 
 ### Miscellaneous documentation
 
-|
+|||
 -|-
 [Settings](settings.md) | Opal settings|
 [Changelog](changelog.md) | Opal Changelog|

@@ -4,7 +4,7 @@ angular.module('opal.controllers')
         function($scope, $http,
                  $timeout, $routeParams,
                  $modalInstance, $rootScope,
-                 Episode, FieldTranslater,
+                 Episode, FieldTranslator,
                  referencedata,
                  demographics,
                  tags){
@@ -39,7 +39,7 @@ angular.module('opal.controllers')
               $scope.editing.start = doa;
             }
 
-            var toSave = FieldTranslater.jsToPatient($scope.editing);
+            var toSave = FieldTranslator.jsToPatient($scope.editing);
 
 		        $http.post('/api/v0.1/episode/', toSave).success(function(episode) {
 			        episode = new Episode(episode);

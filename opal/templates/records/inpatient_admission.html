@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-6">
-    [[ item.datetime_of_admission | shortDate ]] -
-    <span ng-show="item.datetime_of_discharge">[[ item.datetime_of_discharge | shortDate ]]</span>
+    [[ item.datetime_of_admission | displayDate ]] -
+    <span ng-show="item.datetime_of_discharge">[[ item.datetime_of_discharge | displayDate ]]</span>
     <span ng-hide="item.datetime_of_discharge">current</span>
   </div>
   <div class="col-md-6">

@@ -20,7 +20,7 @@
         <small>
           {% block subheading %}
           <span ng-show="patient.demographics[0].date_of_birth">
-            ([[ patient.demographics[0].date_of_birth | shortDate ]])
+            ([[ patient.demographics[0].date_of_birth | displayDate ]])
           </span>
           [[ patient.demographics[0].hospital_number ]]
           {% endblock %}
@@ -55,7 +55,7 @@
                    >
                   [[ e.category_name ]]
                   <span ng-show="e.start">
-                    [[ e.start | shortDate ]] - [[ e.end | shortDate ]]<span ng-show="!e.end">Current</span>
+                    [[ e.start | displayDate ]] - [[ e.end | displayDate ]]<span ng-show="!e.end">Current</span>
                   </span>
                 </a>
               </div>

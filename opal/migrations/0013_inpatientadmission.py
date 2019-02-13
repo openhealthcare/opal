@@ -28,9 +28,9 @@ class Migration(migrations.Migration):
                 ('bed', models.CharField(max_length=255, blank=True)),
                 ('admission_diagnosis', models.CharField(max_length=255, blank=True)),
                 ('external_identifier', models.CharField(max_length=255, blank=True)),
-                ('created_by', models.ForeignKey(related_name='created_opal_inpatientadmission_subrecords', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('patient', models.ForeignKey(to='opal.Patient')),
-                ('updated_by', models.ForeignKey(related_name='updated_opal_inpatientadmission_subrecords', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('created_by', models.ForeignKey(related_name='created_opal_inpatientadmission_subrecords', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
+                ('patient', models.ForeignKey(to='opal.Patient', on_delete=models.CASCADE)),
+                ('updated_by', models.ForeignKey(related_name='updated_opal_inpatientadmission_subrecords', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

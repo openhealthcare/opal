@@ -40,9 +40,6 @@ episode.recordEditor.newItem('diagnosis'):
 
 episode.recordEditor.editItem('diagnosis', 0);
 // -> Opens a modal that allows the user to edit the first diagnosis
-
-episode.recordEditor.deleteItem('diagnosis', 0);
-// -> Prompts the user to confirm the deletion of the first diagnosis
 ```
 
 ## Customising Subrecords

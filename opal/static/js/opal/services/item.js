@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('Item', function($http, $q, $injector, $window, FieldTranslater) {
+    .factory('Item', function($http, $q, $injector, $window, FieldTranslator) {
         return function(attrs, episode, columnSchema) {
             var item = this;
             this.episode =  episode;
@@ -13,7 +13,7 @@ angular.module('opal.services')
                     delete item[field.name];
                 });
 
-                var toUpdate = FieldTranslater.subRecordToJs(attrs, columnSchema.name);
+                var toUpdate = FieldTranslator.subRecordToJs(attrs, columnSchema.name);
                 angular.extend(item, toUpdate);
                 if(columnSchema.angular_service){
                     var serv = $injector.get(columnSchema.angular_service);
@@ -65,7 +65,7 @@ angular.module('opal.services')
 
             // casts to dates/datetimes to the format the server reads dates
             this.castToType = function(attrs){
-                return FieldTranslater.jsToSubrecord(attrs, columnSchema.name);
+                return FieldTranslator.jsToSubrecord(attrs, columnSchema.name);
             }
 
             //

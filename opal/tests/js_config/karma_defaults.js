@@ -38,6 +38,8 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
       'opal/services/flow.js',
       'opal/controllers_module.js',
       'opal/controllers/*.js',
+      '../../core/pathway/static/js/pathway/**/*.js',
+      '../../core/search/static/js/search/**/*.js',
       'test/test_helper.js'
     ];
 

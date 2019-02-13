@@ -108,17 +108,4 @@ angular.module('opal.controllers').controller(
 
     $window.location.href = searchUrl + '/#/' + "?" + $.param(params);
   };
-
-  $scope.getEpisodeID = function(patient){
-    var epid = patient.active_episode_id;
-    if(!epid){
-      epid = _.first(_.keys(patient.episodes));
-    }
-    return epid;
-  };
-
-  $scope.jumpToEpisode = function(patient){
-    $location.path('/episode/'+$scope.getEpisodeID(patient));
-  };
-
 });

@@ -169,7 +169,7 @@ describe('EditItemCtrl', function (){
             $scope.delete();
             expect($modal.open).toHaveBeenCalled()
             var args = $modal.open.calls.mostRecent().args[0];
-            expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
+            expect(args.templateUrl).toEqual('/templates/delete_item_confirmation_modal.html');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
             expect(args.resolve.item()).toEqual(item)
         });

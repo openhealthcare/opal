@@ -49,7 +49,6 @@
 
     var patientData = {
       id: 1,
-      active_episode_id: "123",
       demographics: demographics,
       episodes: {
         "123": episodeData

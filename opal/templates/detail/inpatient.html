@@ -4,7 +4,7 @@
     <div class="panel-heading text-center">
       <h3>
         Inpatient admission
-        [[ episode.start | shortDate]]<span ng-show="episode.end"> - [[ episode.end | shortDate ]]</span>
+        [[ episode.start | displayDate ]]<span ng-show="episode.end"> - [[ episode.end | displayDate ]]</span>
       </h3>
     </div>
     <div class="panel-body">
@@ -44,7 +44,7 @@
           <b>Admitted</b>
         </div>
         <div class="col-md-8">
-          [[ episode.start | shortDate ]]
+          [[ episode.start | displayDate ]]
         </div>
       </div>
       <div class="row" ng-show="episode.end">
@@ -52,7 +52,7 @@
           <b>Discharged</b>
         </div>
         <div class="col-md-8">
-          [[ episode.end | shortDate ]]
+          [[ episode.end | displayDate ]]
         </div>
       </div>
       <div class="row">

@@ -36,6 +36,9 @@
       angular.module('opal.config', []).value(
       'OPAL_FLOW_SERVICE',
       {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
+      ).value(
+      'DATE_DISPLAY_FORMAT',
+      {% if DATE_DISPLAY_FORMAT %}'{{ DATE_DISPLAY_FORMAT }}'{% else %}'D MMM YYYY'{% endif %}
       );
     </script>
 
@@ -88,20 +91,7 @@
 
   </head>
   <body>
-    {% block application %}{% endblock %}
-    <script>
-      // temporary for try outs
-      jQuery(function($){
-
-      // Touch Device Detection
-      var isTouchDevice = 'ontouchstart' in document.documentElement;
-      if( isTouchDevice ) {
-      $('body').addClass('touch');
-      }
-
-      });
-    </script>
-
+    {% block application %}{% endblock %}  
     <!-- google analytics -->
     {% block analytics %}
       <script>

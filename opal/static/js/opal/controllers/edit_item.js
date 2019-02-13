@@ -81,7 +81,11 @@ angular.module('opal.controllers').controller(
                 var deferred = $q.defer();
                 $modalInstance.close(deferred.promise);
                 var deleteModal =  $modal.open({
+<<<<<<< HEAD
                     templateUrl: '/templates/modals/delete_item_confirmation.html/',
+=======
+                    templateUrl: '/templates/delete_item_confirmation_modal.html',
+>>>>>>> v0.13.0
                     controller: 'DeleteItemConfirmationCtrl',
                     resolve: {
                         item: function() {
@@ -126,7 +130,7 @@ angular.module('opal.controllers').controller(
 
             $scope.undischarge = function() {
                 undischargeMoadal = $modal.open({
-                    templateUrl: '/templates/modals/undischarge.html/',
+                    templateUrl: '/templates/undischarge_modal.html',
                     controller: 'UndischargeCtrl',
                     resolve: {episode: function(){ return episode } }
                 }

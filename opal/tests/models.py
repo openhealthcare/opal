@@ -7,7 +7,7 @@ from opal.core import fields
 from opal import models
 from opal.core import lookuplists
 from opal.utils import AbstractBase
-
+from opal.models import UpdatesFromDictMixin, SerialisableFields, ToDictMixin
 
 class Birthday(models.PatientSubrecord):
     birth_date = dmodels.DateField(blank=True)
@@ -43,11 +43,13 @@ class HatWearer(models.EpisodeSubrecord):
 
 
 class EntitledHatWearer(models.EpisodeSubrecord):
-    _title = 'Entitled Wearer of Hats'
     _advanced_searchable = False
     _exclude_from_extract = True
 
     name = dmodels.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = 'Entitled Wearer of Hats'
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
@@ -71,7 +73,7 @@ class HouseOwner(models.PatientSubrecord):
 
 class House(dmodels.Model):
     address = dmodels.CharField(max_length=200)
-    house_owner = dmodels.ForeignKey(HouseOwner, null=True, blank=True)
+    house_owner = dmodels.ForeignKey(HouseOwner, null=True, blank=True, on_delete=dmodels.CASCADE)
 
 
 class Dog(lookuplists.LookupList):
@@ -90,8 +92,8 @@ class DogOwner(models.EpisodeSubrecord):
 
 
 class HoundOwner(models.EpisodeSubrecord):
-    name = dmodels.CharField(max_length=200, default=lambda: "Philipa")
-    dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound", default=lambda: "spaniel")
+    name = dmodels.CharField(max_length=200, default="Philipa")
+    dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound", default="spaniel")
 
 
 class FavouriteDogs(models.PatientSubrecord):
@@ -132,8 +134,16 @@ class CockerSpanielOwner(SpanielOwner):
         proxy = True
 
 
+class SensitiveDogOwner(models.EpisodeSubrecord):
+    name = dmodels.CharField(
+        max_length=200, default="Catherine"
+    )
+    dog = fields.ForeignKeyOrFreeText(
+        Dog, case_sensitive=True
+    )
+
+
 class Colour(models.EpisodeSubrecord):
-    _clonable = False
     _advanced_searchable = False
     _exclude_from_extract = True
     _angular_service = 'Colour'
@@ -181,23 +191,44 @@ class ExternalSubRecord(
 ):
     name = dmodels.CharField(max_length=200, blank=True, null=True)
 
-# We shouldn't, but we basically insist on some non-core models being there.
-if not getattr(models.Patient, 'demographics_set', None):
 
-    class Demographics(models.Demographics):
-        _is_singleton = True
-        pid_fields = 'first_name', 'surname',
-
-if not getattr(models.Episode, 'location_set', None):
-
-    class Location(models.Location):
-        _is_singleton = True
+class Demographics(models.Demographics):
+    _is_singleton = True
+    pid_fields = 'first_name', 'surname',
 
 
-if not getattr(models.Episode, 'symptoms', None):
-    class SymptomComplex(models.SymptomComplex):
-        pass
+class Location(models.Location):
+    _is_singleton = True
 
-if not getattr(models.Episode, 'patientconsultation_set', None):
-    class PatientConsultation(models.PatientConsultation):
-        pass
+
+class SymptomComplex(models.SymptomComplex):
+    pass
+
+
+class PatientConsultation(models.PatientConsultation):
+    pass
+
+
+class DatingModel(UpdatesFromDictMixin, dmodels.Model):
+    datetime = dmodels.DateTimeField()
+    consistency_token = None
+
+
+class UpdatableModelInstance(UpdatesFromDictMixin, dmodels.Model):
+    foo = dmodels.CharField(max_length=200, blank=True, null=True)
+    bar = dmodels.CharField(max_length=200, blank=True, null=True)
+    pid = dmodels.CharField(max_length=200, blank=True, null=True)
+    hatty = fields.ForeignKeyOrFreeText(Hat)
+    pid_fields = 'pid', 'hatty'
+
+
+class GetterModel(ToDictMixin, dmodels.Model):
+    foo = dmodels.CharField(max_length=200, blank=True, null=True)
+
+    def get_foo(self, user):
+        return "gotten"
+
+
+class SerialisableModel(SerialisableFields, dmodels.Model):
+    pid = dmodels.CharField(max_length=200, blank=True, null=True)
+    hatty = fields.ForeignKeyOrFreeText(Hat)

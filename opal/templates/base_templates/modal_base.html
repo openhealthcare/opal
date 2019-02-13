@@ -21,32 +21,32 @@
   {% if not single %}
       {% block modal_delete %}
         <span class="float-left" ng-show="editingMode()">
-            <button class="btn btn-secondary" ng-click="delete('delete')">
+            <button class="btn btn-secondary btn-delete" ng-click="delete('delete')">
               <i class="fa fa-trash-o"></i>
                 Delete
              </button>
          </span>
       {% endblock %}
   {% endif %}
-
+  {% block modal_cancel %}
+  <button class="btn btn-cancel" ng-click="cancel()">Cancel</button>
+  {% endblock %}
   {% block modal_save %}
 
   <span ng-show="form">
-    <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
+    <button check-form="form" class="btn btn-primary btn-save" ng-click="form.$valid && save('save')">
       <i class="fa fa-save"></i> Save
     </button>
   </span>
   <span ng-hide="form">
-    <button class="btn btn-primary" ng-click="save('save')">
+    <button class="btn btn-primary btn-save" ng-click="save('save')">
       <i class="fa fa-save"></i> Save
     </button>
   </span>
 
 
   {% endblock %}
-  {% block modal_cancel %}
-  <button class="btn" ng-click="cancel()">Cancel</button>
-  {% endblock %}
+
   {% if column.get_modal_footer_template %}
     {% include column.get_modal_footer_template %}
   {% endif %}

@@ -28,15 +28,9 @@ urlpatterns = [
          'password_change_form': ChangePasswordForm},
         name='change-password'),
 
-    url(r'^accounts/templates/account_detail.html',
-        views.AccountDetailTemplateView.as_view()),
-
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
-    url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
-        views.EpisodeCopyToCategoryView.as_view()),
+    url(r'^admin/', admin.site.urls),
 
     # Template views
     url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$',
@@ -48,26 +42,6 @@ urlpatterns = [
 
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
         views.EpisodeDetailTemplateView.as_view(), name="episode_detail"),
-
-    url(r'^templates/modals/undischarge.html/?$',
-        views.UndischargeTemplateView.as_view(),
-        name="undischarge_tempate_view"
-        ),
-
-    url(r'^templates/modals/hospital_number.html/?$',
-        views.HospitalNumberTemplateView.as_view()),
-
-    url(r'^templates/modals/reopen_episode.html/?$',
-        views.ReopenEpisodeTemplateView.as_view()),
-
-    url(r'^templates/modals/discharge_episode.html/?$',
-        views.DischargeEpisodeTemplateView.as_view()),
-
-    url(r'^templates/modals/copy_to_category.html/?$',
-        views.CopyToCategoryTemplateView.as_view()),
-
-    url(r'^templates/modals/delete_item_confirmation.html/?$',
-        views.DeleteItemConfirmationView.as_view()),
 
     # New Public facing API urls
     url(r'api/v0.1/', include(api.router.urls)),

@@ -67,10 +67,25 @@ angular.module('opal.controllers').controller(
             addPatient(demographics);
         };
 
-        $scope.newForPatient = function(patient){
-			if (patient.active_episode_id &&
+      $scope._active_episode_id = function(patient){
+        var active_ids = _.filter(
+          _.values(patient.episodes),
+          function(x){ return x.active == true }
+        );
+        if(active_ids.length){
+          return active_ids[0].id
+        }else{
+          return null;
+        }
+      }
+
+      $scope.newForPatient = function(patient){
+
+        var first_active_episode_id = $scope._active_episode_id(patient);
+
+			if (first_active_episode_id &&
                 // Check to see that this episode is not "Discharged"
-                patient.episodes[patient.active_episode_id].location[0].category != 'Discharged') {
+                patient.episodes[first_active_episode_id].location[0].category != 'Discharged') {
 				// This patient has an active episode
                 $scope.newForPatientWithActiveEpisode(patient);
 			} else { // This patient has no active episode
@@ -78,8 +93,11 @@ angular.module('opal.controllers').controller(
 			};
         };
 
-        $scope.newForPatientWithActiveEpisode = function(patient){
-			episode = new Episode(patient.episodes[patient.active_episode_id])
+      $scope.newForPatientWithActiveEpisode = function(patient){
+
+        var first_active_episode_id = $scope._active_episode_id(patient);
+
+			episode = new Episode(patient.episodes[first_active_episode_id])
 
             if(episode.category_name != 'Inpatient'){ // It's the wrong category - add new
                 return $scope.addForPatient(patient);

@@ -3,9 +3,9 @@
    {% if f['type'] == 'null_boolean' or f['type'] == 'boolean' %}
      {{ f['title'] }}
    {% elif f['type'] == 'date' %}
-    [[ item.{{ f['name'] }} | shortDate ]]
+    [[ item.{{ f['name'] }} | displayDate ]]
    {% elif f['type'] == 'date_time' %}
-    [[ item.{{ f['name'] }} | shortDateTime ]]
+    [[ item.{{ f['name'] }} | displayDateTime ]]
    {% elif f['type'] == 'time' %}
     [[ item.{{ f['name'] }} | shortTime ]]
    {% else %}

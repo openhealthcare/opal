@@ -10,8 +10,7 @@ import os
 import tempfile
 import zipfile
 
-from django.template import Context, loader
-from django.utils.encoding import force_bytes
+from django.template import loader
 from six import text_type
 
 from collections import defaultdict
@@ -19,13 +18,6 @@ from opal.models import Episode
 from opal.core.subrecords import (
     episode_subrecords, subrecords
 )
-
-
-def _encode_to_utf8(some_var):
-    if not isinstance(some_var, text_type):
-        return some_var
-    else:
-        return force_bytes(some_var)
 
 
 class CsvColumn(object):
@@ -139,7 +131,7 @@ class CsvRenderer(object):
             writer = csv.writer(csv_file)
             writer.writerow(self.get_headers())
             for row in self.get_rows():
-                writer.writerow([_encode_to_utf8(i) for i in row])
+                writer.writerow(row)
 
         logging.info("finished writing for {}".format(self.model))
 
@@ -222,7 +214,7 @@ def get_data_dictionary():
 def write_data_dictionary(file_name):
     dictionary = get_data_dictionary()
     t = loader.get_template("extract_data_schema.html")
-    ctx = Context(dict(schema=dictionary))
+    ctx = dict(schema=dictionary)
     rendered = t.render(ctx)
     with open(file_name, "w") as f:
         f.write(rendered)

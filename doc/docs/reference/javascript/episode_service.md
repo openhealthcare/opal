@@ -61,14 +61,6 @@ episode.recordEditor.newItem('diagnosis'):
 // -> Opens a modal with the diagnosis form and will create a new diagnosis on save
 ```
 
-#### Episode.recordEditor.deleteItem(name, index)
-
-Delete the `index-th` item of type `name`. Prompt the user to confirm this with a dialog.
-
-```js
-episode.recordEditor.deleteItem('diagnosis', 0);
-// -> Prompts the user to confirm the deletion of the first diagnosis
-```
 #### Episode.recordEditor.editItem(name, index)
 
 Open a modal from which the user may edit the `index-th` item of type `name`.

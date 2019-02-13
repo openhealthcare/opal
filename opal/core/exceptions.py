@@ -37,3 +37,11 @@ class InitializationError(Error):
 
 class MissingTemplateError(Error):
     pass
+
+
+class UnexpectedEpisodeCategoryNameError(Error):
+    pass
+
+
+class InvalidDataError(Error):
+    pass
