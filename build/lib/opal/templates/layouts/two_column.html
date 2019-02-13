@@ -1,0 +1,54 @@
+<div class="heading">
+  <div class="spaced bg-primary">
+    <div class="box">
+      <h1>
+        {% block heading %}[[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]{% endblock %}
+        <small>
+          {% block subheading %}
+          [[ episode.demographics[0].hospital_number ]]
+          [[ episode.demographics[0].date_of_birth | displayDate ]]
+          {% endblock %}
+        </small>
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="container headed-content-offset detail">
+  <div class="row"> <!-- Main Panel -->
+
+    <div class="col-md-3"> <!-- Action Panels -->
+      <div class="affix col-md-2 side-bar">
+        <div class="panel panel-default">
+          <div class="panel-heading ">
+            <h3>
+              [[ episode.demographics[0].first_name ]]
+              [[ episode.demographics[0].surname ]]
+            </h3>
+            <ul class="list-group">
+               <li class="list-group-item">
+                 {% include 'partials/_episode_actions.html' %}
+               </li>
+             </ul>
+          </div>
+        </div>
+        {% block sidebar_panels %}{% endblock %}
+      </div>
+    </div><!-- Ends Action Panels -->
+
+    <div class="col-md-9"> <!-- Detail panels -->
+      <div class="row">
+        <div class="col-md-6"> <!-- Detail panels col 1 -->
+          {% block left_column %}{% endblock %}
+        </div>                 <!-- Ends Detail panels col 1 -->
+        <div class="col-md-6"> <!-- Detail panels col 2 -->
+          {% block right_column %}{% endblock %}
+        </div>                 <!-- Ends Detail panels col 2 -->
+      </div>
+      <div class="row">
+        {% block under_split_cols %}{% endblock %}
+      </div>
+    </div> <!-- Ends Detail Panels -->
+
+  </div>
+</div> <!-- Ends Main Panel -->

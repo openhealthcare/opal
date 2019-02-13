@@ -1,0 +1,33 @@
+{% load forms %}
+<div pathway-step="{{ step.get_api_name }}">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>
+            {% if step.get_icon %}
+              {% icon step.get_icon %}
+            {% endif %}
+            {{ step.get_display_name }}
+          </h3>
+        </div>
+        <div class="panel-body">
+          {% block step_form %}
+            {% include step.get_template %}
+          {% endblock %}
+        </div>
+      </div>
+    </div> <!-- Col -->
+    <div class="col-md-4">
+      {% block side_bar %}
+        {% if step.get_help_text_template %}
+          {% include step.get_help_text_template %}
+        {% else %}
+          <p markdown class="sidebar-help content-offset">
+            {{ step.get_help_text }}
+          </p>
+        {% endif %}
+      {% endblock %}
+    </div>
+  </div>
+</div>

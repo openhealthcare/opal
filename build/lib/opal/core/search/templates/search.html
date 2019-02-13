@@ -1,0 +1,53 @@
+<div class="container content-offset search-container">
+
+  <div class="panel panel-primary search-panel panel-container">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>
+        <i class="fa fa-search"></i>
+        Patient Search
+      </h2>
+    </div>
+    <div class="panel-body">
+      <form ng-submit="search()" class="form form-horizontal">
+        <div class="row content-offset">
+            <div class="col-sm-4 col-sm-push-4">
+              <input type="text" autofocus
+                     name="name"
+                     slash-key-focus="!state || state==='normal'"
+                     ng-blur="enableShortcuts()"
+                     ng-focus="disableShortcuts()"
+                     placeholder="Name or Hospital Number"
+                     ng-model="query.searchTerm"
+                     class="form-control"
+                     autocomplete="off"
+                     />
+            </div>
+            <div class="col-sm-4 col-sm-push-4 text-right">
+                <a href="/search/#/extract" class="btn btn-secondary pull-right">
+                  <i class="fa fa-sliders"></i>
+                  Advanced
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 col-sm-push-4 text-center">
+                <a ng-click="search()" class="btn btn-lg btn-primary content-offset-25">
+                    <i class="glyphicon glyphicon-search"></i>
+                    Search
+                </a>
+            </div>
+        </div>
+      </form>
+      <p>
+      </p>
+    </div>
+    <div ng-show="results.length">
+        {% include 'partials/_patient_summary_list.html' %}
+    </div>
+
+    <div ng-hide="!searched || results.length" class="panel-body">
+        {% include 'partials/_no_search_results.html' %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="form-group"
+     {% if visibility %} {{ visibility|safe }} {% endif %}
+     >
+  <label class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">{{ label }}</label>
+  <div class="{% ifequal style "horizontal" %}col-sm-8{% endifequal %}"
+    ng-class="{'has-error': {{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required}"
+  >
+    <div class="row" >
+      <div class="col-md-12">
+      <label class="radio-inline" ng-repeat="item in {{ lookuplist }}">
+        <input {% if required %}required {% endif %}{% if change %} ng-change="{{ change }}" {% endif %}class="" type="radio" name="[[ {{ element_name }} ]]" value="[[ item ]]" ng-model="{{ model }}">
+        [[ item ]]
+      </label>
+      </div>
+    </div>
+    {% if required %}
+      <div class="row" ng-show="{{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required">
+        <div class="col-md-12">
+          <span class="help-block" >
+            {{ label }} is required
+          </span>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,233 @@
+{% load patient_lists %}
+{% load forms %}
+{% block container %}
+<div class="container-fluid content-offset">
+
+  {% block list_actions %}
+  <div class="row screen-only">
+    <div class="col-md-12">
+      <h1>
+        <!-- List Switcher / Dropdown Menu -->
+        {% include "patient_lists/partials/list_dropdown_menu.html" %}
+        {% if not user.profile.explicit_access_only %}
+        <button class="btn btn-primary pull-right"
+                ng-show="!profile.readonly"
+                ng-click="addEpisode()">
+          <i class="glyphicon glyphicon-plus"></i>
+          Add Patient
+        </button>
+        {% endif %}
+      </h1>
+    </div>
+  </div> <!-- .row .screen-only -->
+  {% endblock list_actions %}
+
+  <div class="row content-offset-25"> <!-- Main Panel -->
+    <div class="col-md-2 screen-only"> <!-- Action Panels -->
+      {% block left_panel %}
+      <div class="panel panel-active screen-only hidden-sm side-bar" ng-show="episode">
+        <div class="panel-heading">
+          <b>
+            <i class="fa fa-user"></i>
+            <span ng-show="profile.can_see_pid()">
+              [[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]
+            </span>
+          </b>
+          {% if request.user.is_staff %}
+          {% block stafftools %}
+          <br>
+          <a href="/admin/opal/episode/[[ episode.id ]]/" target="_blank">
+            <i class="fa fa-cogs"></i>
+            Admin
+          </a>
+          {% endblock stafftools %}
+          {% endif %}
+        </div>
+
+        {% block sidebar %}
+        <ul class="list-group">
+          <li class="list-group-item" ng-show="profile.can_see_pid()">
+            <p>
+              <a class="btn btn-secondary screen-only" ng-href='[[ "#/patient/" + episode.demographics[0].patient_id + "/" + episode.id]]'>
+                <i class="fa fa-search-plus"></i> Patient Details
+              </a>
+            </p>
+          </li>
+          <li class="list-group-item" ng-show="profile.can_see_pid()">
+            <h4>
+              <i class="fa fa-users"></i> Teams
+              {% if patient_list.allow_edit_teams %}
+              <i class="fa edit fa-pencil pointer pull-right"
+                 ng-click="editTags()"></i>
+              {% endif %}
+            </h4>
+            <hr />
+            <h4
+               ng-repeat="tag in episode.getTags()"
+               ng-show="metadata.tag_visible_in_list.indexOf(tag) != -1"
+               >
+              <a href="/#/list/[[ metadata.tags[tag].slug ]]" >[[ metadata.tags[tag].display_name ]]</a>
+            </h4>
+          </li>
+
+          {% block episode_actions %}
+          <li class="list-group-item">
+            {% include 'partials/_episode_actions.html' %}
+          </li>
+          {% endblock episode_actions %}
+
+        </ul>
+        {% endblock sidebar %}
+
+      </div>
+      <div class="panel panel-default screen-only hidden-sm"
+           ng-hide="!profile.can_see_pid()"
+           >
+        <div class="panel-heading">
+          <h4>
+            <i class="fa fa-filter"></i>
+            Filters
+          </h4>
+        </div>
+        <div class="panel-body">
+          <p>
+            <input class="form-control" ng-model="query.hospital_number"
+                     analytics-category="patient-list" analytics-label="{{ patient_list.get_slug }}" analytics-event="filter-hospital-number" analytics-on
+                     ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
+                     type="text" class="input-small" placeholder="Hospital #">
+        	  <input class="form-control" ng-model="query.name" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
+                    analytics-category="patient-list" analytics-label="{{ patient_list.get_slug }}" analytics-event="filter-name"
+                    analytics-on type="text" class="input-small" placeholder="Name">
+          </p>
+        </div>
+        {% endblock left_panel %}
+      </div> <!-- .panel .panel-default .screen-only .hidden-sm -->
+    </div> <!-- ends Action Panels -->
+
+    <div class="col-md-10"> <!-- Detail panels -->
+      {% block content %}
+      <h4 class="print-only">
+        {{ patient_list.display_name }}
+      </h4>
+
+      <div class="screen-only">
+        <div class="visible-sm panel panel-active">
+          {% block spreadsheet_list_small %}
+          <div class="panel-heading">
+            <i class="fa fa-users"></i> Patients
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item spreadsheet-view" ng-repeat="row in rows" ng-class="{selected: episode.id == row.id}">
+              <a href="/#[[ row.link ]]">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div ng-repeat="item in row.demographics">
+                      {% include models.Demographics.get_display_template %}
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div ng-repeat="item in row.diagnosis">
+                      {% include models.Diagnosis.get_display_template %}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+          {% endblock spreadsheet_list_small %}
+        </div>
+      </div>
+
+      <div class="patient-list-container hidden-sm always-on-print-block" freeze-headers fix-height>
+        {% block table %}
+        {% if list_group %}{% tabbed_list_group %}{% endif %}
+        <table class="table table-bordered bg-white patient-list">
+          <thead class="table-header">
+        	  <tr>
+        	    {% for column in columns %}
+        	    <th>
+                <i class="{{ column.icon }}"></i>
+                {{ column.title }}
+              </th>
+        	    {% endfor %}
+        	  </tr>
+          </thead>
+          <tbody>
+        	  <tr ng-repeat="row in rows"
+                ng-click="select_episode(row, $index)"
+                ng-class="{selected: episode.id == row.id}"
+                scroll-episodes="isSelectedEpisode"
+                scroll-container=".patient-list-container"
+                >
+        	    {% for column in columns %}
+        	    <td {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
+                {% if column.model_column %}
+        		  <ul>
+        		    <li ng-repeat="item in row.{{column.name}} {% if column.list_limit %} |limitTo:{{ column.list_limit }}{% endif %} track by $index"
+        			    ng-dblclick="editNamedItem(row, '{{column.name}}', $index);$event.stopPropagation()"
+        			    >
+        			  {% include column.template_path %}
+        		    </li>
+
+        		    {% if not column.single %}
+        		    <li class="edit_item"
+                      ng-click="editNamedItem(row, '{{ column.name }}', row.{{column.name}}.length)"
+        			    ng-dblclick="editNamedItem(row, '{{ column.name  }}', row.{{column.name}}.length)"
+        			    >
+        			  <span ng-show="!profile.readonly">
+        			    Add
+                      <i class="glyphicon glyphicon-plus pull-right"></i>
+        			  </span>
+        			  &nbsp;
+        		    </li>
+                  {% else %}
+                  <li class="edit_item"
+                      ng-click="editNamedItem(row, '{{ column.name }}', 0)"
+        			    ng-dblclick="editNamedItem(row, '{{ column.name }}', 0)"
+        			    >
+        			  <span ng-show="!profile.readonly">
+        			    Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
+        			  </span>
+        			  &nbsp;
+        		    </li>
+                  {% endif %}
+        		  </ul>
+                {% else %}
+        		    {% include column.template_path %}
+                {% endif %}
+        	    </td>
+        	    {% endfor %}
+        	  </tr>
+          </tbody>
+        </table>
+        <div class="empty-list" ng-hide="num_episodes > 0">
+          <p class="lead text-center">
+            There are no patients on this list.
+          </p>
+          <p class="lead text-center">
+            <span class="screen-only">
+              Would you like to <a href="" ng-click="addEpisode()">add one</a>?
+            </span>
+          </p>
+        </div>
+        {% endblock table %}
+      </div>
+
+      {% block spreadsheet_list_footer %}
+      <footer class="text-center keyboard-shortcuts screen-only">
+        <a class="pointer screen-only" ng-click="keyboard_shortcuts($event)">
+          <i class="fa fa-keyboard-o"></i> Keyboard shortcuts available
+        </a>
+      </footer>
+      {% endblock spreadsheet_list_footer %}
+
+      {% endblock content %}
+    </div> <!-- ends Detail Panels -->
+
+  </div> <!-- ends Main Panel -->
+  {% block keyboard_shortcuts %}
+    {% include 'keyboard_shortcuts_modal.html' %}
+  {% endblock keyboard_shortcuts %}
+
+</div> <!-- .container-fluid .content-offset -->
+{% endblock container %}

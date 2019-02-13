@@ -1,0 +1,17 @@
+{% extends 'opal.html' %}
+
+{% load plugins %}
+
+{% block ngapp %}opal.search{% endblock %}
+{% block angularapp %}
+  {{ block.super }}
+  {% plugin_javascripts 'opal.search' %}
+{% endblock %}
+{% block nav_search %}
+  {% comment %}
+    don't show the nav search in on the search page
+  {% endcomment %}
+  <div ng-hide="$location.path().indexOf('extract') === -1">
+    {{ block.super }}
+  </div>
+{% endblock %}

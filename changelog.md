@@ -1,5 +1,8 @@
 ### 0.14.0 (Major Release)
 
+Upgrades the django version from 2.0.9 to 2.0.13
+
+
 ### 0.13.0 (Major Release)
 
 #### Removes support for Python 2.x

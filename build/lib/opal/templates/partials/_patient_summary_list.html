@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-sm-4 col-sm-push-4">
+    <h4>
+      We've found <strong>[[ paginator.totalCount ]]</strong> patient<span ng-if="results.length != 1">s</span>
+    </h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-4 col-sm-push-4">
+    <ul>
+      <li class="content-offset-10 content-offset-below-10" ng-repeat="result in results">
+        <div>
+          <h4 class="inline">
+            <a class="orange-link" ng-href="[[ result.link ]]">
+              [[ result.first_name ]] [[ result.surname ]] [[ result.hospitalNumber ]]
+            </a>
+          </h4>
+          <span ng-show="result.dateOfBirth">
+            ([[ result.dateOfBirth | displayDate ]])
+          </span>
+        </div>
+        <div>
+          [[ result.count ]] Episode<span ng-show="result.count > 1">s</span> ([[ result.categories|title ]]) [[ result.years ]]
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-4 col-sm-push-4" ng-show="paginator.totalPages.length > 1">
+    <nav>
+      <ul class="pagination">
+        <li ng-if="paginator.hasPrevious">
+          <a ng-click="paginator.goPrevious()"><i class="fa fa-caret-left"></i></a>
+        </li>
+        <li ng-repeat="pageNum in paginator.totalPages" ng-class="{active: paginator.pageNumber == pageNum }">
+          <a ng-click="search(pageNum)">[[ pageNum ]]</a>
+        </li>
+        <li ng-if="paginator.hasNext">
+          <a ng-click="paginator.goNext()"><i class="fa fa-caret-right"></i></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

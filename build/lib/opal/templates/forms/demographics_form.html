@@ -1,0 +1,9 @@
+{% load forms %}
+{% input "autofocus" field="Demographics.hospital_number" %}
+{% input field="Demographics.nhs_number" %}
+{% input field="Demographics.first_name" %}
+{% input field="Demographics.surname" %}
+{% date_of_birth_field %}
+{% select field="Demographics.sex" %}
+{% select field="Demographics.ethnicity" %}
+{% input field="Demographics.birth_place" %}
