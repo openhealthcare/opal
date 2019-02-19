@@ -9,6 +9,7 @@ import json
 import logging
 import random
 import os
+from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
 from django.db import models, transaction
@@ -1412,6 +1413,15 @@ class Demographics(PatientSubrecord):
     @property
     def name(self):
         return '{0} {1}'.format(self.first_name, self.surname)
+
+    @property
+    def age(self):
+        if self.date_of_birth:
+            today = datetime.date.today()
+            return relativedelta(
+                today,
+                self.date_of_birth
+            ).years
 
     class Meta:
         abstract = True

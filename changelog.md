@@ -1,3 +1,8 @@
+### 0.14.0 (Major Release)
+
+Adds a `age` property to demographics that returns the patient's age.
+
+
 ### 0.13.0 (Major Release)
 
 #### Removes support for Python 2.x

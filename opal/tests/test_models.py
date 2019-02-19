@@ -819,6 +819,16 @@ class AbstractDemographicsTestCase(OpalTestCase):
                                 middle_name='Obsidian')
         self.assertEqual('Jane Doe', d.name)
 
+    def test_age_no_date_of_birth(self):
+        d = models.Demographics(date_of_birth=None)
+        self.assertIsNone(d.age)
+
+    @patch("opal.models.datetime")
+    def test_age(self, dt):
+        dt.date.today.return_value = datetime.date(2017, 3, 1)
+        d = models.Demographics(date_of_birth=datetime.date(2016, 1, 28))
+        self.assertEqual(d.age, 1)
+
 
 class ExternalSystemTestCase(OpalTestCase):
     def test_get_footer(self):
