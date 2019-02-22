@@ -48,7 +48,7 @@ setup(
         'ffs>=0.0.8.2',
         'letter==0.5',
         'jinja2==2.10',
-        'django==2.0.9',
+        'django==2.0.13',
         'requests==2.20.1',
         'django-axes==1.7.0',
         'djangorestframework==3.7.4',
@@ -57,7 +57,6 @@ setup(
         'python-dateutil==2.7.5',
         'django-celery==3.2.2',
         'celery==3.1.25',
-        'six>=1.10.0',
         ],
     classifiers = [
         "Programming Language :: Python",
