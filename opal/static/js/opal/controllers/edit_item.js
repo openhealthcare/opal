@@ -81,11 +81,7 @@ angular.module('opal.controllers').controller(
                 var deferred = $q.defer();
                 $modalInstance.close(deferred.promise);
                 var deleteModal =  $modal.open({
-<<<<<<< HEAD
-                    templateUrl: '/templates/modals/delete_item_confirmation.html/',
-=======
                     templateUrl: '/templates/delete_item_confirmation_modal.html',
->>>>>>> v0.13.0
                     controller: 'DeleteItemConfirmationCtrl',
                     resolve: {
                         item: function() {

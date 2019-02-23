@@ -3,6 +3,22 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.13.0 -> 0.13.1
+
+Upgrades django (minor security upgrade).
+
+How you do this depends on how you have configured your application. You will need to
+update both the Opal version, and versions of upgraded dependencies if
+you have specified them in for instance, a requirements.txt.
+
+(This will be the case if you use the requirements.txt originally provided by
+`opal startproject`)
+
+    # requirements.txt
+    opal==0.13.1
+    django==2.0.13
+
+
 ### 0.12.0 - 0.11.2 -> 0.13.0
 
 #### Python versions
@@ -24,7 +40,7 @@ you have specified them in for instance, a requirements.txt.
 `opal startproject`)
 
     # requirements.txt
-    opal==0.10.0
+    opal==0.13.0
     django==2.0.9
     django-reversion==3.0.1
     djangorestframework==3.7.4

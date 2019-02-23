@@ -57,7 +57,6 @@ setup(
         'python-dateutil==2.7.5',
         'django-celery==3.2.2',
         'celery==3.1.25',
-        'six>=1.10.0',
         ],
     classifiers = [
         "Programming Language :: Python",
