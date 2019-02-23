@@ -123,18 +123,8 @@ def check_password_reset(request, *args, **kwargs):
     """
     response = login(request, *args, **kwargs)
     if response.status_code == 302:
-        try:
-            profile = request.user.profile
-            if profile and profile.force_password_change:
-                return redirect(
-                    reverse('change-password')
-                )
-        except models.UserProfile.DoesNotExist:
-            # TODO: This probably doesn't do any harm, but
-            # we should really never reach this. Creation
-            # of profiles shouldn't happen in a random view.
-            models.UserProfile.objects.create(
-                user=request.user, force_password_change=True)
+        profile = request.user.profile
+        if profile and profile.force_password_change:
             return redirect(
                 reverse('change-password')
             )
