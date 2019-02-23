@@ -34,10 +34,12 @@ class OpalTestCase(TestCase):
             is_staff=True,
             is_superuser=True
         )
-        profile, _ = UserProfile.objects.get_or_create(
+        profile = UserProfile.objects.get(
             user=user,
-            can_extract=True
         )
+        if not profile.can_extract:
+            profile.can_extract = True
+            profile.save()
         return user
 
     def post_json(self, path, data):

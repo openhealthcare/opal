@@ -19,6 +19,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import force_str
+from django.db.models.signals import post_save
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -1654,6 +1655,14 @@ class UserProfile(models.Model):
         all_roles = itertools.chain(*list(self.get_roles().values()))
         # TODO: Remove these hardcoded role anmes
         return any(r for r in all_roles if r == "scientist")
+
+
+def save_profile(sender, instance, **kwargs):
+    if not UserProfile.objects.filter(user=instance).exists():
+        UserProfile.objects.create(user=instance)
+
+
+post_save.connect(save_profile, sender=User)
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):

@@ -230,14 +230,19 @@ class EpisodeCategoryTestCase(OpalTestCase):
 
     def test_episode_visible_false(self):
         user = User.objects.create()
-        UserProfile.objects.create(user=user, restricted_only=True)
+        UserProfile.objects.filter(user=user).update(
+            restricted_only=True
+        )
         self.assertFalse(
             self.episode.category.episode_visible_to(self.episode, user)
         )
 
     def test_episode_visible_true(self):
         user = User.objects.create()
-        UserProfile.objects.create(user=user, restricted_only=False)
+        UserProfile.objects.filter()
+        UserProfile.objects.filter(user=user).update(
+            restricted_only=False
+        )
         self.assertTrue(
             self.episode.category.episode_visible_to(self.episode, user)
         )

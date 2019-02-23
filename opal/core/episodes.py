@@ -41,7 +41,7 @@ class EpisodeCategory(DiscoverableFeature):
         """
         from opal.models import UserProfile  # Avoid circular import
 
-        profile, _ = UserProfile.objects.get_or_create(user=user)
+        profile = UserProfile.objects.get(user=user)
         if profile.restricted_only:
             return False
 
