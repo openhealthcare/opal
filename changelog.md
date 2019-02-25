@@ -2,6 +2,9 @@
 
 Adds a `age` property to demographics that returns the patient's age.
 
+### 0.13.1 (Minor Release)
+
+Upgrades the setup.py Django version from 2.0.9 to 2.0.13. Removes the six library dependency from setup.py.
 
 ### 0.13.0 (Major Release)
 
@@ -140,6 +143,13 @@ including the `reopen_episode_modal.html` template and the url/view at `template
 * Requests: 2.18.4 -> 2.20.1
 * Psycopg2: 2.7 -> 2.7.6.1
 * Python Dateutil: 2.4.2 -> 2.7.5
+
+
+### 0.12.1 (Minor Release)
+* If an item is deleted from the edit item modal, RecordEditor.openEditItemModal will now resolve after the delete item modal is closed with 'deleted'
+
+* Fixes the default investigation modal
+
 
 ### 0.12.0 (Major Release)
 
