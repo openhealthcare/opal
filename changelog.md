@@ -1,6 +1,6 @@
 ### 0.14.0 (Major Release)
 
-Adds a `age` property to demographics that returns the patient's age.
+Adds the `age` property to demographics that returns the patient's age.
 
 ### 0.13.1 (Minor Release)
 
