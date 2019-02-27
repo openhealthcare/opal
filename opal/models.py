@@ -1412,10 +1412,18 @@ class Demographics(PatientSubrecord):
 
     @property
     def name(self):
+        """
+        Property that returns the name of the patient constructed from
+        `first_name` and `surname`
+        """
         return '{0} {1}'.format(self.first_name, self.surname)
 
     @property
     def age(self):
+        """
+        Property that returns the age of the patient in years
+        or None if `date_of_birth` is not set.
+        """
         if self.date_of_birth:
             today = datetime.date.today()
             return relativedelta(
