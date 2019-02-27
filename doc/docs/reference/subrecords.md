@@ -229,9 +229,25 @@ These fields are then often used in forms to make the data read only
 ### Specific subrecords
 
 #### Demographics
-Opal ships with a demographics model that models personally identifying information a patient.
+Opal ships with a demographics model that models personally identifying information for a patient.
 
-This model maps `first_name`, `middle name` `surname`, `title`, `date_of_birth`, `hospital_number` and `nhs_number` and other similar fields.
+This model maps
+
+ - `hospital_number`
+ - `nhs_number`
+ - `surname`
+ - `first_name`
+ - `middle name`
+ - `title`
+ - `date_of_birth`
+ - `marital_status`
+ - `religion`
+ - `date_of_death`
+ - `post_code`
+ - `birth_place`
+ - `ethnicity`
+ - `death_indicator`
+ - `sex`
 
 It also has the properties:
 
