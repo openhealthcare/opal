@@ -575,7 +575,8 @@ class DateOfBirthTestCase(TestCase):
         ctx = date_of_birth_field(model_name="something")
         expected = dict(
             style="horizontal",
-            model_name="something"
+            model_name="something",
+            label="Date of Birth"
         )
         self.assertEqual(expected, ctx)
 
@@ -583,7 +584,8 @@ class DateOfBirthTestCase(TestCase):
         ctx = date_of_birth_field()
         expected = dict(
             model_name="editing.demographics.date_of_birth",
-            style='horizontal'
+            style='horizontal',
+            label="Date of Birth"
         )
         self.assertEqual(expected, ctx)
 
@@ -591,3 +593,13 @@ class DateOfBirthTestCase(TestCase):
         tpl = Template('{% load forms %}{% date_of_birth_field %}')
         rendered = tpl.render(Context({}))
         self.assertIn("editing.demographics.date_of_birth", rendered)
+
+    def test_label_not_defined(self):
+        tpl = Template('{% load forms %}{% date_of_birth_field %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("Date of Birth", rendered)
+
+    def test_label_defined(self):
+        tpl = Template('{% load forms %}{% date_of_birth_field label="altered birth date label" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("altered birth date label", rendered)

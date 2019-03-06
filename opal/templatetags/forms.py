@@ -324,9 +324,15 @@ def icon(name):
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
 def date_of_birth_field(**kwargs):
     model_name = kwargs.get('model_name', "editing.demographics.date_of_birth")
+    label = kwargs.get("label")
+
+    if not label:
+        Demographics = get_subrecord_from_model_name("Demographics")
+        label = Demographics._get_field_title("date_of_birth")
     return dict(
         model_name=model_name,
-        style=get_style(kwargs)
+        style=get_style(kwargs),
+        label=label
     )
 
 
