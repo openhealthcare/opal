@@ -3,6 +3,10 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.13.1 -> 0.14.0
+If you were creating a UserProfile, this will now fail as a UserProfile is created automatically after creating a user (by a signal).
+
+
 ### 0.13.0 -> 0.13.1
 
 Upgrades django (minor security upgrade).

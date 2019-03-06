@@ -1,6 +1,9 @@
 ### 0.14.0 (Major Release)
 
+
 Adds the `age` property to demographics that returns the patient's age.
+
+A User's UserProfile is now automatically created when you create a user in a post save signal.
 
 ### 0.13.1 (Minor Release)
 

@@ -576,7 +576,6 @@ class UserProfileTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.create(username='testuser')
-        models.UserProfile.objects.create(user=self.user)
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
 
@@ -605,7 +604,6 @@ class UserTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.create(username='testuser')
-        models.UserProfile.objects.create(user=self.user)
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
 

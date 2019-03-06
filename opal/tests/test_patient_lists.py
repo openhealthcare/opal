@@ -230,8 +230,10 @@ class TestPatientList(OpalTestCase):
 
     def setUp(self):
         self.restricted_user = User.objects.create(username='restrictedonly')
-        self.profile, _ = UserProfile.objects.get_or_create(
-            user=self.restricted_user, restricted_only=True
+        UserProfile.objects.filter(
+            user=self.restricted_user
+        ).update(
+            restricted_only=True
         )
 
     def test_unimplemented_schema(self):
