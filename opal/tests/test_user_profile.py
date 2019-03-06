@@ -18,7 +18,7 @@ class UserProfileTest(TestCase):
             first_name='Test', last_name='User'
         )
         self.user.save()
-        self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
+        self.profile = self.user.profile
 
     def test_to_dict_has_full_name(self):
         as_dict = self.profile.to_dict()

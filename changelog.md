@@ -1,5 +1,7 @@
 ### 0.14.0 (Major Release)
 
+A User's UserProfile is now automatically created when you create a user in a post save signal.
+
 ### 0.13.1 (Minor Release)
 
 Upgrades the setup.py Django version from 2.0.9 to 2.0.13. Removes the six library dependency from setup.py.

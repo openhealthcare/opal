@@ -141,7 +141,7 @@ class PatientList(discoverable.DiscoverableFeature,
     def visible_to(klass, user):
         from opal.models import UserProfile  # Avoid circular import
 
-        profile, _ = UserProfile.objects.get_or_create(user=user)
+        profile = UserProfile.objects.get(user=user)
         if profile.restricted_only:
             return False
 

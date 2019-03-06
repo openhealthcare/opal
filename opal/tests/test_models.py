@@ -7,6 +7,7 @@ from mock import patch, MagicMock
 
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from opal import models
 from opal.core import application, exceptions, subrecords
@@ -854,3 +855,9 @@ class RoleTestCase(OpalTestCase):
     def test_str(self):
         r = models.Role(name='Doctor')
         self.assertEqual('Doctor', r.__str__())
+
+
+class UserProfileTestCase(OpalTestCase):
+    def test_create(self):
+        user = User.objects.create()
+        self.assertTrue(bool(user.profile))
