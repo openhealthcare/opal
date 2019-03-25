@@ -13,9 +13,11 @@ angular.module('opal.services').factory('RecordEditor', function(
       }
     };
 
-    self.openEditItemModal = function(item, name){
+    self.openEditItemModal = function(item, name, template_url){
       $rootScope.state = 'modal';
-      var template_url = '/templates/modals/' + name + '.html/';
+      if(!template_url){
+        template_url = '/templates/modals/' + name + '.html/';
+      }
 
       if($routeParams.slug){
           template_url += $routeParams.slug;
@@ -55,12 +57,12 @@ angular.module('opal.services').factory('RecordEditor', function(
       return deferred.promise;
     };
 
-    self.editItem = function(name, iix){
+    self.editItem = function(name, iix, url){
       var item = self.getItem(name, iix);
-      return self.openEditItemModal(item, name);
+      return self.openEditItemModal(item, name, url);
     };
 
-    self.newItem = function(name){
+    self.newItem = function(name, url){
       var iix = episode[name].length;
       var item = self.getItem(name, iix);
 
@@ -69,7 +71,7 @@ angular.module('opal.services').factory('RecordEditor', function(
         deferred.resolve();
         return deferred.promise;
       }
-      return self.openEditItemModal(item, name);
+      return self.openEditItemModal(item, name, url);
     };
   };
 

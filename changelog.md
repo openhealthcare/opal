@@ -2,6 +2,10 @@
 
 A User's UserProfile is now automatically created when you create a user in a post save signal.
 
+RecordEditor.editItem, RecordEditor.editItem and RecordEditor.openEditItemModal to take a url argument.
+This is the url of the template that should be opened with the edit item controller.
+
+
 ### 0.13.1 (Minor Release)
 
 Upgrades the setup.py Django version from 2.0.9 to 2.0.13. Removes the six library dependency from setup.py.

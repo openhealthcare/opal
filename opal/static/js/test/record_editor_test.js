@@ -139,6 +139,18 @@ describe('RecordEditor', function(){
               expect(resolves.referencedata(fakeReferencedata)).toEqual( "some reference data");
           });
 
+          it('should accept a url that is passed through to the modal open', function(){
+            var deferred, callArgs;
+            deferred = $q.defer();
+            deferred.resolve();
+            var modalPromise = deferred.promise;
+            spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
+            episode.recordEditor.editItem('diagnosis', 1, '/custom_template/');
+            $scope.$digest();
+            callArgs = $modal.open.calls.mostRecent().args;
+            expect(callArgs[0].templateUrl).toBe("/custom_template/")
+          });
+
           it('should pull modal size through from the schema if it exists', function() {
               var deferred, callArgs;
               deferred = $q.defer();
