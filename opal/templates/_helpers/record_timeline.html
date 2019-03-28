@@ -5,7 +5,7 @@
       {% if editable %}
       {% if singleton %}
       <i class="fa fa-pencil edit pull-right pointer"
-         ng-click="episode.recordEditor.editItem('{{ name }}', 0)"></i>
+         ng-click="episode.recordEditor.editItem('{{ name }}', episode.{{ name }}[0])"></i>
       {% else %}
       <i class="fa fa-plus-circle edit pull-right pointer"
          ng-click="episode.recordEditor.newItem('{{ name }}')"></i>
@@ -29,7 +29,7 @@
       <div class="col-md-3 patient-timeline">
         <a
            class="pointer"
-           ng-click="episode.recordEditor.editItem('{{ name }}', $index)">
+           ng-click="episode.recordEditor.editItem('{{ name }}', item)">
           <div class="patient-timeline-speech-bubble">
             <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
           </div>

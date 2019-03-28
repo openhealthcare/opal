@@ -2,6 +2,12 @@
 
 A User's UserProfile is now automatically created when you create a user in a post save signal.
 
+RecordEditor.editItem will now take an item or an index rather than just an index.
+Taking an index has been deprecated and will be removed in v0.15.0
+
+The PatientListCtrl now does the logic of whether to create a new item or edit an item within the
+controller before it calls the record editor.
+
 ### 0.13.1 (Minor Release)
 
 Upgrades the setup.py Django version from 2.0.9 to 2.0.13. Removes the six library dependency from setup.py.

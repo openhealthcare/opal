@@ -378,9 +378,16 @@ angular.module('opal.controllers').controller(
                 }
             };
 
-            episode.recordEditor.editItem(name, iix).then(function(result){
-                reset_state(result);
-            });
+            if(iix === episode[name].length){
+                episode.recordEditor.newItem(name);
+            }
+            else{
+                var item = episode[name][iix];
+
+                episode.recordEditor.editItem(name, item).then(function(result){
+                    reset_state(result);
+                });
+            }
         };
 
 	    function goUp() {

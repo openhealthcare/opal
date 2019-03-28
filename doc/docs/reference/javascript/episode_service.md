@@ -61,9 +61,9 @@ episode.recordEditor.newItem('diagnosis'):
 // -> Opens a modal with the diagnosis form and will create a new diagnosis on save
 ```
 
-#### Episode.recordEditor.editItem(name, index)
+#### Episode.recordEditor.editItem(name, item)
 
-Open a modal from which the user may edit the `index-th` item of type `name`.
+Open a modal from which the user may edit the item of type `name`.
 
 ```js
 episode.recordEditor.editItem('diagnosis', 0);
