@@ -133,20 +133,4 @@ describe('PatientDetailCtrl', function(){
 
   });
 
-  describe('dischargeEpisode()', function() {
-
-    it('should should return null if readonly', function() {
-      profile.readonly = true;
-      expect($scope.dischargeEpisode()).toBe(null);
-    });
-
-    it('should call Flow.', function() {
-      $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-      profile.readonly = false;
-      $scope.dischargeEpisode();
-      $rootScope.$apply();
-    });
-
-  });
-
 });
