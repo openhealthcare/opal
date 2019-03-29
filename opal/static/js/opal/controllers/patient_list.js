@@ -303,60 +303,6 @@ angular.module('opal.controllers').controller(
             $scope.episode = $scope.rows[0];
         }
 
-        $scope._post_discharge = function(result, episode){
-    		$rootScope.state = 'normal';
-      		if (result == 'discharged' | result == 'moved') {
-                  $scope.removeFromList(episode.id);
-      		};
-        };
-
-	    $scope.dischargeEpisode = function(episode) {
-            if(profile.readonly){ return null; };
-
-		    $rootScope.state = 'modal';
-            var exit = Flow.exit(episode,
-                {
-                    current_tags: {
-                        tag   : $scope.currentTag,
-                        subtag: $scope.currentSubTag
-                    },
-                },
-                $scope
-            );
-
-            exit.then(function(result) {
-                //
-                // Sometimes our Flow will open another modal - we wait for that
-                // to close before firing the Post discharge hooks - this avoids the list
-                // scope from trapping keystrokes etc
-                //
-                if(result && result.then){
-                    result.then(function(r){
-                        $scope._post_discharge(r, episode);
-                    });
-                }else{
-                    $scope._post_discharge(result, episode);
-                }
-		    });
-	    };
-
-        $scope.removeFromMine = function(episode){
-            if(profile.readonly){
-                return null;
-            }
-
-            var modal;
-            var tagging = episode.tagging[0];
-            editing = tagging.makeCopy();
-            editing.mine = false;
-            // console.error('calling tagging save');
-            // console.error(tagging.save);
-            tagging.save(editing).then(function(){
-                $scope.removeFromList(episode.id);
-            });
-
-        };
-
         $scope.newNamedItem = function(episode, name) {
             return episode.recordEditor.newItem(name);
         };
