@@ -239,14 +239,6 @@ recently changed it - refresh the page and try again');
                 return deferred.promise;
             },
 
-
-            //
-            // Predicate to determine whether this episode is discharged or not
-            //
-            isDischarged: function(){
-                return this.location[0].category == 'Discharged' ||
-                    (this.end && moment(this.end).isBefore(moment()));
-            }
         }; // Closes prototype
 
 
