@@ -161,13 +161,6 @@ class MetadataViewSetTestCase(OpalTestCase):
             for key, value in s.to_dict(user=self.user).items():
                 self.assertEqual(response.data[key], value)
 
-    def test_retrieve(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = api.MetadataViewSet().retrieve(mock_request, pk='macros')
-        self.assertEqual(200, response.status_code)
-        self.assertIn('macros', response.data)
-
     def test_retrieve_nonexistent_metadata(self):
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user

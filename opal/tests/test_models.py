@@ -847,13 +847,6 @@ class SynonymTestCase(OpalTestCase):
         self.assertEqual('Name', s.__str__())
 
 
-class MacroTestCase(OpalTestCase):
-
-    def test_str(self):
-        m = models.Macro(title='My Macro')
-        self.assertEqual('My Macro', m.__str__())
-
-
 class RoleTestCase(OpalTestCase):
 
     def test_str(self):

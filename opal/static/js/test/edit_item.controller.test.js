@@ -91,15 +91,6 @@ describe('EditItemCtrl', function (){
 
     });
 
-    describe('select_macro()', function() {
-
-        it('should return expanded', function() {
-            var i = {expanded: 'thing'};
-            expect($scope.select_macro(i)).toEqual('thing');
-        });
-
-    });
-
     describe('Saving items', function (){
 
         it('Should save the current item', function () {

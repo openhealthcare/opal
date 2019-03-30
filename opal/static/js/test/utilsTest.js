@@ -166,7 +166,6 @@ describe("OPAL.module", function(){
     var implicit_dependencies = [
       'angular-growl',
       'ngCookies',
-      'mentio',
       'angulartics',
       'angulartics.google.analytics',
       'LocalStorageModule'

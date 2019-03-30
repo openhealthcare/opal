@@ -29,11 +29,6 @@ angular.module('opal.controllers').controller(
             $scope.columnName = item.columnName;
             _.extend($scope, referencedata.toLookuplists());
 
-            $scope.macros = metadata.macros;
-            $scope.select_macro = function(item){
-                return item.expanded;
-            };
-
             // TODO - don't hardcode this
             if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
                 $scope.microbiology_test_list = [];
