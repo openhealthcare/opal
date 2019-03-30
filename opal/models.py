@@ -1202,27 +1202,6 @@ class Speciality(lookuplists.LookupList):
         verbose_name_plural = "Specialities"
 
 
-# These should probably get refactored into opal-opat in 0.5
-class Line_complication(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line complication"
-
-
-class Line_removal_reason(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line removal reason"
-
-
-class Line_site(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line site"
-
-
-class Line_type(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line type"
-
-
 class MaritalStatus(lookuplists.LookupList):
     class Meta:
         verbose_name_plural = "Marital statuses"
