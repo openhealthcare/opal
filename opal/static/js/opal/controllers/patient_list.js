@@ -162,9 +162,7 @@ angular.module('opal.controllers').controller(
           }
           break;
         case 13:
-          if(profile.can_see_pid()){
-            $scope.jumpToEpisodeDetail($scope.episode);
-          }
+          $scope.jumpToEpisodeDetail($scope.episode);
           break;
     	case 38: // up
     	  goUp();

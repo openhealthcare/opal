@@ -20,14 +20,6 @@ angular.module('opal.services')
                 return this.active_roles().indexOf(role) != -1;
             };
 
-            // TODO: don't hardcode these roles
-            this.can_see_pid = function(){
-                if(this.has_role('researcher') || this.has_role('scientist')){
-                    return false;
-                }
-                return true;
-            };
-
             this.can_edit = function(record_name){
                 // This is non-scalable.
                 if(this.has_role('scientist')){
