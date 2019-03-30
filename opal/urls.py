@@ -52,10 +52,6 @@ urlpatterns = [
     url(r'^templates/forms/(?P<model>[0-9a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),
 
-    url(r'^design-patterns/$',
-        TemplateView.as_view(template_name='design_patterns.html'),
-        name='design_patterns'),
-
 ]
 
 
