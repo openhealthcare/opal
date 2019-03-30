@@ -39,25 +39,6 @@ describe('filters', function() {
     });
   });
 
-  describe('boxed', function(){
-    var boxed
-
-    beforeEach(function(){
-      inject(function($injector){
-        boxed  = $injector.get('boxedFilter');
-      });
-    });
-
-    it('should be boxed done', function(){
-      expect(boxed(true)).toEqual('[X]');
-    });
-
-    it('should be boxed todo', function(){
-      expect(boxed(false)).toEqual('[ ]');
-    });
-
-  });
-
   describe('plural', function(){
     var plural;
 

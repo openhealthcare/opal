@@ -261,17 +261,6 @@ The scaffolding templates are only really supposed to get you started - you'll o
 need to tweak the templates they generate with whatever logic makes sense for your
 application.
 
-For us, you'll notice that the value of `TODOItem.completed` simply displays as false -
-which is not particularly useful. So let's update that using the Opal
-[Boxed filter](../reference/javascript/javascript_helpers/#boxed). In `mynewapp/templates/records/todo_item.html`
-change the last `span` to look like this:
-
-```html
-<span ng-show="item.completed">
-  [[ item.completed | boxed ]]
-</span>
-```
-
 #### Set an Icon for your model
 
 You'll notice that your new column is the only one without an icon - we set the icon by

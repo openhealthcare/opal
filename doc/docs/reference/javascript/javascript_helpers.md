@@ -119,12 +119,6 @@ Opal provides some built-in Angular filters for your project to use.
 
 Calculates a persons current age from their date of birth
 
-#### boxed
-
-Displays Boolean fields as a checkbox (e.g. either [ ] or [X])
-
-    [[ item.boolean_field | boxed]]
-
 #### hhmm
 
 Displays the hours & minutes portion of a javascript Date object as HH:MM

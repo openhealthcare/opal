@@ -1,14 +1,5 @@
 var filters = angular.module('opal.filters', []);
 
-filters.filter('boxed',  function(){
-    return function(input){
-        if(input == true){
-            return '[X]'
-        }
-        return '[ ]'
-    }
-})
-
 filters.filter('plural', function(){
 		return function(someWord, count, plural){
 				if(count === 1){
