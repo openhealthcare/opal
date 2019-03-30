@@ -34,49 +34,6 @@ angular.module('opal.controllers').controller(
                 return item.expanded;
             };
 
-            // TODO - don't hardcode this
-            if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
-                $scope.microbiology_test_list = [];
-                $scope.microbiology_test_lookup = {};
-                $scope.micro_test_defaults =  metadata.micro_test_defaults;
-
-                for (var name in referencedata){
-                    if (name.indexOf('micro_test') == 0) {
-                        for (var ix = 0; ix < referencedata[name].length; ix++) {
-                            $scope.microbiology_test_list.push(referencedata[name][ix]);
-                            $scope.microbiology_test_lookup[referencedata[name][ix]] = name;
-                        };
-                    };
-                };
-            var watchName= "editing." + item.columnName + ".test"
-                $scope.$watch(watchName, function(testName, oldValue) {
-                    $scope.testType = $scope.microbiology_test_lookup[testName];
-              if(oldValue == testName){
-                return;
-              }
-
-              _.each(_.keys($scope.editing[item.columnName]), function(field){
-                  if(field !== "test" && field !== "_client" && field !== "date_ordered" && field !== "alert_investigation"  && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
-                      $scope.editing[item.columnName][field] = undefined;
-                  }
-              });
-
-              if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
-                  return;
-              }
-
-              if($scope.testType in $scope.micro_test_defaults){
-                  _.each(_.pairs($scope.micro_test_defaults[$scope.testType]), function(values){
-                      var field =  values[0];
-                      var val =  values[1];
-                      if(!$scope.editing[item.columnName][field]){
-                          $scope.editing[item.columnName][field] = val;
-                      }
-                  });
-              }
-                });
-            };
-
             $scope.delete = function(){
                 var deferred = $q.defer();
                 $modalInstance.close(deferred.promise);
