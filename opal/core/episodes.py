@@ -95,19 +95,3 @@ class InpatientEpisode(EpisodeCategory):
         'Followup',
         'Discharged'
     ]
-
-
-class OutpatientEpisode(EpisodeCategory):
-    display_name = 'Outpatient'
-    stages       = [
-        'Outpatient',
-        'Discharged'
-    ]
-
-
-class LiaisonEpisode(EpisodeCategory):
-    display_name = 'Liaison'
-    stages       = [
-        'Review',
-        'Unfollow'
-    ]
