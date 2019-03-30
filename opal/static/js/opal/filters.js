@@ -1,17 +1,5 @@
 var filters = angular.module('opal.filters', []);
 
-filters.filter('plural', function(){
-		return function(someWord, count, plural){
-				if(count === 1){
-					 return someWord;
-				}
-				else if(plural){
-					 return plural;
-				}
-				return someWord + "s";
-		};
-});
-
 filters.filter('toMoment', function(){
 		return function(input){
 			if(!input){

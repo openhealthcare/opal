@@ -127,14 +127,6 @@ Displays the hours & minutes portion of a javascript Date object as HH:MM
 
 Allows a us to use moment.js formatters in the template exactly like you would use moment.format
 
-#### plural
-
-Takes a word, a count, and an optional plural term.
-
-If count != 1 and there is a plural term it will return the plural term otherwise it will just suffix an 's'
-
-if count == 1 then it will return the word
-
 #### short-date
 
 Displays a date as DD/MM if it's this year, else DD/MM/YYYY
