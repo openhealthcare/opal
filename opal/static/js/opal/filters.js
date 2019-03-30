@@ -25,44 +25,7 @@ filters.filter('fromNow', function(toMomentFilter){
 		};
 });
 
-filters.filter('shortDate', function(toMomentFilter, $log){
-    return function(input){
-      $log.warn('shortDate will be removed in Opal 0.14.0')
-        if(!input){
-            return
-        }
-
-				d = toMomentFilter(input);
-
-        if (d.year() <= 2000) {
-            // if the date was before 1/1/2001,
-            // show the full year
-            return d.format('DD/MM/YYYY');
-        }
-        else if (d.year() == moment().year()) {
-            // if the date was this year,
-            // don't show the year
-            return d.format('DD/MM');
-        }
-        // show the year as two digits
-        return d.format('DD/MM/YY');
-    }
-});
-
-filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter, $log){
-		return function(input){
-          $log.warn('shortDateTime will be removed in Opal 0.14.0')
-		  var datePart = shortDateFilter(input);
-				var timePart = hhmmFilter(input);
-
-				if(datePart && timePart){
-						return datePart + " " + timePart;
-				}
-		};
-});
-
-
-filters.filter('shortTime', function(shortDateFilter, hhmmFilter){
+filters.filter('shortTime', function(hhmmFilter){
 	return function(input){
 	  var toChange;
 		if(_.isDate(input)){
