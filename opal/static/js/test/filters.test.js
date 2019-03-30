@@ -39,33 +39,6 @@ describe('filters', function() {
     });
   });
 
-  describe('microresultFilter', function(){
-    var microresult;
-
-    beforeEach(function(){
-      inject(function($injector){
-        microresult  = $injector.get('microresultFilter');
-      });
-    });
-
-    it('should return pos', function(){
-      expect(microresult('positive')).toEqual('POS');
-    });
-
-    it('should return neg', function(){
-      expect(microresult('negative')).toEqual('NEG');
-    });
-
-    it('should return equiv', function(){
-      expect(microresult('equivocal')).toEqual('EQUIV');
-    });
-
-    it('should do nothing', function(){
-      expect(microresult('wat')).toEqual('wat');
-    });
-
-  })
-
   describe('boxed', function(){
     var boxed
 
