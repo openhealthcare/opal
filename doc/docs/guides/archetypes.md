@@ -95,11 +95,11 @@ details | Text
 Field|Type|Length
 -----|----|---
 internal | NullBoolean
-referral_route | FKorFT(ReferralOrganisation)
+referral_organisation | FKorFT(ReferralOrganisation)
 referral_name | Char | 255
 date_of_referral | Date
 referral_team | FKorFT(Speciality)
-referral_reason | FKorFT(ReferralReason)
+referral_type | FKorFT(ReferralType)
 
 ### PatientConsultation
 
