@@ -36,11 +36,11 @@ sex| FKorFT(Gender)
 
 ### Allergies
 
-Field|Type|Length
------|----|---
+Field|Type
+-----|----
 drug | FKorFT(Drug)
 provisional | Boolean
-details | Char|255
+details | Text
 
 
 ## Episode Subrecords
@@ -67,11 +67,11 @@ frequency | FKorFT(Drugfreq)
 
 ### Diagnosis
 
-Field|Type|Length
------|----|---
+Field|Type
+-----|----
 condition | FKorFT(Condition)
 provisional | Boolean
-details | Char | 255
+details | Text
 date_of_diagnosis | Date
 
 ### PastMedicalHistory
@@ -80,7 +80,7 @@ Field|Type|Length
 -----|----|---
 condition | FKorFT(Condition)
 year | Char | 4
-details | Char | 255
+details | Text
 
 ### SymptomComplex
 

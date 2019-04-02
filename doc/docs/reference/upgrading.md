@@ -6,6 +6,14 @@ application to a later version where there are extra steps required.
 ### 0.13.1 -> 0.14.0
 If you were creating a UserProfile, this will now fail as a UserProfile is created automatically after creating a user (by a signal).
 
+##### Migrations
+0.14.0 changes Diagnosis.details, Allergies.details and PastMedicalHistory.details to be a text fields. Migrations will have to be run.
+
+    python manage.py makemigrations yourapp
+    python manage.py migrate yourapp
+
+Existing data will be maintained.
+
 
 ### 0.13.0 -> 0.13.1
 
