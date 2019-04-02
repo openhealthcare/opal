@@ -152,8 +152,8 @@ class LoadLookuplistItemTestCase(OpalTestCase):
 
 
 class LookupListClassTestCase(AbstractLookupListTestCase):
-    def test_unicode(self):
-        self.assertEqual(self.hat.__unicode__(), u"Cowboy")
+    def test_str(self):
+        self.assertEqual(self.hat.__str__(), u"Cowboy")
 
     def test_to_dict(self):
         self.assertEqual(self.hat.to_dict(self.user), "Cowboy")

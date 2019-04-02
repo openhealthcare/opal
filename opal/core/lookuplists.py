@@ -124,7 +124,7 @@ class LookupList(models.Model):
         abstract = True
         unique_together = ('code', 'system')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def to_dict(self, user):
