@@ -1465,7 +1465,7 @@ Defaults to False."
         default=False, verbose_name="Suspected?",
         help_text=HELP_PROVISIONAL
     )
-    details     = models.CharField(max_length=255, blank=True)
+    details     = models.TextField(blank=True, default="")
 
     class Meta:
         abstract = True
@@ -1486,7 +1486,7 @@ class Diagnosis(EpisodeSubrecord):
         verbose_name="Provisional?",
         help_text="True if the diagnosis is provisional. Defaults to False"
     )
-    details           = models.CharField(max_length=255, blank=True)
+    details           = models.TextField(blank=True, default="")
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
     class Meta:
@@ -1501,7 +1501,7 @@ class PastMedicalHistory(EpisodeSubrecord):
 
     condition = ForeignKeyOrFreeText(Condition)
     year      = models.CharField(max_length=4, blank=True)
-    details   = models.CharField(max_length=255, blank=True)
+    details   = models.TextField(blank=True, default="")
 
     class Meta:
         abstract = True
