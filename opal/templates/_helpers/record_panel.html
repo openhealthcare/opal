@@ -14,7 +14,7 @@
         <span ng-show="{{ editable }}" >
             {% if singleton %}
             <i class="fa fa-pencil edit pull-right pointer"
-               ng-click="parent.recordEditor.editItem('{{ name }}', 0)"></i>
+               ng-click="parent.recordEditor.editItem('{{ name }}', parent.{{ name }}[0])"></i>
             {% else %}
             <i class="fa fa-plus-circle edit pull-right pointer"
                ng-click="parent.recordEditor.newItem('{{ name }}')"></i>
@@ -42,7 +42,7 @@
           <span ng-show="{{ editable }}" >
               {% if not singleton %}
               <i class="fa fa-pencil edit pull-right pointer"
-                 ng-click="parent.recordEditor.editItem('{{ name }}', $index)"></i>
+                 ng-click="parent.recordEditor.editItem('{{ name }}', item)"></i>
               {% endif %}
           </span>
         </div>
