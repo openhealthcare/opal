@@ -6,7 +6,7 @@ describe('RecordEditor', function(){
     var Flow, Episode, episode;
     var controller, UserProfile;
     var opalTestHelper;
-    var profile;
+    var profile, $log;
 
     var episodeData = {
         id: 123,
@@ -95,6 +95,7 @@ describe('RecordEditor', function(){
             $q = $injector.get('$q');
             UserProfile = $injector.get('UserProfile');
             opalTestHelper = $injector.get('opalTestHelper');
+            $log = $injector.get('$log');
         });
 
         profile = opalTestHelper.getUserProfile();
@@ -105,38 +106,28 @@ describe('RecordEditor', function(){
           };
         });
 
+        spyOn($log, "warn");
+
         episode = opalTestHelper.newEpisode($rootScope);
         // $rootScope.fields = fields;
         // episode = new Episode(angular.copy(episodeData));
     });
 
     describe("edit item", function(){
-      describe("edit item", function(){
-          it('should open the EditItemCtrl', function(){
+          it('should open the EditItemCtrl with an index but warn', function(){
               var deferred, callArgs;
               deferred = $q.defer();
               deferred.resolve();
               var modalPromise = deferred.promise;
-              var fakeMetadaa = {
-                load: function(){ return "some metadata"; }
-              };
-
-              var fakeReferencedata = {
-                load: function(){ return "some reference data"; }
-              };
-
               spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
               episode.recordEditor.editItem('diagnosis', 1);
               $scope.$digest();
               callArgs = $modal.open.calls.mostRecent().args;
+              var expected = "The ability to pass in an index to recordEditor.editItem will be removed in Opal v0.15.0, please pass in an item";
+              expect($log.warn).toHaveBeenCalledWith(expected);
               expect(callArgs.length).toBe(1);
-              expect(callArgs[0].controller).toBe('EditItemCtrl');
-              expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/');
               var resolves = callArgs[0].resolve;
               expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 1));
-              expect(resolves.episode()).toEqual(episode);
-              expect(resolves.metadata(fakeMetadaa)).toEqual("some metadata");
-              expect(resolves.referencedata(fakeReferencedata)).toEqual( "some reference data");
           });
 
           it('should accept a url that is passed through to the modal open', function(){
@@ -150,6 +141,33 @@ describe('RecordEditor', function(){
             callArgs = $modal.open.calls.mostRecent().args;
             expect(callArgs[0].templateUrl).toBe("/custom_template/")
           });
+
+          it('should open the EditItemCtrl with an item', function(){
+            var deferred, callArgs;
+            deferred = $q.defer();
+            deferred.resolve();
+            var modalPromise = deferred.promise;
+            var fakeMetadaa = {
+              load: function(){ return "some metadata"; }
+            };
+
+            var fakeReferencedata = {
+              load: function(){ return "some reference data"; }
+            };
+
+            spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
+            episode.recordEditor.editItem('diagnosis', episode.diagnosis[0]);
+            $scope.$digest();
+            callArgs = $modal.open.calls.mostRecent().args;
+            expect(callArgs.length).toBe(1);
+            expect(callArgs[0].controller).toBe('EditItemCtrl');
+            expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/');
+            var resolves = callArgs[0].resolve;
+            expect(resolves.item()).toEqual(episode.diagnosis[0]);
+            expect(resolves.episode()).toEqual(episode);
+            expect(resolves.metadata(fakeMetadaa)).toEqual("some metadata");
+            expect(resolves.referencedata(fakeReferencedata)).toEqual( "some reference data");
+        });
 
           it('should pull modal size through from the schema if it exists', function() {
               var deferred, callArgs;
@@ -251,8 +269,6 @@ describe('RecordEditor', function(){
             expect($rootScope.state).toBe('normal');
             expect(called).toBe(true);
           });
-      });
-
     });
 
     describe("get item", function(){

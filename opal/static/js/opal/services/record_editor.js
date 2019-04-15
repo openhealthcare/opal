@@ -1,5 +1,5 @@
 angular.module('opal.services').factory('RecordEditor', function(
-    $http, $q, Item, $modal, $rootScope, $routeParams,
+    $http, $q, Item, $modal, $rootScope, $routeParams, $log,
     UserProfile){
   "use strict";
   var RecordEditor = function(episode){
@@ -58,7 +58,14 @@ angular.module('opal.services').factory('RecordEditor', function(
     };
 
     self.editItem = function(name, iix, url){
-      var item = self.getItem(name, iix);
+      var item;
+      if(_.isNumber(iix)){
+        $log.warn("The ability to pass in an index to recordEditor.editItem will be removed in Opal v0.15.0, please pass in an item");
+        item = self.getItem(name, iix);
+      }
+      else{
+        item = iix;
+      }
       return self.openEditItemModal(item, name, url);
     };
 

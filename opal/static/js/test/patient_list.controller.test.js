@@ -59,6 +59,7 @@ describe('PatientListCtrl', function() {
         var promise = deferred.promise
 
         spyOn(episode.recordEditor, 'editItem').and.returnValue(promise);
+        spyOn(episode.recordEditor, 'newItem').and.returnValue(promise);
         spyOn($cookies, 'put').and.stub();
 
 
@@ -791,7 +792,6 @@ describe('PatientListCtrl', function() {
 
     describe('newNamedItem', function(){
         it('should pass through the current scopes tags', function(){
-            spyOn(episode.recordEditor, "newItem");
             $scope.newNamedItem(episode, "someName");
             expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName")
         });
@@ -812,7 +812,7 @@ describe('PatientListCtrl', function() {
         it('should call through to the record editor', function(){
             $scope.editNamedItem($scope.episode, 'demographics', 0);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                'demographics', 0
+                'demographics', $scope.episode.demographics[0]
             );
         });
 
@@ -828,8 +828,8 @@ describe('PatientListCtrl', function() {
         it('should call through to the record editor when we add an item', function() {
             var iix = episodeData.diagnosis.length;
             $scope.editNamedItem($scope.episode, "diagnosis", iix);
-            expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                'diagnosis', iix
+            expect($scope.episode.recordEditor.newItem).toHaveBeenCalledWith(
+                'diagnosis'
             );
         });
     });
