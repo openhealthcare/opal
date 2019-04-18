@@ -56,14 +56,20 @@ Example usage:
 
 Takes a string, opens a modal from which the user can create a new subrecord of type `name`.
 
+It takes the optional argument of `url` which is the url of the template to be opened. This defaults
+to the modal form template for the subrecord of `name`.
+
 ```js
 episode.recordEditor.newItem('diagnosis'):
 // -> Opens a modal with the diagnosis form and will create a new diagnosis on save
 ```
 
-#### Episode.recordEditor.editItem(name, index)
+#### Episode.recordEditor.editItem(name, item)
 
-Open a modal from which the user may edit the `index-th` item of type `name`.
+Open a modal from which the user may edit the item of type `name`.
+
+It takes the optional argument of `url` which is the url of the template to be opened. This defaults
+to the modal form template for the subrecord of `name`.
 
 ```js
 episode.recordEditor.editItem('diagnosis', 0);

@@ -1,5 +1,5 @@
 angular.module('opal.services').factory('RecordEditor', function(
-    $http, $q, Item, $modal, $rootScope, $routeParams,
+    $http, $q, Item, $modal, $rootScope, $routeParams, $log,
     UserProfile){
   "use strict";
   var RecordEditor = function(episode){
@@ -13,9 +13,11 @@ angular.module('opal.services').factory('RecordEditor', function(
       }
     };
 
-    self.openEditItemModal = function(item, name){
+    self.openEditItemModal = function(item, name, template_url){
       $rootScope.state = 'modal';
-      var template_url = '/templates/modals/' + name + '.html/';
+      if(!template_url){
+        template_url = '/templates/modals/' + name + '.html/';
+      }
 
       if($routeParams.slug){
           template_url += $routeParams.slug;
@@ -55,12 +57,19 @@ angular.module('opal.services').factory('RecordEditor', function(
       return deferred.promise;
     };
 
-    self.editItem = function(name, iix){
-      var item = self.getItem(name, iix);
-      return self.openEditItemModal(item, name);
+    self.editItem = function(name, iix, url){
+      var item;
+      if(_.isNumber(iix)){
+        $log.warn("The ability to pass in an index to recordEditor.editItem will be removed in Opal v0.15.0, please pass in an item");
+        item = self.getItem(name, iix);
+      }
+      else{
+        item = iix;
+      }
+      return self.openEditItemModal(item, name, url);
     };
 
-    self.newItem = function(name){
+    self.newItem = function(name, url){
       var iix = episode[name].length;
       var item = self.getItem(name, iix);
 
@@ -69,7 +78,7 @@ angular.module('opal.services').factory('RecordEditor', function(
         deferred.resolve();
         return deferred.promise;
       }
-      return self.openEditItemModal(item, name);
+      return self.openEditItemModal(item, name, url);
     };
   };
 
