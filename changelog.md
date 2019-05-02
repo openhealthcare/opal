@@ -1,3 +1,5 @@
+### 0.14.1 (Minor Release)
+
 ### 0.14.0 (Major Release)
 
 A User's UserProfile is now automatically created when you create a user in a post save signal.
