@@ -33,7 +33,7 @@ class SearchPlugin(plugins.OpalPlugin):
         ('extract-schema', api.ExtractSchemaViewSet)
     ]
 
-    opal_angular_exclude_tracking_qs = [
+    opal_angular_exclude_tracking_prefix = [
         "/search",
         "/extract",
     ]
