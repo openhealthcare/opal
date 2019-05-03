@@ -1,0 +1,69 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>
+      <i class="fa fa-user"></i> Demographics
+      <i class="fa fa-pencil edit pull-right"
+         ng-click="patient.recordEditor.editItem('demographics', patient.demographics[0])"></i>
+    </h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-4">
+        <b>Name</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].first_name ]]
+        [[ patient.demographics[0].surname ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Hosp. #</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].hospital_number ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>NHS #</b>
+      </div>
+      <div class="col-md-8">
+        [[ episode.demographics[0].nhs_number ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>DOB</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].date_of_birth | displayDate ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Sex</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].sex ]]
+      </div>
+    </div>
+    <div ng-show="patient.demographics[0].birth_place" class="row">
+      <div class="col-md-4">
+        <b>Birth place</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].birth_place ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Ethnicity</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].ethnicity ]]
+      </div>
+    </div>
+  </div>
+  {% block footer %}{% endblock %}
+</div>

@@ -1,0 +1,50 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>
+      <i class="{{ icon }}"></i> {{ title }}
+      {% if editable %}
+      {% if singleton %}
+      <i class="fa fa-pencil edit pull-right pointer"
+         ng-click="episode.recordEditor.editItem('{{ name }}', episode.{{ name }}[0])"></i>
+      {% else %}
+      <i class="fa fa-plus-circle edit pull-right pointer"
+         ng-click="episode.recordEditor.newItem('{{ name }}')"></i>
+      {% endif %}
+      {% endif %}
+    </h3>
+  </div>
+
+  <div class="panel-body">
+    <div ng-if="$first" class="row">
+      <div class="col-md-3 patient-timeline">
+        <div class="patient-timeline-now">
+          <div class="patient-timeline-now-text bg-secondary">
+            Now
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-repeat="item in episode.{{ name }}" class="row content-offset-20">
+
+      <div class="col-md-3 patient-timeline">
+        <a
+           class="pointer"
+           ng-click="episode.recordEditor.editItem('{{ name }}', item)">
+          <div class="patient-timeline-speech-bubble">
+            <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
+          </div>
+          <div ng-show="item.{{whenfield}}">
+            <div class="patient-timeline-date">
+              [[ item.{{whenfield}} | momentDateFormat:'DD MMM YYYY' ]]
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-9">
+        <div class="patient-timeline-entry">
+          {% include detail_template %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

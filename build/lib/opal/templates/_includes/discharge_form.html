@@ -1,0 +1,56 @@
+{% load forms %}
+
+<div class="text-center" ng-show="currentCategory == 'Followup'">
+  <input type="hidden" ng-model="editing.category" value="Discharged">
+  <p class="lead">
+    Confirm discharge and no further follow-up is required.
+  </p>
+</div>
+
+<div class="text-center" ng-show="currentCategory == 'Discharged'">
+  <p class="lead">Confirm discharge.</p>
+</div>
+
+{% datepicker label="Discharge date" model="editing.end" hide="editing.category=='Unfollow' || currentCategory=='Discharged'" mindate="[[editing.start]]"%}
+
+<div
+   class="col-md-offset-3"
+   ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' "
+   >
+  <h4>Reason</h4>
+  <div class="radio radio-primary">
+    <input type="radio" name="radio" id="radiodischarged" value="Discharged" ng-model="editing.category">
+    <label for="radiodischarged">
+      Discharge
+    </label>
+  </div>
+
+  <div class="radio radio-primary">
+    <input type="radio" name="radio" id="radiofollowup" value="Followup" ng-model="editing.category">
+    <label for="radiofollowup">
+      Discharged - Outstanding Results for Follow-Up
+    </label>
+  </div>
+
+  <div class="radio radio-primary">
+    <input type="radio" name="radio" id="radiodeceased" value="Deceased" ng-model="editing.category">
+    <label for="radiodeceased">
+      Deceased
+    </label>
+  </div>
+
+  <div class="radio radio-primary">
+    <input type="radio" name="radio" id="radiotransferred" value="Transferred" ng-model="editing.category">
+    <label for="radiotransferred">
+      Transferred
+    </label>
+  </div>
+
+  <div class="radio radio-primary">
+    <input type="radio" name="radio" id="radiounfollow" value="Unfollow" ng-model="editing.category">
+    <label for="radiounfollow">
+      No longer under active review
+    </label>
+  </div>
+
+</div>

@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>
+      <i class="fa fa-warning"></i>
+      Allergies
+    </h4>
+  </div>
+  <div ng-show="the_episode.allergies.length">
+    <div ng-show="the_episode.allergies[0].no_allergies">
+      The patient has no allergies
+    </div>
+    <div ng-hide="the_episode.allergies[0].no_allergies">
+      <ul>
+        <li ng-repeat="item in the_episode.allergies">
+          {% include models.Allergies.get_detail_template %}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

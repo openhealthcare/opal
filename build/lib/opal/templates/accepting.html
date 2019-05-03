@@ -1,0 +1,89 @@
+{% extends 'static_page.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<script type="text/javascript" src="{% static "js/lib/highlight/highlight.pack.js" %}"></script>
+<link href="{% static "js/lib/highlight/styles/idea.css" %}" rel="stylesheet" media="all">
+<script>hljs.initHighlightingOnLoad();</script>
+<link href="{% static "css/tita.css" %}" rel="stylesheet" media="all">
+<style>
+
+  .checkbox {
+  margin-top: 30px;
+  }
+  .checkbox-slider-lg input + span:before {
+  width: 100px;
+  }
+  .checkbox-slider--b-flat input + span:after {
+  width: 40px;
+  font-size: 16px;
+  color: #000000;
+  content: "Fail";
+  border: solid transparent 1px;
+  background-clip: content-box;
+  }
+  .checkbox-slider--b-flat input:checked + span:after {
+  content: "Pass";
+  color: #ffffff;
+  background: #5cb85c;
+  border: solid transparent 1px;
+  background-clip: content-box;
+  }
+  .checkbox label::before {
+  border: none;
+  }
+  #results { display: none }
+</style>
+
+<div class="container content-offset">
+  <div class="panel panel-primary">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>
+        {{ OPAL_BRAND_NAME }} Stories & Acceptance
+      </h2>
+    </div>
+
+    <div class="panel-body">
+      {% block stories %}{% endblock %}
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <center>
+          <p>
+            <button class="btn btn-lg btn-primary"
+                    onclick="makeresults()"
+                    >
+              Share results
+            </button>
+          </p>
+          <p>
+            <input class="form-control" id="results" />
+          </p>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+      return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  }
+
+  function makeresults(){
+    var results = $("input[type='checkbox']").map(function(i, c){if($(c).is(':checked')){ return 'pass' }else{ return 'fail' }}).get().join(',');
+    $('#results').val(window.location.href.split('?')[0] + '?results=' + results ).slideDown();
+  }
+  function useresults(){
+    var results = getParameterByName('results');
+    if(results == ""){ return }
+    results = results.split(',');
+    $("input[type='checkbox']").each(function(i, c){ if(results[i] == 'fail'){ $(c).attr('checked', false) } });
+  }
+  useresults();
+</script>
+  {% endblock %}

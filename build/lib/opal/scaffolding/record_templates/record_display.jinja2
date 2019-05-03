@@ -1,0 +1,16 @@
+{% for f in fields %}{% if f['name'] != 'consistency_token' %}
+<span ng-show="item.{{ f['name'] }}">
+   {% if f['type'] == 'null_boolean' or f['type'] == 'boolean' %}
+     {{ f['title'] }}
+   {% elif f['type'] == 'date' %}
+    [[ item.{{ f['name'] }} | displayDate ]]
+   {% elif f['type'] == 'date_time' %}
+    [[ item.{{ f['name'] }} | displayDateTime ]]
+   {% elif f['type'] == 'time' %}
+    [[ item.{{ f['name'] }} | shortTime ]]
+   {% else %}
+    [[ item.{{ f['name'] }} ]]
+   {% endif %}
+   <br />
+</span>
+{% endif %}{% endfor %}

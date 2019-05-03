@@ -1,0 +1,55 @@
+{
+  "travel_reason": [
+    {
+      "synonyms": [
+        "Visiting Friends and Relatives"
+      ], 
+      "name": "VFR"
+    }, 
+    {
+      "synonyms": [
+        "Work", 
+        "Professional"
+      ], 
+      "name": "Business"
+    }, 
+    {
+      "synonyms": [
+        "British Armed Forces"
+      ], 
+      "name": "Military"
+    }, 
+    {
+      "synonyms": [
+        "Tourism"
+      ], 
+      "name": "Holiday"
+    }, 
+    {
+      "synonyms": [
+        "New Entrant to UK"
+      ], 
+      "name": "Migrant"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "UK Citizen Living Abroad"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Foreign Student"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Foreign Visitor"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Civilian sea/air crew"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Child visiting family"
+    }
+  ]
+}

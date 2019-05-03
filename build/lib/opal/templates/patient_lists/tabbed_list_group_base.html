@@ -1,0 +1,11 @@
+<div class="patient-list-group">
+  <ul class="nav nav-tabs nav-justified" role="tablist">
+    {% for member in members %}
+    <li role="presentation" {% if member.display_name == active_list.display_name %}class="active"{% endif %}>
+      <a href="#/list/{{ member.get_slug }}" aria-controls="home" role="tab" data-toggle="tab">
+        {{ member.display_name }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>

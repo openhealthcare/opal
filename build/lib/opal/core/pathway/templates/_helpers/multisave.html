@@ -1,0 +1,35 @@
+{% load forms %}
+<div save-multiple-wrapper="{{ model }}" initialise-empty="{{ initialise_empty }}">
+  <div ng-repeat="editing in model.subrecords track by $index">
+    <div class="row">
+      <div class="col-md-12">
+        <div ng-show="!{{ model }}._client.completed" class="form-horizontal">
+          {% include subrecord.get_form_template %}
+        </div>
+        <div ng-show="{{ model }}._client.completed">
+          <div ng-repeat="item in [{{ model }}]">
+            {% include subrecord.get_detail_template %}
+          </div>
+        </div>
+        <div class="pull-right">
+          <div ng-show="{{ model }}._client.completed" ng-click="edit({{ model }})" class="btn btn-primary">
+            {% icon 'fa-edit' %}
+            Edit
+          </div>
+          <div ng-disabled="!recordFilledIn({{ model }})" class="btn btn-primary" ng-click="done({{ model }})" ng-show="!{{ model }}._client.completed">
+              {% icon 'fa-check-square' %}
+              Done
+          </div>
+          <div ng-click="remove($index)" class="btn btn-secondary">
+            {% icon 'fa-trash' %}
+            Remove
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr ng-show="!$last" />
+  </div>
+  <div class="text-center row">
+    <a ng-click="addAnother()" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
+  </div>
+</div>

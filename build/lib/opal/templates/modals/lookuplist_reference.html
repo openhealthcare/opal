@@ -1,0 +1,19 @@
+{% extends 'base_templates/modal_base.html' %}
+{% block icon_name %}fa fa-list{% endblock %}
+{% block title %}Coded reference data: [[ lookuplist_name ]]{% endblock %}
+{% block modal_body %}
+<div class="row">
+  <div class="col-md-3" ng-repeat="item in lookuplist track by $index">
+    <p>
+      [[ item ]]
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block modal_save %}
+{% endblock modal_save %}
+
+{% block modal_cancel %}
+<button class="btn" ng-click="cancel()">Close</button>
+{% endblock modal_cancel %}

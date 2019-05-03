@@ -1,0 +1,13 @@
+*~
+*.sqlite
+*.pyc
+*/assets/js/*
+*/assets/css/*
+*/assets/img/*
+*/assets/admin/*
+*/assets/rest_framework/*
+*/assets/bootstrap*
+*/assets/CACHE/*
+.coverage
+htmlcov
+libpeerconnection.log

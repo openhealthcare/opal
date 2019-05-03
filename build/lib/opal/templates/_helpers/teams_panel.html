@@ -1,0 +1,18 @@
+{% load forms %}
+<div class="panel panel-default record-panel">
+  <div class="panel-heading">
+    <h3>
+      {% icon 'fa-users' %}
+      Teams
+      <i class="fa fa-pencil edit pull-right"
+         ng-click="open_modal('EditTeamsCtrl', '/templates/modals/edit_teams.html', {episode: episode})"></i>
+    </h3>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item"
+        ng-repeat="tag in episode.getTags()"
+        ng-show="metadata.tag_visible_in_list.indexOf(tag) != -1">
+        <a href="/#/list/[[ metadata.tags[tag].slug ]]" >[[ metadata.tags[tag].display_name ]]</a>
+    </li>
+  </ul>
+</div>

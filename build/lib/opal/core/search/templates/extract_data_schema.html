@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <title>Data Dictionary</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8 col-md-push-2">
+          {% for record_title, record_schema in schema.items %}
+            <h3>{{ record_title }}</h3>
+            <table class="table">
+              <tr>
+                <th class="col-md-3">
+                  Title
+                </th>
+                <th class="col-md-4">
+                  Type
+                </th>
+                <th class="col-md-5">
+                  Description
+                </th>
+              </tr>
+              {% for record_field in record_schema %}
+              <tr>
+                <td class="col-md-3">
+                  {{ record_field.display_name }}
+                </td>
+                <td class="col-md-4">
+                  {{ record_field.type_display_name }}
+                </td>
+                <td class="col-md-5">
+                  {{ record_field.description | default_if_none:"" }}
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

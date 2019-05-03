@@ -1,0 +1,17 @@
+{% load forms %}
+<div ng-show="editing.inpatient_admission.external_system">
+  {% static "InpatientAdmission.datetime_of_admission" %}
+  {% static "InpatientAdmission.datetime_of_discharge" %}
+  {% static "InpatientAdmission.hospital" %}
+  {% static "InpatientAdmission.ward_code" %}
+  {% static "InpatientAdmission.room_code" %}
+  {% static "InpatientAdmission.bed_code" %}
+</div>
+<div ng-hide="editing.inpatient_admission.external_system">
+  {% datepicker autofocus field="InpatientAdmission.datetime_of_admission" %}
+  {% datepicker field="InpatientAdmission.datetime_of_discharge" %}
+  {% input field="InpatientAdmission.hospital" %}
+  {% input field="InpatientAdmission.ward_code" %}
+  {% input field="InpatientAdmission.room_code" %}
+  {% input field="InpatientAdmission.bed_code" %}
+</div>

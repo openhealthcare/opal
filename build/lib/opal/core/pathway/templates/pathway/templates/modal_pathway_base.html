@@ -1,0 +1,26 @@
+{% load forms %}
+<div class="modal-header">
+  {% block pathway_header %}
+    <h2>
+      {% if pathway.icon %}{% icon pathway.icon %}{% endif %} {{ pathway.display_name }}
+      <span ng-show="episode">
+        ([[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]])
+      </span>
+    </h2>
+  {% endblock pathway_header %}
+</div>
+<div class="modal-body">
+  <form name="form" class="form-horizontal" novalidate>
+    {% block pathway_body %}
+    {% endblock pathway_body %}
+  </form>
+</div>
+</div>
+{% block pathway_footer %}
+  <div class="modal-footer">
+    <div class="row">
+        {% include "pathway/partial/save_button.html" %}
+        {% include "pathway/partial/cancel_button.html" %}
+    </div>
+  </div>
+ {% endblock pathway_footer %}

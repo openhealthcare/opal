@@ -1,0 +1,20 @@
+<div class="form-group"      {% if visibility %} {{ visibility|safe }} {% endif %} >
+  <label class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">{{ label }}</label>
+  <div class="{% ifequal style "horizontal" %}col-sm-8{% endifequal %}">
+	<textarea class="form-control" {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}
+              ng-model="{{ model }}" rows="{{ rows }}"
+              name="[[ {{ element_name }} ]]"
+              {% if change %}
+              ng-change="{{ change }}"
+              {% endif %}
+              {% if macros %}{% include 'partials/_mentio_edit_item.html' %}{% endif %}
+              ></textarea>
+    {% if help_text %}
+  <br />
+  <span class="text-muted" style="">
+    {{ help_text }}
+  </span>
+  {% endif %}
+
+  </div>
+</div>

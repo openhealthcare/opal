@@ -1,0 +1,59 @@
+{% comment %}
+  if we're looking at a patient subrecord and the patient exists use the patient as the parent
+  otherwise use the episode as the parent
+{% endcomment %}
+{% if is_patient_subrecord %}
+<div ng-repeat="parent in [patient || episode]">
+{% else %}
+<div ng-repeat="parent in [episode]">
+{% endif %}
+  <div {% if only_display_if_exists %}ng-show="parent.{{ name }}.length && parent.{{ name }}[0].consistency_token"{% endif %} class="panel panel-default record-panel">
+    <div class="panel-heading">
+      <h3>
+        <i class="{{ icon }}"></i> {{ title }}
+        <span ng-show="{{ editable }}" >
+            {% if singleton %}
+            <i class="fa fa-pencil edit pull-right pointer"
+               ng-click="parent.recordEditor.editItem('{{ name }}', parent.{{ name }}[0])"></i>
+            {% else %}
+            <i class="fa fa-plus-circle edit pull-right pointer"
+               ng-click="parent.recordEditor.newItem('{{ name }}')"></i>
+            {% endif %}
+       </span>
+      </h3>
+    </div>
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="item in parent.{{ name }}"
+      {% if angular_filter %}
+      ng-show="{{ angular_filter }}">
+      {% else %}
+      >
+      {% endif %}
+      <div class="row">
+        {% if full_width %}
+        <div class="col-md-12">
+          {% include detail_template %}
+        </div>
+        {% else %}
+        <div class="col-md-9">
+          {% include detail_template %}
+        </div>
+        <div class="col-md-3">
+          <span ng-show="{{ editable }}" >
+              {% if not singleton %}
+              <i class="fa fa-pencil edit pull-right pointer"
+                 ng-click="parent.recordEditor.editItem('{{ name }}', item)"></i>
+              {% endif %}
+          </span>
+        </div>
+        {% endif %}
+        </div>
+      </li>
+      {% if noentries %}
+      <li class="list-group-item" ng-show="parent.{{name}}.length == 0">
+        {{ noentries }}
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>

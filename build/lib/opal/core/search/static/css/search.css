@@ -1,0 +1,26 @@
+.extract-search .search-info{
+  border: 1px solid grey;
+  padding: 10px 15px 30px 15px;
+  position: relative;
+  margin-top: 10px;
+}
+
+.extract-search .search-info-title{
+  position: absolute;
+  display: block;
+  background-color: white;
+  left: 10px;
+  top: -10px;
+  padding: 0 5px;
+}
+
+.extract-search .divider{
+  /*fields have a margin-top so that they collapse nicely in
+  small screens, offset it for the <hr />*/
+  margin-bottom: -5px;
+}
+
+
+.extract-search .square-button{
+  width: 34px;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "ng-idle",
+  "version": "1.2.2",
+  "homepage": "https://github.com/HackedByChinese/ng-idle",
+  "description": "Responding to idle users in AngularJS",
+  "main": "angular-idle.js",
+  "keywords": [
+    "angularjs",
+    "idle",
+    "ng-idle",
+    "keepalive",
+    "ping",
+    "angular",
+    "user",
+    "session"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": ">= 1.2.0"
+  },
+  "devDependencies": {
+    "angular-mocks": ">=1.2.0",
+    "jquery": "~2.0.3"
+  },
+  "_release": "1.2.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.2.2",
+    "commit": "eca77b30ab3661f2b54992a970caffe24eecc13d"
+  },
+  "_source": "https://github.com/HackedByChinese/ng-idle.git",
+  "_target": "^1.2.2",
+  "_originalSource": "ng-idle",
+  "_direct": true
+}

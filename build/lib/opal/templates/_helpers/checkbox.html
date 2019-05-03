@@ -1,0 +1,15 @@
+<div class="checkbox checkbox-primary {% ifequal style "horizontal" %}col-sm-offset-3{% endifequal %}">
+  <input {% if disabled %}ng-disabled="{{ disabled }}"{% endif %}
+         class="" id="checkbox_[[ {{ element_name }} ]]"
+         type="checkbox"
+         name="[[ {{ element_name }} ]]"
+         ng-model="{{ model }}" {% if change %}ng-change="{{ change }}"{% endif %}
+         />
+  <label for="checkbox_[[ {{element_name }} ]]">{{ label }}</label>
+  {% if help_text %}
+  <br />
+  <span class="text-muted" style="margin-left: -20px;">
+    {{ help_text }}
+  </span>
+  {% endif %}
+</div>

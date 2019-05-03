@@ -1,0 +1,16 @@
+<div class="panel-heading">
+  <div class="row">
+    <div class="col-sm-12">
+      <h3><i class="fa fa-user"></i>
+        [[ row.demographics[0].first_name ]] [[ row.demographics[0].surname ]] [[ row.demographics[0].hospital_number ]]
+        <small>
+          [[ row.demographics[0].date_of_birth | displayDate ]]
+          <span ng-show="row.demographics[0].date_of_birth">
+            ([[ row.demographics[0].date_of_birth | age ]])
+          </span>
+        </small>
+      </h3>
+    </div>
+
+  </div>
+</div>

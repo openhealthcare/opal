@@ -1,0 +1,4 @@
+{% load staticfiles %}
+{% for sheet, mime_type in styles %}
+<link href="{% static sheet  %}" type="{{ mime_type }}" rel="stylesheet" charset="utf-8" media="screen">
+{% endfor %}

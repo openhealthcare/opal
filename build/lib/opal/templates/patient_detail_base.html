@@ -1,0 +1,117 @@
+{% load panels %}
+{% load forms %}
+<div ng-show="patient == null" class="container-fluid content-offset">
+  <h1 class="text-center content-offset">
+    Patient not found
+  </h1>
+  <p class="lead text-center content-offset">
+    We're sorry but we couldn't find the patient you're looking for.
+    <br />
+    Perhaps try searching for them instead?
+  </p>
+</div>
+<div class="container-fluid content-offset {% block container_classes %}{% endblock %}"
+     ng-hide="patient == null">
+  <div class="panel panel-primary panel-container patient-detail {% block panel_classes %}{% endblock %}">
+    <!-- Default panel contents -->
+    <div class="panel-heading patient-detail-heading">
+      <h1>
+        {% block heading %}{% icon 'fa-user' %}[[ patient.demographics[0].first_name ]] [[ patient.demographics[0].surname ]]{% endblock %}
+        <small>
+          {% block subheading %}
+          <span ng-show="patient.demographics[0].date_of_birth">
+            ([[ patient.demographics[0].date_of_birth | displayDate ]])
+          </span>
+          [[ patient.demographics[0].hospital_number ]]
+          {% endblock %}
+        </small>
+      </h1>
+    </div>
+
+    <div class="panel-body {% block panel_body_classes %}{% endblock %}">
+      <div class="row">
+        {% block content %}
+
+        <div class="col-md-3"> <!-- Episode Switcher -->
+          {% block pre_demographics %}{% endblock %}
+          {% block demographics %}
+            {% include 'partials/_demographics_panel.html' %}
+          {% endblock %}
+          {% block post_demographics %}{% endblock %}
+          {% block episodes_switcher %}
+            <div class="panel panel-default">
+              <div class="panel-heading ">
+                <h3>
+                  <i class="fa fa-history"></i>
+                  Episodes
+                </h3>
+              </div>
+              <div class="list-group">
+                <a class="list-group-item episodelist pointer"
+                   ng-class="{'bg-active': view == null && e.id == episode.id}"
+                   ng-repeat="e in patient.episodes"
+                   href="[[ '/#' + e.link]]"
+                   ng-click="switch_to_episode($index, $event)"
+                   >
+                  [[ e.category_name ]]
+                  <span ng-show="e.start">
+                    [[ e.start | displayDate ]] - [[ e.end | displayDate ]]<span ng-show="!e.end">Current</span>
+                  </span>
+                </a>
+              </div>
+            </div>
+          {% endblock episodes_switcher %}
+
+          {% block views_switcher %}
+            {% if detail_views|length > 0 %}
+            <div class="panel panel-default">
+              <div class="panel-heading ">
+                <h3>
+                  <i class="fa fa-list-alt"></i>
+                  Views
+                </h3>
+              </div>
+              <div class="list-group">
+                {% for detail in detail_views %}
+                <a class="list-group-item episodelist pointer"
+                   ng-class="{'bg-active': view == '{{ detail.get_slug}}'}"
+                   ng-click="switch_to_episode(0, $event) && switch_to_view('{{ detail.get_slug }}')"
+                   href="[[ '/#/patient/' + patient.id + '/{{ detail.get_slug }}' ]]"
+                   >
+                  {{ detail.display_name }}
+                </a>
+                {% endfor %}
+                {% block viewnavigation %}{% endblock %}
+              </div>
+            </div>
+            {% endif %}
+          {% endblock views_switcher %}
+        </div> <!-- End episode switcher -->
+        <div class="col-md-9">
+          <div class="col-md-12">
+            {% for episode_category in episode_categories %}
+            {% if episode_category.detail_template %}
+            <div class="row" ng-show="view == null && episode.category_name == '{{ episode_category.display_name }}'">
+              {% include episode_category.detail_template %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% for detail in detail_views %}
+            <div class="row" ng-show="view == '{{ detail.get_slug }}'">
+              {% include detail.template %}
+            </div>
+            {% endfor %}
+            {% block viewtemplates %}{% endblock %}
+          </div>
+        </div>
+
+      </div> <!-- Ends Main Panel -->
+
+      {% endblock content %}
+
+    </div>
+
+  </div> <!-- Panel body -->
+
+</div>   <!-- Panel -->
+</div>     <!-- Container -->

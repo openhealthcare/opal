@@ -1,0 +1,16 @@
+<div ng-show="item.created" class="content-offset-20">
+  <p class="text-muted text-center">
+    <span ng-hide="item.updated">
+      <img class="text-avatar" avatar-for-user="[[ item.created_by_id ]]">
+      Created <span ng-show="item.created_by_id">by</span>
+      <span full-name-for-user="[[ item.created_by_id ]]"></span>
+      [[ item.created | displayDate ]]
+    </span>
+    <span ng-show="item.updated">
+      <img class="text-avatar" avatar-for-user="[[ item.updated_by_id ]]">
+      Last updated <span ng-show="item.created_by_id">by</span>
+      <span full-name-for-user="[[ item.updated_by_id ]]"></span>
+      [[ item.updated | displayDate ]]
+    </span>
+  </p>
+</div>

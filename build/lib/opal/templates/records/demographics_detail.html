@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-md-4">
+    <b>Name</b>
+  </div>
+  <div class="col-md-8">
+    [[ item.first_name ]]
+    [[ item.surname ]]
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <b>Hospital #</b>
+  </div>
+  <div class="col-md-8">
+    [[ item.hospital_number ]]
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <b>NHS #</b>
+  </div>
+  <div class="col-md-8">
+    [[ episode.demographics[0].nhs_number ]]
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <b>DOB</b>
+  </div>
+  <div class="col-md-8">
+    [[ item.date_of_birth | displayDate ]]
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <b>Sex</b>
+  </div>
+  <div class="col-md-8">
+    [[ item.sex ]]
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <b>Birth place</b>
+  </div>
+  <div class="col-md-8">
+    [[ item.birth_place ]]
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <b>Ethnicity</b>
+  </div>
+  <div class="col-md-8">
+    [[ item.ethnicity ]]
+  </div>
+</div>

@@ -1,0 +1,2608 @@
+{
+  "condition": [
+    {
+      "synonyms": [
+        "Atrial fibrillation"
+      ], 
+      "name": "AF"
+    }, 
+    {
+      "synonyms": [
+        "Above knee amputation"
+      ], 
+      "name": "AKA"
+    }, 
+    {
+      "synonyms": [
+        "Acute Kidney Injury"
+      ], 
+      "name": "AKI"
+    }, 
+    {
+      "synonyms": [
+        "Acute Lymphocytic Leukaemia"
+      ], 
+      "name": "ALL"
+    }, 
+    {
+      "synonyms": [
+        "Acute Myeloid Leukaemia"
+      ], 
+      "name": "AML"
+    }, 
+    {
+      "synonyms": [
+        "Acute Respiratory Distress Syndrome"
+      ], 
+      "name": "ARDS"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Achalasia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acne vulgaris"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acromegaly"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Actinomycosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute CMV"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute Confusional State"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute Coronary Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute EBV"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute Liver Failure"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute Pancreatitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Acute Sinusitis"
+    }, 
+    {
+      "synonyms": [
+        "Acute on chronic subdural haematoma"
+      ], 
+      "name": "Acute on chronic SDH"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Addisons Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Adhesions"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "African Tick Bite Fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Alcohol Dependence"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Allograft"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Alopecia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Alzheimer's"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Amoebic Dysentry"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Amoebic liver abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Amyloid"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Anaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Anaemia of Chronic Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ancylostoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Anisakiasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ankylosing Spondylitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Anthrax"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Anti-phospholipid Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Aortic dissection"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Aphthous ulcer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Aplastic anemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Appendicitis"
+    }, 
+    {
+      "synonyms": [
+        "Hip arthroplasty"
+      ], 
+      "name": "Arthroplasty (hip)"
+    }, 
+    {
+      "synonyms": [
+        "Knee arthroplasty"
+      ], 
+      "name": "Arthroplasty (knee)"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Asbestosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ascariasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Aseptic Meningitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Aspergillosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Aspiration Pneumonia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Asthma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Atrial flutter"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Atypical Pneumonia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Autograft"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Avascular Necrosis"
+    }, 
+    {
+      "synonyms": [
+        "Below knee amputation"
+      ], 
+      "name": "BKA"
+    }, 
+    {
+      "synonyms": [
+        "Bone Marrow Transplant"
+      ], 
+      "name": "BMT"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Babesiosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bacteraemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bacterial Gastroenteritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bacterial Meningitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Balanitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Barrett's Oesophagus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Basal Cell Carcinoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Behcet's Syndrome"
+    }, 
+    {
+      "synonyms": [
+        "Endemic Syphilis"
+      ], 
+      "name": "Bejel"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bell's Palsy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Benign Intracranial Hypertension"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Benign Prostatic Hypertrophy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Beri-beri"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bicuspid valve"
+    }, 
+    {
+      "synonyms": [
+        "Manic Depression"
+      ], 
+      "name": "Bipolar Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bipolar disorder"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bladder Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bladder stricture"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Blind"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Blocked intrathecal pump"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Boil"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Botfly"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Botulism"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bowl obstruction"
+    }, 
+    {
+      "synonyms": [
+        "Intracranial abscess"
+      ], 
+      "name": "Brain Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Brainstem encephalitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Breast Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bronchiectasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Brucellosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Burkitts Lymphoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bursitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bursititis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Buttock Abscess"
+    }, 
+    {
+      "synonyms": [
+        "Clostridium difficile"
+      ], 
+      "name": "C diff"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "CADASIL"
+    }, 
+    {
+      "synonyms": [
+        "Community Acquired Pneumonia"
+      ], 
+      "name": "CAP"
+    }, 
+    {
+      "synonyms": [
+        "Crimean-congo Haemorrhagic fever"
+      ], 
+      "name": "CCHF"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "CJD"
+    }, 
+    {
+      "synonyms": [
+        "Chronic Kidney Disease"
+      ], 
+      "name": "CKD"
+    }, 
+    {
+      "synonyms": [
+        "Chronic Lymphocytic Leukaemia"
+      ], 
+      "name": "CLL"
+    }, 
+    {
+      "synonyms": [
+        "Cutaneous Larva Migrans"
+      ], 
+      "name": "CLM"
+    }, 
+    {
+      "synonyms": [
+        "Chronic Myeloid Leukaema"
+      ], 
+      "name": "CML"
+    }, 
+    {
+      "synonyms": [
+        "Chronic Obstructive Pulmonary Disease"
+      ], 
+      "name": "COPD"
+    }, 
+    {
+      "synonyms": [
+        "Common variable immunodeficiency"
+      ], 
+      "name": "CVID"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Candidaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Candidiaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Carcinoid"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cardiomyopathy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cat-scratch disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cauda Equina"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cellulitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cerebellar Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cerebral Vasculitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cervical Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cervicitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chagas Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chancroid"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chest crisis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chickenpox"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chikungunya"
+    }, 
+    {
+      "synonyms": [
+        "Ascending Cholangitis"
+      ], 
+      "name": "Cholangitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cholecystitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cholera"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chronic Granulomatis Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chronic Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chronic Pancreatitis"
+    }, 
+    {
+      "synonyms": [
+        "Chronic subdural haematoma"
+      ], 
+      "name": "Chronic SDH"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chronic Sinusitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chronic venous ulcer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Churg Strauss Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ciguatera Poisoning"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cirrhosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Coccidioidomycosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Coeliac"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Colon Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Condyloma acuminatum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Conjuncitivitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Connective Tissue Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Contact Dermatitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Conyloma acuminata"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cor Pulmonale"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cord Compression"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cowpox"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Crohn's Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cryptococcal IRIS"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cryptococcal Meningitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cryptosporidium"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cushing's"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cutaneous Leishmaniasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cystic Fibrosis"
+    }, 
+    {
+      "synonyms": [
+        "Diabetic Ketoacidosis"
+      ], 
+      "name": "DKA"
+    }, 
+    {
+      "synonyms": [
+        "Diffuse large B cell lymphoma"
+      ], 
+      "name": "DLBCL"
+    }, 
+    {
+      "synonyms": [
+        "Deep Venous Thrombosis"
+      ], 
+      "name": "DVT"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dehydration"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Delirium"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Delusional parasitosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dementia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dengue fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dental Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Depression"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dermatitis herpetiformis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dermatomyositis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dermatophytosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Devics Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Diabetes Insipidus"
+    }, 
+    {
+      "synonyms": [
+        "Infected Diabetic Ulcer"
+      ], 
+      "name": "Diabetic Foot Infection"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Diarrhoea"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Diffuse Systemic Sclerosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Diphtheria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Disc Prolapse"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Disciitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Discitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Diverticular Disease"
+    }, 
+    {
+      "synonyms": [
+        "Overdose"
+      ], 
+      "name": "Drug Overdose"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Drug Reaction"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Drug induced psychosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Duodenal ulcer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Duodenitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "East African Trypanosomiasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ebola"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Eclampsia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ectopic Pregnancy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Eczema"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Eczema herpeticum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ehrlichosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Empyema"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Encephalitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Endometrial Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Endometriosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Endophtalmitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Enteric Fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Eosinophilia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Eosinophilic Meninigitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Epidemic Typhus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Epididymitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Epidural Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Epiglottitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Epilepsy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Episcleritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erysipelas"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erythema Multiforme"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erythema Nodosum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erythema Nodosum Leprosum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erythema Nodousm"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erythroderma"
+    }, 
+    {
+      "synonyms": [
+        "Alcohol Withdrawal"
+      ], 
+      "name": "EtOH Withdrawal"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ewings Sarcoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Extrinsic\u00a0allergic\u00a0alveolitis"
+    }, 
+    {
+      "synonyms": [
+        "Familial Meiterranean Fever"
+      ], 
+      "name": "FMF"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Facial Cellulitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Falciparum Malaria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Fasciola"
+    }, 
+    {
+      "synonyms": [
+        "Febrile neutropenia", 
+        "FNE"
+      ], 
+      "name": "Febrile neutropaenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Folate Deficiency"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Fracture"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "G6PD Deficiency"
+    }, 
+    {
+      "synonyms": [
+        "Gastro-oesophageal reflux"
+      ], 
+      "name": "GORD"
+    }, 
+    {
+      "synonyms": [
+        "Graft-versus host disease"
+      ], 
+      "name": "GVHD"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gallbladder Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gallstones"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gastric Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gastric ulcer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gastritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gastroenteritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gastroparesis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Genital herpes"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Giardia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Glanders"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Glaucoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Glioblastoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Glomerulonephritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Goiter"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gonoccoal arthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gonorrhea"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gout"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Graves Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Groin Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Guillain-Barr\u00e9 syndrome"
+    }, 
+    {
+      "synonyms": [
+        "Hospital Acquired Pneumonia"
+      ], 
+      "name": "HAP"
+    }, 
+    {
+      "synonyms": [
+        "Hereditary hemorrhagic telangiectasia", 
+        "Hereditary haemorrhagic telangiectasia"
+      ], 
+      "name": "HHT"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "HIV"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "HIV Encephalitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "HIV Encephalopathy"
+    }, 
+    {
+      "synonyms": [
+        "Seroconversion Illness"
+      ], 
+      "name": "HIV Seroconversion"
+    }, 
+    {
+      "synonyms": [
+        "Hyperosmolar Non-Ketotic Coma"
+      ], 
+      "name": "HONK"
+    }, 
+    {
+      "synonyms": [
+        "Herpes Encephalitis"
+      ], 
+      "name": "HSV Encephalitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haematuria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haemolytic Anaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haemophagocytic Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haemophilia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hand, foot and mouth disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Heart failure"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Henoch-Sch\u00f6nlein purpura"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatic Encephalopathy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatitis A"
+    }, 
+    {
+      "synonyms": [
+        "HBV"
+      ], 
+      "name": "Hepatitis B"
+    }, 
+    {
+      "synonyms": [
+        "HCV"
+      ], 
+      "name": "Hepatitis C"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatitis D"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatitis E"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatitits"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatorenal syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hereditary spherocytosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hernia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Herpangina"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Herpes simplex"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Herpes zoster"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Herpetic gingivostomatitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hidranitits suppurative"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Histoplasmosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hodgkins Lymphoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Huntingdon's"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hydatid Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hyper-emesis gravidarum"
+    }, 
+    {
+      "synonyms": [
+        "Tropical Malarial Splenomegaly"
+      ], 
+      "name": "Hyper-reactive Malarial Splenomegaly"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypercalcaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypercholesterolaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypereosinophilia Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hyperlipidaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hyperparathyroidism"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypersplenism"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypertension"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypertriglyeridaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypogammaglobulinaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypokalaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hyponatraemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypoparathyroidism"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hypothyroidism"
+    }, 
+    {
+      "synonyms": [
+        "Inflammatory Bowel Disease"
+      ], 
+      "name": "IBD"
+    }, 
+    {
+      "synonyms": [
+        "Ischaemic Heart Disease"
+      ], 
+      "name": "IHD"
+    }, 
+    {
+      "synonyms": [
+        "Immune Thrombocytopenic Purpura"
+      ], 
+      "name": "ITP"
+    }, 
+    {
+      "synonyms": [
+        "Injecting drug user"
+      ], 
+      "name": "IVDU"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Immune Thrombocytopenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Impetigo"
+    }, 
+    {
+      "synonyms": [
+        "Infected Vascular Graft"
+      ], 
+      "name": "Infected IVC Filter"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Infected Prosthetic Joint"
+    }, 
+    {
+      "synonyms": [
+        "Infected total hip replacement"
+      ], 
+      "name": "Infected THR"
+    }, 
+    {
+      "synonyms": [
+        "Infected total knee replacement"
+      ], 
+      "name": "Infected TKR"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Infectious mononucleosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Infective Endocarditis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Influenza"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Influenza A"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Influenza B"
+    }, 
+    {
+      "synonyms": [
+        "ILD"
+      ], 
+      "name": "Interstitial Lung Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Intestinal Malabsorption"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Iron deficiency anaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Irritable Bowel Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ischaemic Colitis"
+    }, 
+    {
+      "synonyms": [
+        "Juvenile rheumatoid arthritis"
+      ], 
+      "name": "JRA"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Jigger"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Kaposi's Sarcoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Keratitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Kikuchi's Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Knowlesi Malaria"
+    }, 
+    {
+      "synonyms": [
+        "Lymphogranuloma venereum"
+      ], 
+      "name": "LGV"
+    }, 
+    {
+      "synonyms": [
+        "Lower Respiratory Tract Infection"
+      ], 
+      "name": "LRTI"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lambert Eaton Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Large Vessel Vasculitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Laryngeal Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Laryngitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lassa"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lemierres Syndrome "
+    }, 
+    {
+      "synonyms": [
+        "Hansen's Disease"
+      ], 
+      "name": "Leprosy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Leptospirosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Leucopenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lichen Simplex"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lichen planus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Limited Systemic Sclerosis"
+    }, 
+    {
+      "synonyms": [
+        "Line Associated Infection"
+      ], 
+      "name": "Line Infection"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Line Thrombosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Listeriosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Liver Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Liver Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Loa loa"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Loeffler Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lower GI Bleed"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lung Absces"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lung Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lyme Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lymphadenopathy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lymphatic filariasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Lymphopenia"
+    }, 
+    {
+      "synonyms": [
+        "Eumycetoma", 
+        "Mycetoma"
+      ], 
+      "name": "Madura Foot"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Malariae Malaria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Marfan's "
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mastoiditis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Measles"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mediterranean spotted fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Medium Vessel Vasculitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Megaloblastic Anaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Melanoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Melioidosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Meningitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Meningococcal meningitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Meningoencepahlitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mesothelioma"
+    }, 
+    {
+      "synonyms": [
+        "MPA"
+      ], 
+      "name": "Microscopic Polyangiitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Migraine"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Molluscum contagiosum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mononeuritis multiplex"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Motor Neuron Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mucocutaenous Leishmaniasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mucositis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Multicentric Castleman's"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Multicentric Castlemans"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Multiple Myeloma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Multiple sclerosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mumps"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Murine Typhus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Muscle spasm"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Muscular dystrophy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Myasthenia gravia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mycosis Fungoides"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Myelofibrosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Myeloma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Myositis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "M\u00e9ni\u00e8re\u2019s disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Necrotising Fasciitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neurocystercicosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neurofibromatosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neurogenic Bladder"
+    }, 
+    {
+      "synonyms": [
+        "Neutropaenia"
+      ], 
+      "name": "Neutropenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Non-Hodgkins Lymphoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Non-Typhoidal Salmonella"
+    }, 
+    {
+      "synonyms": [
+        "Mycobacterium Other Than Tuberculosis"
+      ], 
+      "name": "Non-tuberculosis Mycobacterial Infection"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Normal pressure hydrocephalus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Norovirus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oesophageal Candiasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oesophageal Candidia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oesophageal cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oesophageal candida"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oesophagitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Olceranon bursitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Onchocerciasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oophritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Opthalmic Herpes Simplex"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Optic Neuritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oral Candidia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oral Hairy Leukoplakia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oral cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oral candida"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Orbital cellulits"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Orchitis"
+    }, 
+    {
+      "synonyms": [
+        "OA"
+      ], 
+      "name": "Osteoarthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Osteomyelitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Osteoporosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Otitis Externa"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Otitis Media"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ovale Malaria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ovarian Cancer"
+    }, 
+    {
+      "synonyms": [
+        "Pneumocystis jirovecii pneumonia", 
+        "PJP"
+      ], 
+      "name": "PCP"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "PCP IRIS"
+    }, 
+    {
+      "synonyms": [
+        "Progressive Multifocal Leukoencephalopathy"
+      ], 
+      "name": "PML"
+    }, 
+    {
+      "synonyms": [
+        "Pyrexia of Unknown Origin", 
+        "FUO", 
+        "Fever of Unknown Origin"
+      ], 
+      "name": "PUO"
+    }, 
+    {
+      "synonyms": [
+        "Peripheral vascular disease"
+      ], 
+      "name": "PVD"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pancreatic Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pancytopenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Papillodema"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Paraspinal Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Parkinson's disease"
+    }, 
+    {
+      "synonyms": [
+        "PDA"
+      ], 
+      "name": "Patent Ductus Arteriosus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pellagra"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pelvic Inflammatory Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pemphigoid"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pemphigus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Penile Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Perforation"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Peri-anal abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Periorbital Cellulitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Peripheral Neuropathy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Peritonitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pernicious Anaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pharyngitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pinta"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pituitary Adenoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Plague"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pleural Effusion"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pneumothorax"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polio"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polyarteritis Nodosa"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polycythaemia rubra vera"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polymyalgia rheumatica"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polymyositis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Portal hypertension"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Post malaria neurological syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Postherpetic neuralgia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pre-eclampsia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pregnant"
+    }, 
+    {
+      "synonyms": [
+        "PBC"
+      ], 
+      "name": "Primary Biliary Cirrhosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Primary CNS Lymphoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Primary Scleorsing Cholangitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Primary Syphilis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Proctitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Prostate Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Prostatits"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Protein losing enteropathy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pseudogout"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Psoas abcess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Psoriasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Psoriatic arthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pulmonary Fibrosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pulmonary Odema"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pulmonary hypertension"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pyelonephritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pyoderma gangrenosum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pyogenic Granuloma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Q Fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Quinsey"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rabies"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rash of Unknown Aetiology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rat-bite fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Reactive Arthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Refeeding Syndrome"
+    }, 
+    {
+      "synonyms": [
+        "Relapsed acute myeloid leukaemia"
+      ], 
+      "name": "Relapsed AML"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Renal Calculi"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Renal Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Renal Tubular Acidosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Retinoblastoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rhabdomyolysis"
+    }, 
+    {
+      "synonyms": [
+        "RA"
+      ], 
+      "name": "Rheumatoid Arthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rickettsial infection"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rickettsialpox"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rocky mountain spotted fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rosacea"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Roseola infantum"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rotavirus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rubella"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "SARS"
+    }, 
+    {
+      "synonyms": [
+        "Spontaneous Bacterial Peritonitis"
+      ], 
+      "name": "SBP"
+    }, 
+    {
+      "synonyms": [
+        "Subdural haematoma"
+      ], 
+      "name": "SDH"
+    }, 
+    {
+      "synonyms": [
+        "STEW"
+      ], 
+      "name": "STEWARDSHIP"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sacroiliitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sarcoid"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sarcoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Scabies"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Scarlet Fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Schistosomiasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Schizophrenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sciatica"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Scleritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Scrub Typhus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Seborrheic dermatitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Secondary Syphilis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sepsis"
+    }, 
+    {
+      "synonyms": [
+        "Neutropaenic sepsis"
+      ], 
+      "name": "Sepsis (neutropaenic)"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sepsis (non-neutropaenic)"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Septic Arthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Septic Arthtitis"
+    }, 
+    {
+      "synonyms": [
+        "Infected Bursitis"
+      ], 
+      "name": "Septic Bursitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Septicaemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Seronegative inflammatory arthritis"
+    }, 
+    {
+      "synonyms": [
+        "Scid"
+      ], 
+      "name": "Severe Combined Immunodeficiency"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Severe falciparum malaria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Shigella"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Shingles"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Short Bowel Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sickle-cell anemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sickle-cell trait"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sinusitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sj\u00f6gren's syndrome"
+    }, 
+    {
+      "synonyms": [
+        "OSA"
+      ], 
+      "name": "Sleep apnea"
+    }, 
+    {
+      "synonyms": [
+        "Leucocytoclastic Vasculitis"
+      ], 
+      "name": "Small Vessel Vasculitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Smallpox"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Spinal Abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "St Louis Encephalitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Stevens-Johnsons Syndrome"
+    }, 
+    {
+      "synonyms": [
+        "Adult Onset Still's Disease"
+      ], 
+      "name": "Still's Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Streptococcal\u00a0throat infection"
+    }, 
+    {
+      "synonyms": [
+        "CVA", 
+        "Cerebrovascular Accident"
+      ], 
+      "name": "Stroke"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Strongyloidiasis"
+    }, 
+    {
+      "synonyms": [
+        "SAH"
+      ], 
+      "name": "Sub-Arachnoid Haemorrhage"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sweets's Syndrome"
+    }, 
+    {
+      "synonyms": [
+        "SIADH"
+      ], 
+      "name": "Syndrome of Inappropriate Antidiuretic Hormone"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Synovitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Systemic lupus erythematosus"
+    }, 
+    {
+      "synonyms": [
+        "Type 1 Diabetes", 
+        "DM1", 
+        "DMI"
+      ], 
+      "name": "T1DM"
+    }, 
+    {
+      "synonyms": [
+        "Type 2 Diabetes", 
+        "DM2", 
+        "DMII"
+      ], 
+      "name": "T2DM"
+    }, 
+    {
+      "synonyms": [
+        "Mycobacterium Tuberculosis", 
+        "MTB"
+      ], 
+      "name": "TB"
+    }, 
+    {
+      "synonyms": [
+        "Total hip replacement"
+      ], 
+      "name": "THR"
+    }, 
+    {
+      "synonyms": [
+        "Total knee replacement"
+      ], 
+      "name": "TKR"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Takayasu's Arteritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tapeworm"
+    }, 
+    {
+      "synonyms": [
+        "Giant Cell Vasculitis"
+      ], 
+      "name": "Temporal Arteritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tension headache"
+    }, 
+    {
+      "synonyms": [
+        "Neurosyphilis"
+      ], 
+      "name": "Tertiary Syphilis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Testicular Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Testicular Torsion"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tetanus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Thrombocytopenia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Thyroid Cancer"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Thyroiditis"
+    }, 
+    {
+      "synonyms": [
+        "Hyperthryoidism"
+      ], 
+      "name": "Thyrotoxicosis"
+    }, 
+    {
+      "synonyms": [
+        "TBE"
+      ], 
+      "name": "Tick-borne encephalitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tinea Capita"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tinea Corporis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tinea Pedis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tonsillitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Toxoplasma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Toxoplasma IRIS"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Trachoma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Transverse myelitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Trench Fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Trichuris"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tropical Pulmonary Eosinophilia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tropical Sprue"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tuberculosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tubo ovarian abscess"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tularemia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Tumbo Fly"
+    }, 
+    {
+      "synonyms": [
+        "Upper Respiratory Tract Infection"
+      ], 
+      "name": "URTI"
+    }, 
+    {
+      "synonyms": [
+        "Urinary Tract Infection"
+      ], 
+      "name": "UTI"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ulcerative Colitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Upper GI Bleed"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Urethritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Urinary retention"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Urticaria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Uterine fibroid"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Uveitis"
+    }, 
+    {
+      "synonyms": [
+        "Ventilator Associated Pneumonia"
+      ], 
+      "name": "VAP"
+    }, 
+    {
+      "synonyms": [
+        "Viral Haemorrhagic Fever"
+      ], 
+      "name": "VHF"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "VP shunt infection"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Variceal bleed"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vascular Dementia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Venous sinus thrombosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vincent's angina"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Viral Exanthem"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Viral Gastroenteritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Viral Illness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Viral Meningitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Viral Pneumonia"
+    }, 
+    {
+      "synonyms": [
+        "Kala-azar"
+      ], 
+      "name": "Visceral Leishmaniasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vitamin D Deficiency"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vitiligo"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vivax Malaria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Von Willebrand's disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Von-Hippel Lindau Syndrome"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Wegners Granulomatosis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Wernicke's encephalopathy"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "West African Trypanosomiasis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "West Nile"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Whooping cough"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Wilson's Disease"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Wound infection (non-surgical)"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Wound infection (surgical site)"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Yaws"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Yellow fever"
+    }, 
+    {
+      "synonyms": [
+        "chronic myelomonocytic leukaemia"
+      ], 
+      "name": "cmml"
+    }
+  ]
+}

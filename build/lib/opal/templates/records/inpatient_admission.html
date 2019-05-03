@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-6">
+    [[ item.datetime_of_admission | displayDate ]] -
+    <span ng-show="item.datetime_of_discharge">[[ item.datetime_of_discharge | displayDate ]]</span>
+    <span ng-hide="item.datetime_of_discharge">current</span>
+  </div>
+  <div class="col-md-6">
+     <span ng-show="item.ward_code">
+       [[ item.ward_code ]] -
+     </span>
+     <span ng-show="item.room_code">
+       [[ item.room_code ]]
+     </span>
+     <span ng-show="item.bed_code">
+       - [[ item.bed_code ]]
+     </span>
+  </div>
+</div>
