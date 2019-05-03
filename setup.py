@@ -54,7 +54,7 @@ setup(
         'djangorestframework==3.7.4',
         'django-reversion==3.0.1',
         'django-compressor==2.2',
-        'python-dateutil==2.7.5',
+        'python-dateutil==2.8.0',
         'django-celery==3.2.2',
         'celery==3.1.25',
         ],
