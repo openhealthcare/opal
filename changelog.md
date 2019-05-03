@@ -1,3 +1,12 @@
+### 0.14.2 (Minor Release)
+
+Documentation fix, we're on python 3.4 now.
+
+### 0.14.1 (Minor Release)
+
+The search plugin was not excluding search strings from analytics.
+This change makes it so that it does.
+
 ### 0.14.0 (Major Release)
 
 A User's UserProfile is now automatically created when you create a user in a post save signal.
