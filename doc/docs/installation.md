@@ -11,9 +11,9 @@ installed on your system.
 Let's just check that you do:
 
     $ python --version
-    Python 2.7.5
+    Python 3.4.3
     $ pip --version
-    pip 1.5.6
+    pip 19.0.3
 
 ### Step 2: Use Pip
 
