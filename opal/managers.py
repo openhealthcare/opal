@@ -4,6 +4,7 @@ Custom managers for query optimisations
 from collections import defaultdict
 import operator
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
@@ -13,6 +14,11 @@ from opal.core.subrecords import (
 from opal.core.fields import ForeignKeyOrFreeText
 from functools import reduce
 
+DEFAULT_SEARCH_FIELDS = [
+    "demographics__hospital_number",
+    "demographics__first_name",
+    "demographics__surname"
+]
 
 class PatientQueryset(models.QuerySet):
     def search(self, some_query):
@@ -20,14 +26,18 @@ class PatientQueryset(models.QuerySet):
         splits a string by space and queries
         first name, last name and hospital number
         """
-        fields = ["hospital_number", "first_name", "surname"]
+        fields = getattr(
+            settings,
+            'OPAL_DEFAULT_SEARCH_FIELDS',
+            DEFAULT_SEARCH_FIELDS
+        )
 
         query_values = some_query.split(" ")
         qs = self
         for query_value in query_values:
             q_objects = []
             for field in fields:
-                model_field = "demographics__{}__icontains".format(field)
+                model_field = "{}__icontains".format(field)
                 q_objects.append(Q(**{model_field: query_value}))
             qs = qs.filter(reduce(operator.or_, q_objects))
         return qs

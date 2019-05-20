@@ -1,3 +1,8 @@
+### 0.15.0 (Major Release)
+
+Adds an optional setting OPAL_DEFAULT_SEARCH_FIELDS that specifies the fields used to
+search in when a criteria isn't specified.
+
 ### 0.14.2 (Minor Release)
 
 Documentation fix, we're on python 3.4 now.
