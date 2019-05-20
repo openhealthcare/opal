@@ -127,6 +127,16 @@ class PatientManagerTestCase(OpalTestCase):
         query = Patient.objects.search('je rien')
         self.assertEqual(query.get(), self.patient_1)
 
+    def test_overriding_search_fields(self):
+        patient = Patient.objects.create()
+        words   = patient.famouslastwords_set.get()
+        words.words = "This is no way to live!"
+        words.save()
+        with self.settings(OPAL_DEFAULT_SEARCH_FIELDS=['famouslastwords__words']):
+            p = Patient.objects.search('no way to live').get()
+            self.assertEqual(patient, p)
+
+
 
 class EpisodeManagerTestCase(OpalTestCase):
 
