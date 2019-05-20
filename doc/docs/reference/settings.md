@@ -12,6 +12,18 @@ The human readable form of your application name.
 Displayed in the header by default.
 Scaffolded applications start with whatever is passed in to `opal startproject`.
 
+## OPAL_DEFAULT_SEARCH_FIELDS
+
+Search fields that we look in by default when a user enters a search term.
+Defaults to
+```python
+ [
+    "demographics__hospital_number",
+    "demographics__first_name",
+    "demographics__surname"
+]
+```
+
 ## OPAL_LOG_OUT_DURATION
 
 Opal will log users out if they have been inactive for greater than this value.
