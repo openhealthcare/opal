@@ -20,6 +20,7 @@ DEFAULT_SEARCH_FIELDS = [
     "demographics__surname"
 ]
 
+
 class PatientQueryset(models.QuerySet):
     def search(self, some_query):
         """
