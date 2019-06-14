@@ -295,6 +295,53 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         }
         self.assertEqual(response, expected)
 
+    @patch('opal.core.search.views.PAGINATION_AMOUNT', 2)
+    def test_patients_more_than_pagination_amount(self):
+        # We had a bug where the queryset was paginated
+        # when we queried for episodes so that the
+        # if episodes per patient was high
+        # we would not see a full amount of patients
+        blofeld_patient, blofeld_episode = self.create_patient(
+            "Ernst", "Blofeld", "23422"
+        )
+        blofeld_patient.create_episode()
+
+        response = json.loads(
+            self.get_response(
+                '{}/?query=o'.format(self.url)
+            ).content.decode('UTF-8')
+        )
+        expected = {
+            "total_pages": 1,
+            "object_list": [
+                {
+                    'count': 1,
+                    'date_of_birth': None,
+                    'end': '15/10/2015',
+                    'first_name': 'Sean',
+                    'hospital_number': '007',
+                    'patient_id': 1,
+                    'start': '15/10/2015',
+                    'surname': 'Connery',
+                    "categories": ["Inpatient"]
+                },
+                {
+                    "count": 2,
+                    "first_name": "Ernst",
+                    "surname": "Blofeld",
+                    "start": None,
+                    "patient_id": blofeld_patient.id,
+                    "hospital_number": "23422",
+                    "date_of_birth": None,
+                    "end": None,
+                    "categories": ["Inpatient"]
+                },
+            ],
+            "page_number": 1,
+            "total_count": 2
+        }
+        self.assertEqual(response, expected)
+
 
 class SearchTemplateTestCase(OpalTestCase):
 
