@@ -1490,7 +1490,7 @@ class Diagnosis(EpisodeSubrecord):
         verbose_name="Provisional?",
         help_text="True if the diagnosis is provisional. Defaults to False"
     )
-    details           = models.CharField(max_length=255, blank=True)
+    details           = models.TextField(blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
     class Meta:

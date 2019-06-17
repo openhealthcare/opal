@@ -1,3 +1,7 @@
+### 0.16.0 (Major Release)
+
+Diagnosis.details is now a text field.
+
 ### 0.15.0 (Major Release)
 
 Adds an optional setting OPAL_DEFAULT_SEARCH_FIELDS that specifies the fields used to
