@@ -3,6 +3,8 @@
 Adds serialize_date, serialize_datetime, serialize_time methods to serialize date/datetime/time to
 strings.
 
+Diagnosis.details is now a text field.
+
 ### 0.15.0 (Major Release)
 
 Adds an optional setting OPAL_DEFAULT_SEARCH_FIELDS that specifies the fields used to
