@@ -2,6 +2,9 @@
 
 Diagnosis.details is now a text field.
 
+Changes the requirements.txt files that get created when we create an opal application or plugin to use `python-dateutil==2.7.5`
+
+
 ### 0.15.0 (Major Release)
 
 Adds an optional setting OPAL_DEFAULT_SEARCH_FIELDS that specifies the fields used to
