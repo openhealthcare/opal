@@ -1,9 +1,11 @@
 ### 0.16.0 (Major Release)
 
+Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to
+strings.
+
 Diagnosis.details is now a text field.
 
 Changes the requirements.txt files that get created when we create an opal application or plugin to use `python-dateutil==2.7.5`
-
 
 ### 0.15.0 (Major Release)
 
