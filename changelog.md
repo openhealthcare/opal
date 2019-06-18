@@ -1,6 +1,6 @@
 ### 0.16.0 (Major Release)
 
-Adds serialize_date, serialize_datetime, serialize_time methods to serialize date/datetime/time to
+Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to
 strings.
 
 ### 0.15.0 (Major Release)
