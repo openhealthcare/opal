@@ -3,6 +3,13 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.15.0 -> v0.16.0
+Diagnosis.details is now a text field. Please make and run migrations if you are
+using it in your app.
+
+The record template for diagnosis now shows the details on the next row.
+
+
 ### 0.13.1 -> 0.14.0
 If you were creating a UserProfile, this will now fail as a UserProfile is created automatically after creating a user (by a signal).
 
