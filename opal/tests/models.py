@@ -73,7 +73,9 @@ class HouseOwner(models.PatientSubrecord):
 
 class House(dmodels.Model):
     address = dmodels.CharField(max_length=200)
-    house_owner = dmodels.ForeignKey(HouseOwner, null=True, blank=True, on_delete=dmodels.CASCADE)
+    house_owner = dmodels.ForeignKey(
+        HouseOwner, null=True, blank=True, on_delete=dmodels.CASCADE
+    )
 
 
 class Dog(lookuplists.LookupList):
