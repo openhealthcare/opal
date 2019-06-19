@@ -97,7 +97,7 @@ Each column contains a different type of information about a patient, while each
 row represents one patient.
 
 <blockquote><small>
-Strictly speaking each row is an <a href="../guides/datamodel.md">episode</a>
+Strictly speaking each row is an <a href="../guides/datamodel">episode</a>
 of care for a patient - but we'll come to that in a second.
 </small></blockquote>
 
