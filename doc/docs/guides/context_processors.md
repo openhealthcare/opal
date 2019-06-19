@@ -8,7 +8,7 @@ All Opal settings are copied into the context of the template.
 
 ### Models
 
-All [subrecords](../reference/subrecords/) (the underlying clinical models of Opal) are copied into the context of the template context and can be accessed from the variable `models`, e.g. the Allergies subrecord can be referred to by 
+All [subrecords](../reference/subrecords.md) (the underlying clinical models of Opal) are copied into the context of the template context and can be accessed from the variable `models`, e.g. the Allergies subrecord can be referred to by
 
 ```html
 {{ models.Allergy }}
@@ -16,7 +16,7 @@ All [subrecords](../reference/subrecords/) (the underlying clinical models of Op
 
 ### Pathways
 
-Pathways are copied in to the context of the template and can be accessed from the variable `pathways`. For an example Pathway you would be able to access attributes of a Pathway thus: 
+Pathways are copied in to the context of the template and can be accessed from the variable `pathways`. For an example Pathway you would be able to access attributes of a Pathway thus:
 
 ```html
 {{ pathways.MyPathway.get_display_name }}

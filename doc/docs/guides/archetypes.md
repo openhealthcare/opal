@@ -67,11 +67,11 @@ frequency | FKorFT(Drugfreq)
 
 ### Diagnosis
 
-Field|Type|Length
------|----|---
+Field|Type
+-----|----
 condition | FKorFT(Condition)
 provisional | Boolean
-details | Char | 255
+details | Text
 date_of_diagnosis | Date
 
 ### PastMedicalHistory
