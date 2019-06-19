@@ -47,7 +47,7 @@ implement a Demographics `Subrecord` as follows:
 
 Subrecords also define various properties that will provide metadata about their
 display or structure, which are documented in the
-[Subrecord reference material](/reference/subrecords/)
+[Subrecord reference material](../reference/subrecords.md)
 
 ### Core Clinical Data Model
 

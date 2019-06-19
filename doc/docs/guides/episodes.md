@@ -52,7 +52,7 @@ More detail on customising the rest of the detail tempalte is found in the detai
 ## Default Category
 
 The default category of episodes in an Opal application is set by the
-[OpalApplication](../reference/opal_application) object's default_episode_category
+[OpalApplication](../reference/opal_application.md) object's default_episode_category
 property.
 
 ```python
@@ -62,7 +62,7 @@ class Application(application.OpalApplication):
 
 ## Defining your own EpisodeCategory
 
-As EpisodeCategory is a [discoverable](discoverable) we can define our own to
+As EpisodeCategory is a [discoverable](discoverable.md) we can define our own to
 meet custom requirements.
 
 Episode categories should be defined in a file named `episode_categories` of
