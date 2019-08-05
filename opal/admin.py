@@ -27,10 +27,6 @@ class UserProfileInline(admin.StackedInline):
     filter_horizontal = ('roles',)
 
 
-class FilterInline(admin.StackedInline):
-    model = models.Filter
-
-
 class UserProfileAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
@@ -42,7 +38,7 @@ class UserProfileAdmin(UserAdmin):
             )
         }),
     )
-    inlines = [UserProfileInline, FilterInline, ]
+    inlines = [UserProfileInline]
 
     def get_actions(self, request):
         actions = super(UserProfileAdmin, self).get_actions(request)
