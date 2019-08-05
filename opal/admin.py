@@ -59,6 +59,23 @@ class UserProfileAdmin(UserAdmin):
                 return False
         return True
 
+    def save_formset(self, request, form, formset, change):
+        """
+        The user profile is already created by a signal so
+        attatch the existing user profile if after the user
+        has been saved.
+        """
+        if change:
+            super().save_formset(request, form, formset, change)
+        else:
+            instances = formset.save(commit=False)
+            profile = UserProfile.objects.get(user_id=form.instance.id)
+            for i in instances:
+                i.id = profile.id
+                i.user = profile.user
+                i.save()
+            formset.save_m2m()
+
 
 class MyAdmin(VersionAdmin):
     pass

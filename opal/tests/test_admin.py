@@ -3,10 +3,12 @@ Unittests for opal.admin
 """
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.models import User
+from django.urls import reverse
 
 from opal.core.test import OpalTestCase
 from opal.tests.models import Hat
-from opal.models import Synonym, Patient, Episode
+from opal.models import Synonym, Patient, Episode, Role
 
 from opal.admin import (LookupListForm, PatientAdmin, EpisodeAdmin,
                         UserProfileAdmin)
@@ -104,6 +106,90 @@ class UserProfileAdminTestCase(AdminTestCase):
         admin = UserProfileAdmin(self.user, self.site)
         has_perm = admin.has_delete_permission(request, obj=self.user)
         self.assertTrue(has_perm)
+
+    def test_create(self):
+        role = Role.objects.create(name="can_doctor")
+        post_dict = {
+            # profile fields
+             '_save': ['Save'],
+            'profile-MIN_NUM_FORMS': ['0'],
+            'profile-TOTAL_FORMS': ['1'],
+            'profile-MAX_NUM_FORMS': ['1'],
+            'profile-__prefix__-id': [''],
+            'profile-0-id': [''],
+            'profile-0-roles': [role.id],
+            'profile-0-user': [''],
+            'profile-INITIAL_FORMS': ['0'],
+            'profile-__prefix__-force_password_change': ['on'],
+
+            # user fields
+            'username': ['test_user'],
+            'email': [''],
+            'password1': ['test1'],
+            'password2': ['test1'],
+            'first_name': [''],
+            'last_name': [''],
+        }
+        url = reverse('admin:auth_user_add')
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
+        response = self.client.post(url, post_dict)
+        new_user = User.objects.get(username="test_user")
+        self.assertEqual(
+            list(new_user.profile.roles.values_list('name', flat=True)),
+            ["can_doctor"]
+        )
+
+    def test_edit(self):
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
+        new_user = User.objects.create(username="test_user")
+        new_user.set_password("test1")
+        new_user.save()
+        profile = new_user.profile
+        profile.force_password_change = False
+        profile.save()
+        role = Role.objects.create(name="can_doctor")
+        url = reverse('admin:auth_user_change', args=(new_user.pk,))
+        post_dict = {
+            '_save': ['Save'],
+            'first_name': [''],
+            'username': ['test_user'],
+            'last_name': [''],
+            'email': [''],
+            'last_login_0': [''],
+            'last_login_1': [''],
+            'date_joined_0': ['02/08/2019'],
+            'date_joined_1': ['14:21:00'],
+            'initial-date_joined_0': ['02/08/2019'],
+            'initial-date_joined_1': ['14:21:00'],
+            'is_active': ['on'],
+
+
+            'profile-TOTAL_FORMS': ['1'],
+            'profile-MAX_NUM_FORMS': ['1'],
+            'profile-INITIAL_FORMS': ['1'],
+            'profile-__prefix__-id': [''],
+            'profile-__prefix__-user': [new_user.pk],
+            'profile-0-force_password_change': ['on'],
+            'profile-0-id': [new_user.profile.id],
+            'profile-0-user': [new_user.id],
+            'profile-0-roles': [role.id],
+            'profile-__prefix__-force_password_change': ['on'],
+            'profile-MIN_NUM_FORMS': ['0'],
+        }
+        response = self.client.post(url, post_dict)
+        reloaded_user = User.objects.get(username="test_user")
+        self.assertEqual(
+            list(reloaded_user.profile.roles.values_list('name', flat=True)),
+            ["can_doctor"]
+        )
 
 
 class LookupListFormTestCase(OpalTestCase):
