@@ -1,5 +1,11 @@
 ### 0.17.0 (Major Release)
 
+#### Javascript API removals
+
+* Removes the function Episode.isDischarged() (This was rarely if ever used, and no longer an accurate represenation of dischargedness.)
+
+#### Miscelanious changes
+
 Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
 
 ### 0.16.0 (Major Release)
