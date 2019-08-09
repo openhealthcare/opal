@@ -38,7 +38,7 @@ def plugin_head_extra(context):
     def templates():
         for plugin in plugins.OpalPlugin.list():
             for tpl in plugin.head_extra:
-                    yield tpl
+                yield tpl
     ctx = context
     ctx['head_extra'] = templates
     return ctx

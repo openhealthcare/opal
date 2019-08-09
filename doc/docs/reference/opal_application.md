@@ -8,7 +8,7 @@ Returns the application class for the currently active application.
 
 #### get_all_components
 
-Returns an iterator of all the of the [plugins](/guides/plugins/) and the current application
+Returns an iterator of all the of the [plugins](../guides/plugins.md) and the current application
 
 ## OpalApplication
 
