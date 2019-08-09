@@ -284,7 +284,7 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
             if not issubclass(patient_list, PatientList):
                 raise ValueError(msg)
         except TypeError:
-                raise ValueError(msg)
+            raise ValueError(msg)
 
         for group in klass.list():
             if patient_list in group.get_member_lists():

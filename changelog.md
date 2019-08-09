@@ -1,3 +1,7 @@
+### 0.17.0 (Major Release)
+
+Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
+
 ### 0.16.0 (Major Release)
 
 Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to
