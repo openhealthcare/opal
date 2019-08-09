@@ -2,7 +2,7 @@
 
 Opal applications will typically be made up of several types of components.
 
-![Layers of an Opal application](../img/OpalLayers.png)
+![Layers of an Opal application](/img/OpalLayers.png)
 
 ### Opal
 

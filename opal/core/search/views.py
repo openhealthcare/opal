@@ -109,8 +109,9 @@ def simple_search_view(request):
     # on postgres it blows up if we don't manually manage this
     if not paginated_patients:
         paginated_patients = models.Patient.objects.none()
+
     episodes = models.Episode.objects.filter(
-        id__in=paginated_patients.values_list("episode__id", flat=True)
+        patient__in=paginated_patients
     )
     paginated["object_list"] = query.get_aggregate_patients_from_episodes(
         episodes

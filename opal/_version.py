@@ -1,4 +1,4 @@
 """
 Declare our current version string
 """
-__version__ = '0.14.1'
+__version__ = '0.17.0'

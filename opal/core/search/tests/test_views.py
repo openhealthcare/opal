@@ -295,6 +295,29 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         }
         self.assertEqual(response, expected)
 
+    @patch('opal.core.search.views.PAGINATION_AMOUNT', 2)
+    def test_patients_more_than_pagination_amount(self):
+        """
+        Prior to 0.16.0 the implementation would sometimes
+        return results with fewer than the number of results
+        that should have been on that page.
+
+        This is because a subquery was paginating by the
+        number of episodes rather than the number of
+        patients.
+        """
+        blofeld_patient, blofeld_episode = self.create_patient(
+            "Ernst", "Blofeld", "23422"
+        )
+        blofeld_patient.create_episode()
+
+        response = json.loads(
+            self.get_response(
+                '{}/?query=o'.format(self.url)
+            ).content.decode('UTF-8')
+        )
+        self.assertEqual(len(response["object_list"]), 2)
+
 
 class SearchTemplateTestCase(OpalTestCase):
 

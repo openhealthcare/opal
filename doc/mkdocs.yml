@@ -123,7 +123,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.14.0
+  version: v0.17.0
 
 markdown_extensions:
     - fenced_code

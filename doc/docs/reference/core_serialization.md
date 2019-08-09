@@ -2,6 +2,30 @@
 
 Helpers for serializing and deserializing data
 
+## `serialize_date(value)`
+Given a date, serialize it to a string using the
+`settings.DATE_FORMAT`
+
+```python
+    as_date_str = serialize_date(datetime.date(2019, 4, 1))
+```
+
+## `serialize_datetime(value)`
+Given a datetime, serialize it to a string using the
+`settings.DATETIME_FORMAT`
+
+```python
+    as_datetime_str = serialize_datetime(datetime.datetime(2019, 4, 1, 10, 30))
+```
+
+## `serialize_time(value)`
+Given a time, serialize it to a string using the
+`settings.TIME_FORMAT`
+
+```python
+    as_datetime_str = serialize_time(datetime.time(10, 30))
+```
+
 ## `deserialize_datetime(value)`
 
 Given a string which represents a date time, deserialize it to a Python datetime
