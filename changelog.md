@@ -8,6 +8,9 @@ and no longer an accurate represenation of dischargedness.)
 Removes the methods PatientDetailCtrl.dischargeEpisode() and PatientListCtrl.dischargeEpisode()
 (However you're discharging episodes as of 0.17 it would be strongly unadvisable to do it this way.)
 
+Removes PatientList.removeFromMine()
+(The special casing of the 'Mine' list is strongly unadvised and set for complete removal.)
+
 #### Miscelanious changes
 
 Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
