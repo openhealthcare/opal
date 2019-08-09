@@ -3,6 +3,7 @@
 #### Javascript API removals
 
 * Removes the function Episode.isDischarged() (This was rarely if ever used, and no longer an accurate represenation of dischargedness.)
+* Removes the methodd PatientDetailCtrl.dischargeEpisode() (However you're discharging episodes as of 0.17 it would be strongly unadvisable to do it this way.)
 
 #### Miscelanious changes
 
