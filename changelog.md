@@ -11,6 +11,7 @@ Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.
 
 #### Updates to the Dependency Graph
 
+* Jinja2: 2.10 -> 2.10.1
 * Psycopg2: 2.7.6.1 -> 2.8.3
 
 ### 0.16.0 (Major Release)
