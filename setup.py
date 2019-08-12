@@ -55,7 +55,7 @@ setup(
         'django-reversion==3.0.1',
         'django-compressor==2.2',
         'python-dateutil==2.7.5',
-        'django-celery==3.2.2',
+        'django-celery==3.3.0',
         'celery==3.1.25',
         ],
     classifiers = [
