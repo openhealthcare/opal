@@ -296,13 +296,6 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-        $scope.removeFromList = function(episode_id){
-            delete $scope.episodes[episode_id];
-            $scope.rows = $scope.getVisibleEpisodes();
-            $scope.num_episodes -= 1;
-            $scope.episode = $scope.rows[0];
-        }
-
         $scope.newNamedItem = function(episode, name) {
             return episode.recordEditor.newItem(name);
         };
