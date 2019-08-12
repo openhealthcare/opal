@@ -7,18 +7,6 @@
         [[ episode.start | displayDate ]]<span ng-show="episode.end"> - [[ episode.end | displayDate ]]</span>
       </h3>
     </div>
-    <div class="panel-body">
-      <center>
-        <button
-           ng-hide="profile.readonly"
-           ng-click="dischargeEpisode(episode)"
-           class="btn btn-primary btn-lg">
-          <i class="fa fa-home"></i>
-          <span ng-show="episode.end">Confirm</span>
-          Discharge
-        </button>
-      </center>
-    </div>
   </div>
 </div>
 <div class="col-md-6"> <!-- Detail panels col 1 -->
