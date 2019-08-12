@@ -614,6 +614,13 @@ describe('PatientListCtrl', function() {
         });
     });
 
+    describe('removeFromList', function() {
+        it('should remove the episode from the list', function() {
+          $scope.removeFromList(123);
+          expect($scope.num_episodes).toEqual(0);
+        });
+    });
+
     describe('newNamedItem', function(){
         it('should pass through the current scopes tags', function(){
             $scope.newNamedItem(episode, "someName");
