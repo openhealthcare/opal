@@ -82,4 +82,4 @@ forms, with less verbose templates.
     </form>
 
 
-For full documentation of the options, please see the [Form templatetags reference material](/reference/form_templatetags/)
+For full documentation of the options, please see the [Form templatetags reference material](../reference/form_templatetags.md)

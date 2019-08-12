@@ -1,9 +1,27 @@
+### 0.17.0 (Major Release)
+
+#### Javascript API removals
+
+* Removes the function Episode.isDischarged() (This was rarely if ever used, and no longer an accurate represenation of dischargedness.)
+* Removes the methodd PatientDetailCtrl.dischargeEpisode() (However you're discharging episodes as of 0.17 it would be strongly unadvisable to do it this way.)
+
+#### Miscelanious changes
+
+Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
+
+#### Updates to the Dependency Graph
+
+* Jinja2: 2.10 -> 2.10.1
+* Psycopg2: 2.7.6.1 -> 2.8.3
+
 ### 0.16.0 (Major Release)
+
+Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to
+strings.
 
 Diagnosis.details is now a text field.
 
 Changes the requirements.txt files that get created when we create an opal application or plugin to use `python-dateutil==2.7.5`
-
 
 ### 0.15.0 (Major Release)
 

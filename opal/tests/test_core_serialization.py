@@ -100,7 +100,7 @@ class SerializerTestCase(test.OpalTestCase):
         serialized = s.default(binary)
         self.assertIsInstance(serialized, six.text_type)
 
-    def test_time_serialisation(self):
+    def test_serializer_time_serialisation(self):
         s = serialization.OpalSerializer()
         serialised = s.default(datetime.time(20))
         self.assertEqual(serialised, "20:00:00")
@@ -124,3 +124,23 @@ class SerializerTestCase(test.OpalTestCase):
         expected = ['22/04/1959', 11, 33]
         serialised = s.default(data)
         self.assertEqual(expected, serialised)
+
+    def test_time_serialization(self):
+        self.assertEqual(
+            serialization.serialize_time(datetime.time(10, 30)),
+            '10:30:00'
+        )
+
+    def test_date_serialization(self):
+        self.assertEqual(
+            serialization.serialize_date(datetime.date(2019, 4, 1)),
+            '01/04/2019'
+        )
+
+    def test_datetime_serialization(self):
+        self.assertEqual(
+            serialization.serialize_datetime(
+                datetime.datetime(2019, 4, 1, 10, 30)
+            ),
+            '01/04/2019 10:30:00'
+        )
