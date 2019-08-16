@@ -176,15 +176,6 @@ angular.module('opal.controllers').controller(
       }
 	});
 
-	$scope.getRowIxFromEpisodeId = function(episodeId) {
-	  for (var rix = 0; rix < $scope.rows.length; rix++) {
-		if ($scope.rows[rix].id == episodeId) {
-		  return rix;
-		}
-	  };
-	  return -1;
-	};
-
     $scope.is_tag_visible_in_list = function(tag){
       return _.contains(metadata.tag_visible_in_list, tag);
     };
