@@ -170,13 +170,6 @@ class Step(object):
             delete_others(data, self.model, patient=patient, episode=episode)
 
 
-class FindPatientStep(Step):
-    template = "pathway/find_patient_form.html"
-    step_controller = "FindPatientCtrl"
-    display_name = "Find Patient"
-    icon = "fa fa-user"
-
-
 class HelpTextStep(Step):
     base_template = "pathway/steps/step_help_text_template.html"
 
