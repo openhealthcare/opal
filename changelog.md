@@ -25,6 +25,9 @@ Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.
 * Psycopg2: 2.7.6.1 -> 2.8.3
 * Requests: 2.20.1 -> 2.22.0
 
+#### python3
+Opal now only supports python 3.5 - python 3.7
+
 ### 0.16.0 (Major Release)
 
 Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to
