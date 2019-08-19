@@ -60,10 +60,6 @@ angular.module('opal.services')
                 return this.demographics[0].first_name + ' ' + this.demographics[0].surname;
             },
 
-            getNumberOfItems: function(columnName) {
-                return this[columnName].length;
-            },
-
             // Getter function to return active episode tags.
             // Default implementation just hits tagging
             getTags: function(){
