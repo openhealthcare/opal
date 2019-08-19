@@ -11,6 +11,8 @@ Removes the methods PatientDetailCtrl.dischargeEpisode() and PatientListCtrl.dis
 Removes PatientList.removeFromMine()
 (The special casing of the 'Mine' list is strongly unadvised and set for complete removal.)
 
+Removes the front end Flow service
+
 #### Miscelanious changes
 
 Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
