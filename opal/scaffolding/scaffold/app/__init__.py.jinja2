@@ -2,8 +2,20 @@
 {{ name }} - Our Opal Application
 """
 from opal.core import application
+from opal.core import menus
 
 class Application(application.OpalApplication):
     javascripts   = [
         'js/{{ name }}/routes.js',
     ]
+
+    menuitems = [
+        menus.MenuItem(
+            href='/pathway/#/add_patient',
+            display='Add Patient',
+            icon='fa fa-plus',
+            activepattern='/pathway/#/add_patient'
+        )
+    ]
+
+
