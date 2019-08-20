@@ -205,19 +205,6 @@ describe('EditItemCtrl', function (){
 
     });
 
-    describe('undischarge', function() {
-        it('should open the modal', function() {
-
-            spyOn($modal, 'open').and.callFake(function(){
-                return {result: {then: function(fn){ fn() }}}
-            });;
-            $scope.undischarge();
-            expect($modal.open).toHaveBeenCalled();
-            var resolvers = $modal.open.calls.mostRecent().args[0].resolve
-            expect(resolvers.episode()).toEqual(episode);
-        });
-    });
-
     describe('prepopulate()', function() {
         it('should extend the item', function() {
             var mock_event = {

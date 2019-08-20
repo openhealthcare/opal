@@ -16,7 +16,6 @@ episodes of it's category behave in Opal applications - for instance:
 
 Display
 Permissions
-Flow
 
 By registering episode category, plugins and applications can achieve a huge
 degree of flexibility over the behaviour of their episodes.
