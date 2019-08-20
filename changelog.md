@@ -1,3 +1,33 @@
+### 0.17.0 (Major Release)
+
+#### Javascript API removals
+
+Removes the function Episode.isDischarged() (This was rarely if ever used,
+and no longer an accurate represenation of dischargedness.)
+
+Removes the Episode.getNumberOfItems method which is rarely used.
+
+Removes the methods PatientDetailCtrl.dischargeEpisode() and PatientListCtrl.dischargeEpisode()
+(However you're discharging episodes as of 0.17 it would be strongly unadvisable to do it this way.)
+
+Removes PatientList.removeFromMine()
+(The special casing of the 'Mine' list is strongly unadvised and set for complete removal.)
+
+Removes the front end Flow service
+
+#### Miscelanious changes
+
+Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
+
+#### Updates to the Dependency Graph
+
+* Jinja2: 2.10 -> 2.10.1
+* Psycopg2: 2.7.6.1 -> 2.8.3
+* Requests: 2.20.1 -> 2.22.0
+
+#### python3
+Opal now only supports python 3.5 - python 3.7
+
 ### 0.16.0 (Major Release)
 
 Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to

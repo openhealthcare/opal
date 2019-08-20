@@ -2,7 +2,7 @@ angular.module('opal.controllers').controller(
     'PatientDetailCtrl',
     function(
         $rootScope, $scope, $modal, $location, $routeParams,
-        Flow, Item, patientLoader, patient, profile, metadata
+        Item, patientLoader, patient, profile, metadata
     ){
         $scope.profile = profile;
         $scope.patient = patient;
@@ -55,26 +55,7 @@ angular.module('opal.controllers').controller(
             return true
         }
 
-	    $scope.dischargeEpisode = function() {
-            if(profile.readonly){ return null; };
-
-		    $rootScope.state = 'modal';
-            var exit = Flow.exit(
-                $scope.episode,
-                {
-                    current_tags: {
-                        tag   : $scope.currentTag,
-                        subtag: $scope.currentSubTag
-                    }
-                },
-                $scope
-            );
-
-            exit.then(function(result) {
-			    $rootScope.state = 'normal';
-		    });
-	    };
-        if($scope.patient != null){
+      if($scope.patient != null){
             $scope.initialise();
         }
     }

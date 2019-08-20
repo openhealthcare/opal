@@ -11,7 +11,7 @@ installed on your system.
 Let's just check that you do:
 
     $ python --version
-    Python 3.4.3
+    Python 3.7.2
     $ pip --version
     pip 19.0.3
 
