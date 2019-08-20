@@ -4,6 +4,9 @@
 
 #### Updates to the Dependency Graph
 
+### 0.17.1 (Minor Release)
+Removes a now deleted file from the default application javascripts list
+
 ### 0.17.0 (Major Release)
 
 #### Javascript API removals
