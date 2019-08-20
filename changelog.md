@@ -1,3 +1,9 @@
+### 0.18.0 (Major Release)
+
+* DjangoRESTFramework 3.7.4 -> 3.10.2
+
+#### Updates to the Dependency Graph
+
 ### 0.17.0 (Major Release)
 
 #### Javascript API removals
