@@ -3,7 +3,7 @@ describe('RecordEditor', function(){
 
     var $scope, $modal, $routeParams;
     var $rootScope, $q, $controller;
-    var Flow, Episode, episode;
+    var Episode, episode;
     var controller, UserProfile;
     var opalTestHelper;
     var profile, $log;

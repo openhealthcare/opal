@@ -2,7 +2,7 @@ describe('PatientDetailCtrl', function(){
   "use strict";
 
   var $scope, $rootScope, $controller, $modal, $routeParams, $httpBackend;
-  var Flow, patientLoader, Episode, opalTestHelper;
+  var patientLoader, Episode, opalTestHelper;
   var patient, controller, metadata, profile;
   var mkcontroller;
 
@@ -28,15 +28,10 @@ describe('PatientDetailCtrl', function(){
     metadata = opalTestHelper.getMetaData();
     profile = opalTestHelper.getUserProfile();
 
-    Flow = {exit: jasmine.createSpy().and.returnValue({
-      then: function(fn){ fn(); }
-    }) };
-
     mkcontroller = function(patient){
       controller = $controller('PatientDetailCtrl', {
         $scope       : $scope,
         $routeParams : $routeParams,
-        Flow         : Flow,
         patient      : patient,
         profile      : profile,
         metadata     : metadata,

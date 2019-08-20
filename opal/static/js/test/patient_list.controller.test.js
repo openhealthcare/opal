@@ -6,7 +6,7 @@ describe('PatientListCtrl', function() {
     var $scope, $cookies, $controller, $q, $dialog, $httpBackend;
     var $$injector;
     var $location, $routeParams, $http;
-    var Flow, opalTestHelper;
+    var opalTestHelper;
     var episodedata, controller;
     var $modal, metadata, $rootScope;
 
@@ -38,7 +38,6 @@ describe('PatientListCtrl', function() {
         $routeParams = $injector.get('$routeParams');
         $httpBackend = $injector.get('$httpBackend');
         $location    = $injector.get('$location');
-        Flow         = $injector.get('Flow');
         $$injector   = $injector.get('$injector');
         episodeVisibility = $injector.get('episodeVisibility');
         opalTestHelper = $injector.get('opalTestHelper');
@@ -83,7 +82,6 @@ describe('PatientListCtrl', function() {
                 $window          : fakeWindow,
                 $injector        : $$injector,
                 growl            : growl,
-                Flow             : Flow,
                 episodedata      : episodedata,
                 profile          : profile,
                 metadata         : md,
@@ -117,7 +115,7 @@ describe('PatientListCtrl', function() {
             expect($rootScope.state).toBe("normal");
         });
 
-        it('should leave the episode if it does have the pertinant tag', function(){
+      describe('should leave the episode if it does have the pertinant tag', function(){
             it('should filter an episode if the episode does not have the same tags', function(){
                 // imitate the case where we remove all the tags
                 $scope.episodes[episode.id] = episode;
@@ -423,24 +421,6 @@ describe('PatientListCtrl', function() {
 
         });
 
-        describe('n', function() {
-
-            it('should addEpisode()', function() {
-                spyOn($scope, 'addEpisode');
-                $scope.$broadcast('keydown', { keyCode: 78 });
-                expect($scope.addEpisode).toHaveBeenCalledWith();
-            });
-
-        });
-
-    });
-
-    describe('getRowIxFromEpisodeId()', function() {
-
-        it('should return -1 if the id is not an episode we know about', function() {
-            expect($scope.getRowIxFromEpisodeId(73872387)).toEqual(-1)
-        });
-
     });
 
     describe('print()', function() {
@@ -469,149 +449,6 @@ describe('PatientListCtrl', function() {
             expect($scope.state).toEqual('normal');
         });
 
-    });
-
-    describe('adding an episode', function() {
-        var fake_episode_resolver = function(){
-            return {then : function(fn){ fn(new Episode(episodeData2)); }};
-        };
-
-        it('should call flow', function() {
-            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-            $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith(
-              {
-                current_tags: {
-                  tag: $scope.currentTag,
-                  subtag: $scope.currentSubTag
-                }
-              },
-              $scope
-          );
-        });
-
-        it('should allow the enter flow to resolve with a promise', function() {
-            $scope.currentTag = 'mine';
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {
-                        then : function(fn){ fn({
-                            then: function(fn){ fn(new Episode(episodeData) ) }
-                        })}
-                    }
-                }
-            );
-            $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
-                tag: $scope.currentTag,
-                subtag: $scope.currentSubTag
-            }}, $scope);
-
-            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
-        });
-
-        it('should print the correct message even dependent on the current tag', function(){
-            $scope.currentTag = 'tropical';
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {
-                        then : function(fn){ fn({
-                            then: function(fn){ fn(new Episode(episodeData) ) }
-                        })}
-                    }
-                }
-            );
-            $scope.addEpisode();
-            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
-        });
-
-        it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
-            $scope.currentTag = 'opat';
-            $scope.currentSubTag = 'opat_referrals';
-            var episodeData3 = angular.copy(episodeData);
-            episodeData3.tagging = [
-                {opat: true, opat_referrals: true, mine: true}
-            ];
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {
-                        then : function(fn){ fn({
-                            then: function(fn){ fn(new Episode(episodeData3) ) }
-                        })}
-                    }
-                }
-            );
-            $scope.addEpisode();
-            expect(growl.success).toHaveBeenCalledWith(
-                'John Smith added to the OPAT Referral list');
-        });
-
-        it('should add the new episode to episodes if it has the current tag', function() {
-            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-            expect($scope.rows.length).toBe(1);
-            $scope.addEpisode();
-            expect($scope.rows.length).toBe(2);
-        });
-
-        it('should not add the new episode to episodes if it does not have the current tag',
-           function() {
-               episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
-               spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-               expect($scope.rows.length).toBe(1);
-               $scope.addEpisode();
-               expect($scope.rows.length).toBe(1);
-           });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.addEpisode()).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
-        describe('When a promise returned by flow is rejected', function() {
-            it('should reset the state', function() {
-                spyOn(Flow, 'enter').and.callFake(
-                    function(){
-                        return {
-                            then : function(cb, eb){ cb(
-                                {
-                                    then: function(cb, eb){
-                                        eb();
-                                    }
-                                }
-                            ) }
-                        }
-                    }
-                );
-                $scope.addEpisode()
-                expect($rootScope.state).toEqual('normal');
-            });
-
-        });
-
-        describe('When the modal is dismissed', function() {
-
-            it('should reset the state', function() {
-                spyOn(Flow, 'enter').and.callFake(
-                    function(){
-                        return {
-                            then : function(cb, eb){ eb() }
-                        }
-                    }
-                );
-                $scope.addEpisode()
-                expect($rootScope.state).toEqual('normal');
-            });
-
-        });
     });
 
     describe('removeFromList', function() {
