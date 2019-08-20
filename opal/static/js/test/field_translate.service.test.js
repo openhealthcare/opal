@@ -88,7 +88,7 @@ describe('services', function() {
           expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
-      it('should handle single empty strings', function(){
+      describe('should handle single empty strings', function(){
         it("should remove the spaces from around ints and floats", function(){
             jsPatientData.demographics.age = "";
             jsPatientData.demographics.weight = "";
