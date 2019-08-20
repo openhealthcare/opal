@@ -4,7 +4,6 @@ describe('SearchCtrl', function (){
     var $scope, $httpBackend, $window, $rootScope, $controller;
     var ngProgressLite
     var location;
-    var Flow;
     var profile, schema, options, locationDetails, controller;
     var PatientSummary, $analytics;
 
@@ -23,7 +22,6 @@ describe('SearchCtrl', function (){
             $rootScope       = $injector.get('$rootScope');
             $scope           = $rootScope.$new();
             $controller      = $injector.get('$controller');
-            Flow             = $injector.get('Flow');
             PatientSummary   = $injector.get('PatientSummary');
             $httpBackend     = $injector.get('$httpBackend');
             location         = $injector.get('$location');
@@ -40,7 +38,6 @@ describe('SearchCtrl', function (){
             controller = $controller('SearchCtrl', {
                 $scope         : $scope,
                 $location      : location,
-                Flow           : Flow,
                 options        : options,
                 schema         : schema,
                 profile        : profile,

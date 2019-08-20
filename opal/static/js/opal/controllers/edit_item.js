@@ -124,17 +124,6 @@ angular.module('opal.controllers').controller(
 		        $modalInstance.close('cancel');
 	        };
 
-            $scope.undischarge = function() {
-                undischargeMoadal = $modal.open({
-                    templateUrl: '/templates/undischarge_modal.html',
-                    controller: 'UndischargeCtrl',
-                    resolve: {episode: function(){ return episode } }
-                }
-                                               ).result.then(function(result){
-                                                   $modalInstance.close(episode.location[0])
-                                               });
-            };
-
             $scope.prepopulate = function($event) {
                 $event.preventDefault();
                 var data = $($event.target).data()
