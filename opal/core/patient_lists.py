@@ -188,7 +188,13 @@ class PatientList(discoverable.DiscoverableFeature,
         raise ValueError("this needs to be implemented")
 
     def get_queryset(self, user=None):
-        return self.queryset
+        if self.queryset.ordered:
+            return self.queryset
+        return self.queryset.order_by(
+            "-start",
+            "patient__demographics__surname",
+            "patient__demographics__first_name",
+        )
 
     def get_template_names(self):
         return [self.template_name]

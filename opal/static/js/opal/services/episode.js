@@ -162,19 +162,6 @@ angular.module('opal.services')
 
             compare: function(other, comparators) {
                 var self = this;
-                //
-                // The default comparators we use for our Episode sorting in lists
-                //
-                var comparators = comparators || [
-                    function(p) {
-                      if(p.start){
-                        // we want to order by -start date
-                        return -p.start.toDate().getTime();
-                      }
-                    },
-                    function(p) { return p.first_name },
-                    function(p) { return p.surname }
-                ];
 
                 var v1, v2;
                 for (var ix = 0; ix < comparators.length; ix++) {

@@ -2,6 +2,10 @@
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
+#### Patient lists are ordered by the server by default
+Default ordering for patient lists is now done on the
+server.
+
 #### Updates to the Dependency Graph
 
 ### 0.17.0 (Major Release)

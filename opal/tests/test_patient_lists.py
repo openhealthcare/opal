@@ -253,12 +253,77 @@ class TestPatientList(OpalTestCase):
     def test_get_display_name(self):
         self.assertEqual('Herbivores', TaggingTestPatientList.get_display_name())
 
-    def test_get_queryset_default(self):
+    def test_get_queryset_already_ordered(self):
         mock_queryset = MagicMock('Mock Queryset')
-        with patch.object(PatientList, 'queryset',
-                          new_callable=PropertyMock) as queryset:
+        mock_queryset.ordered = True
+        with patch.object(
+            PatientList, 'queryset', new_callable=PropertyMock
+        ) as queryset:
             queryset.return_value = mock_queryset
             self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+    def test_get_queryset_ordering_start(self):
+        _, episode_1 = self.new_patient_and_episode_please()
+        _, episode_2 = self.new_patient_and_episode_please()
+
+        episode_1.start = datetime.datetime.now() - datetime.timedelta(1)
+        episode_1.save()
+        episode_1.patient.demographics_set.update(surname="Adams")
+        episode_2.start = datetime.datetime.now()
+        episode_2.save()
+        episode_2.patient.demographics_set.update(surname="Zen")
+
+        with patch.object(PatientList, 'queryset',
+                          new_callable=PropertyMock) as queryset:
+            queryset.return_value = Episode.objects.filter(
+                id__in=[episode_1.id, episode_2.id]
+            )
+            self.assertEqual(
+                [episode_2, episode_1],
+                list(PatientList().get_queryset())
+            )
+
+    def test_get_queryset_ordering_surname(self):
+        _, episode_1 = self.new_patient_and_episode_please()
+        _, episode_2 = self.new_patient_and_episode_please()
+
+        episode_1.patient.demographics_set.update(
+            surname="Adams", first_name="Xander"
+        )
+        episode_2.patient.demographics_set.update(
+            surname="Zen", first_name="Annabelle"
+        )
+
+        with patch.object(PatientList, 'queryset',
+                          new_callable=PropertyMock) as queryset:
+            queryset.return_value = Episode.objects.filter(
+                id__in=[episode_1.id, episode_2.id]
+            )
+            self.assertEqual(
+                [episode_1, episode_2],
+                list(PatientList().get_queryset())
+            )
+
+    def test_get_queryset_ordering_first_name(self):
+        _, episode_1 = self.new_patient_and_episode_please()
+        _, episode_2 = self.new_patient_and_episode_please()
+
+        episode_1.patient.demographics_set.update(
+            first_name="Xander"
+        )
+        episode_2.patient.demographics_set.update(
+            first_name="Annabelle"
+        )
+
+        with patch.object(PatientList, 'queryset',
+                          new_callable=PropertyMock) as queryset:
+            queryset.return_value = Episode.objects.filter(
+                id__in=[episode_1.id, episode_2.id]
+            )
+            self.assertEqual(
+                [episode_2, episode_1],
+                list(PatientList().get_queryset())
+            )
 
     @patch('opal.models.Episode.objects.serialised')
     def test_to_dict_passes_queryset(self, serialised):

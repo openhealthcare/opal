@@ -58,8 +58,6 @@ angular.module('opal.controllers').controller(
 	$scope.compareEpisodes = function(p1, p2) {
       if($scope.comparators){
         return p1.compare(p2, $scope.comparators);
-      }else{
-        return p1.compare(p2);
       }
 	};
 
