@@ -1,8 +1,9 @@
 ### 0.18.0 (Major Release)
 
-* DjangoRESTFramework 3.7.4 -> 3.10.2
-
 #### Updates to the Dependency Graph
+
+* DjangoRESTFramework 3.7.4 -> 3.10.2
+* python-dateutil 2.7.5 -> 2.8.0
 
 ### 0.17.0 (Major Release)
 
