@@ -174,7 +174,11 @@ class SerialisableFields(object):
     @classmethod
     def _get_field_default(cls, name):
         field = cls._get_field(name)
-        default = field.get_default()
+
+        if isinstance(field, models.ManyToOneRel):
+            default = []
+        else:
+            default = field.get_default()
 
         # for blank fields the result is a blank string, lets just remove that
         if default == '':
@@ -1486,7 +1490,7 @@ class Diagnosis(EpisodeSubrecord):
         verbose_name="Provisional?",
         help_text="True if the diagnosis is provisional. Defaults to False"
     )
-    details           = models.CharField(max_length=255, blank=True)
+    details           = models.TextField(blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
     class Meta:

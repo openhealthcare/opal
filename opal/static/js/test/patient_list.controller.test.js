@@ -6,7 +6,7 @@ describe('PatientListCtrl', function() {
     var $scope, $cookies, $controller, $q, $dialog, $httpBackend;
     var $$injector;
     var $location, $routeParams, $http;
-    var Flow, opalTestHelper;
+    var opalTestHelper;
     var episodedata, controller;
     var $modal, metadata, $rootScope;
 
@@ -38,7 +38,6 @@ describe('PatientListCtrl', function() {
         $routeParams = $injector.get('$routeParams');
         $httpBackend = $injector.get('$httpBackend');
         $location    = $injector.get('$location');
-        Flow         = $injector.get('Flow');
         $$injector   = $injector.get('$injector');
         episodeVisibility = $injector.get('episodeVisibility');
         opalTestHelper = $injector.get('opalTestHelper');
@@ -83,7 +82,6 @@ describe('PatientListCtrl', function() {
                 $window          : fakeWindow,
                 $injector        : $$injector,
                 growl            : growl,
-                Flow             : Flow,
                 episodedata      : episodedata,
                 profile          : profile,
                 metadata         : md,
@@ -117,7 +115,7 @@ describe('PatientListCtrl', function() {
             expect($rootScope.state).toBe("normal");
         });
 
-        it('should leave the episode if it does have the pertinant tag', function(){
+      describe('should leave the episode if it does have the pertinant tag', function(){
             it('should filter an episode if the episode does not have the same tags', function(){
                 // imitate the case where we remove all the tags
                 $scope.episodes[episode.id] = episode;
@@ -423,24 +421,6 @@ describe('PatientListCtrl', function() {
 
         });
 
-        describe('n', function() {
-
-            it('should addEpisode()', function() {
-                spyOn($scope, 'addEpisode');
-                $scope.$broadcast('keydown', { keyCode: 78 });
-                expect($scope.addEpisode).toHaveBeenCalledWith();
-            });
-
-        });
-
-    });
-
-    describe('getRowIxFromEpisodeId()', function() {
-
-        it('should return -1 if the id is not an episode we know about', function() {
-            expect($scope.getRowIxFromEpisodeId(73872387)).toEqual(-1)
-        });
-
     });
 
     describe('print()', function() {
@@ -471,323 +451,11 @@ describe('PatientListCtrl', function() {
 
     });
 
-    describe('adding an episode', function() {
-        var fake_episode_resolver = function(){
-            return {then : function(fn){ fn(new Episode(episodeData2)); }};
-        };
-
-        it('should call flow', function() {
-            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-            $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith(
-              {
-                current_tags: {
-                  tag: $scope.currentTag,
-                  subtag: $scope.currentSubTag
-                }
-              },
-              $scope
-          );
+    describe('removeFromList', function() {
+        it('should remove the episode from the list', function() {
+          $scope.removeFromList(123);
+          expect($scope.num_episodes).toEqual(0);
         });
-
-        it('should allow the enter flow to resolve with a promise', function() {
-            $scope.currentTag = 'mine';
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {
-                        then : function(fn){ fn({
-                            then: function(fn){ fn(new Episode(episodeData) ) }
-                        })}
-                    }
-                }
-            );
-            $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
-                tag: $scope.currentTag,
-                subtag: $scope.currentSubTag
-            }}, $scope);
-
-            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
-        });
-
-        it('should print the correct message even dependent on the current tag', function(){
-            $scope.currentTag = 'tropical';
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {
-                        then : function(fn){ fn({
-                            then: function(fn){ fn(new Episode(episodeData) ) }
-                        })}
-                    }
-                }
-            );
-            $scope.addEpisode();
-            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
-        });
-
-        it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
-            $scope.currentTag = 'opat';
-            $scope.currentSubTag = 'opat_referrals';
-            var episodeData3 = angular.copy(episodeData);
-            episodeData3.tagging = [
-                {opat: true, opat_referrals: true, mine: true}
-            ];
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {
-                        then : function(fn){ fn({
-                            then: function(fn){ fn(new Episode(episodeData3) ) }
-                        })}
-                    }
-                }
-            );
-            $scope.addEpisode();
-            expect(growl.success).toHaveBeenCalledWith(
-                'John Smith added to the OPAT Referral list');
-        });
-
-        it('should add the new episode to episodes if it has the current tag', function() {
-            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-            expect($scope.rows.length).toBe(1);
-            $scope.addEpisode();
-            expect($scope.rows.length).toBe(2);
-        });
-
-        it('should not add the new episode to episodes if it does not have the current tag',
-           function() {
-               episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
-               spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-               expect($scope.rows.length).toBe(1);
-               $scope.addEpisode();
-               expect($scope.rows.length).toBe(1);
-           });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.addEpisode()).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
-        describe('When a promise returned by flow is rejected', function() {
-            it('should reset the state', function() {
-                spyOn(Flow, 'enter').and.callFake(
-                    function(){
-                        return {
-                            then : function(cb, eb){ cb(
-                                {
-                                    then: function(cb, eb){
-                                        eb();
-                                    }
-                                }
-                            ) }
-                        }
-                    }
-                );
-                $scope.addEpisode()
-                expect($rootScope.state).toEqual('normal');
-            });
-
-        });
-
-        describe('When the modal is dismissed', function() {
-
-            it('should reset the state', function() {
-                spyOn(Flow, 'enter').and.callFake(
-                    function(){
-                        return {
-                            then : function(cb, eb){ eb() }
-                        }
-                    }
-                );
-                $scope.addEpisode()
-                expect($rootScope.state).toEqual('normal');
-            });
-
-        });
-    });
-
-    describe('discharging an episode', function(){
-        describe('_post_discharge()', function (){
-
-            beforeEach(function(){
-                $rootScope.state = 'modal'
-            });
-
-            it('Should set the $scope.state', function () {
-                $scope._post_discharge();
-                expect($rootScope.state).toBe('normal');
-            });
-
-            it('Should re-set the visible episodes', function () {
-                spyOn($scope, 'getVisibleEpisodes').and.callThrough();
-                $scope._post_discharge('discharged', episode);
-                expect($scope.getVisibleEpisodes).toHaveBeenCalledWith();
-            });
-
-            it('Should re-set the focus to 0', function () {
-                /*
-                 * reselect the first episode available when we discharge
-                 */
-                spyOn($scope, 'select_episode');
-
-                $scope.episodes[episodeData.id] = episode;
-                $scope.episodes[episodeData2.id] = episode2;
-                $scope.rows = [
-                    $scope.episodes[episode.id],
-                    $scope.episodes[episode2.id]
-                ];
-                $scope._post_discharge('discharged', episode);
-                var first_name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].first_name;
-                var surname = $scope.select_episode.calls.allArgs()[0][0].demographics[0].surname;
-                var expectedFirstName = episode2.demographics[0].first_name;
-                var expectedSurname = episode2.demographics[0].surname;
-                expect(first_name).toEqual(expectedFirstName);
-                expect(surname).toEqual(expectedSurname);
-            });
-        });
-
-        describe('should discharge', function() {
-
-            var fake_exit = function(){
-                return {
-                    then: function(fn){
-                        fn('discharged');
-                    }
-                }
-            }
-
-            beforeEach(function(){
-                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            });
-
-            it('should discharge the patient', function() {
-                spyOn(Flow, 'exit').and.callFake(fake_exit);
-                $scope.dischargeEpisode(episode);
-                $rootScope.$apply();
-            });
-
-            it('should should discharge the patient if flow returns a promise', function() {
-                var fake_exit = function(){
-                    return {
-                        then: function(fn){
-                            fn({ then: function(gn){ gn() } } );
-                        }
-                    }
-                }
-                spyOn(Flow, 'exit').and.callFake(fake_exit);
-                $scope.dischargeEpisode(episode);
-                $rootScope.$apply();
-            });
-
-            describe('for multiple patients', function() {
-                beforeEach(function(){
-                    var episodeData3 = angular.copy(episodeData);
-                    episodeData3.id = 125
-                    episodedata = {
-                        status: 'success',
-                        data: {
-                            123: episode,
-                            124: new Episode(episodeData2),
-                            125: new Episode(episodeData3)
-                        }
-                    };
-                    _makecontroller()
-                });
-
-                it('should remove the episode from episodes', function() {
-                    spyOn(Flow, 'exit').and.callFake(fake_exit);
-                    expect(_.keys($scope.episodes).length).toBe(3);
-                    $scope.dischargeEpisode(episode);
-                    $rootScope.$apply();
-                    expect(_.keys($scope.episodes).length).toBe(2);
-                });
-
-                it('should set a new active episode', function() {
-                    spyOn(Flow, 'exit').and.callFake(fake_exit);
-                    expect($scope.rix).toEqual(0);
-                    expect($scope.episode.id).toEqual(123);
-                    expect($scope.rows.length).toEqual(3)
-                    $scope.dischargeEpisode(episode);
-                    $rootScope.$apply();
-
-                    expect($scope.rix).toEqual(0);
-                    expect($scope.rows.length).toEqual(2)
-                    expect($scope.episode.id).toEqual(124);
-                });
-
-
-            });
-
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.dischargeEpisode(0)).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-    });
-
-    describe('removeFromMine()', function() {
-        it('should be null if readonly', function() {
-            profile.readonly = true;
-
-            var rows = _.map($scope.rows, function(episode){
-                return episode.id;
-            });
-            expect($scope.removeFromMine($scope.episode));
-            $rootScope.$apply();
-            var newRows = _.map($scope.rows, function(episode){
-                return episode.id;
-            });
-            expect(rows).toEqual(newRows);
-        });
-
-        it('should remove the mine tag', function() {
-            var selectedEpisodeId = $scope.episode.id;
-            profile.readonly = false;
-            spyOn($scope.episode.tagging[0], "save").and.returnValue({
-                then: function(fn){fn();}
-            });
-            $scope.removeFromMine($scope.episode);
-
-            // the episode should be removed from the displayed episodes
-            var displayed_episodes = _.map($scope.rows, function(episode){
-                return episode.id;
-            });
-
-            var isRemoved = !_.contains(displayed_episodes, selectedEpisodeId);
-            expect(isRemoved).toBe(true);
-        });
-
-        it('should call removeFromList', function() {
-            var selectedEpisodeId = $scope.episode.id;
-            profile.readonly = false;
-            spyOn($scope, 'removeFromList');
-            spyOn($scope.episode.tagging[0], 'save').and.returnValue({
-                then: function(f){ f() }
-            })
-            $scope.removeFromMine($scope.episode);
-            $scope.$apply();
-
-            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode.id);
-        });
-
     });
 
     describe('newNamedItem', function(){

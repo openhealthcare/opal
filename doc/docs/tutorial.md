@@ -47,7 +47,7 @@ Let's have a look at what that created for you:
             urls.py             # Django Urlconf
             wsgi.py
 
-            patient_lists.py    # these create the [lists](/guides/list_views/) for you application
+            patient_lists.py    # these create the [lists](guides/list_views.md) for you application
 
             assets/             # Your static files directory
             templates/          # Your template directory
@@ -88,8 +88,8 @@ front-end Angular single page apps.
 Most clinical services will need at some stage to generate a list of patients - so Opal provides
 this functionality enabled by default.
 
-The [list view](/guides/list_views/) is a spreadsheet-style list of patients - try navigating
-to the list view and adding a patient with the `add patient` button.
+The [list view](guides/list_views.md) is a spreadsheet-style list of patients - try navigating
+to the list view and adding a patient with the `add patient` button. [episode](guides/datamodel.md)
 
 <img src="/img/tutorial-list.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
 
@@ -97,7 +97,7 @@ Each column contains a different type of information about a patient, while each
 row represents one patient.
 
 <blockquote><small>
-Strictly speaking each row is an <a href="/guides/datamodel/">episode</a>
+Strictly speaking each row is an <a href="../guides/datamodel.md">episode</a>
 of care for a patient - but we'll come to that in a second.
 </small></blockquote>
 
@@ -120,7 +120,7 @@ class Diagnosis(EpisodeSubrecord):
 
 You will notice that the condition field has a custom field type - `ForeignKeyOrFreeText`.
 This is a custom field type that we use with Opal when we want to use a
-[Lookup List](/guides/referencedata/).
+[Lookup List](guides/referencedata.md).
 
 
 Lookup Lists allow us to reference canonical lists of available terminology as a foreign key, while
@@ -147,7 +147,7 @@ For more details consult the
 So far we've begun to get a sense of the batteries-included parts of Opal,
 but before long, you're going to need to create models for your own needs.
 
-Most Opal models are [Subrecords](/guides/datamodel/) - they relate to either a patient, or
+Most Opal models are [Subrecords](guides/datamodel.md) - they relate to either a patient, or
 an episode (an episode is for example, an admission to hospital).
 
 Let's see how that works by creating a TODO list model that is assigned to
@@ -263,7 +263,7 @@ application.
 
 For us, you'll notice that the value of `TODOItem.completed` simply displays as false -
 which is not particularly useful. So let's update that using the Opal
-[Boxed filter](/reference/javascript/javascript_helpers/#boxed). In `mynewapp/templates/records/todo_item.html`
+[Boxed filter](../reference/javascript/javascript_helpers/#boxed). In `mynewapp/templates/records/todo_item.html`
 change the last `span` to look like this:
 
 ```html
@@ -312,4 +312,4 @@ in your application. You can inspect these APIs interactively at the url:
 ### What next?
 
 This is just a glimpse at the full range of functionality that comes with Opal - there is
-much more to discover in the [Topic Guides](/guides/topic-guides/).
+much more to discover in the [Topic Guides](guides/topic-guides.md).

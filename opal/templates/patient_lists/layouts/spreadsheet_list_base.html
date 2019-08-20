@@ -9,14 +9,6 @@
       <h1>
         <!-- List Switcher / Dropdown Menu -->
         {% include "patient_lists/partials/list_dropdown_menu.html" %}
-        {% if not user.profile.explicit_access_only %}
-        <button class="btn btn-primary pull-right"
-                ng-show="!profile.readonly"
-                ng-click="addEpisode()">
-          <i class="glyphicon glyphicon-plus"></i>
-          Add Patient
-        </button>
-        {% endif %}
       </h1>
     </div>
   </div> <!-- .row .screen-only -->
@@ -203,11 +195,6 @@
         <div class="empty-list" ng-hide="num_episodes > 0">
           <p class="lead text-center">
             There are no patients on this list.
-          </p>
-          <p class="lead text-center">
-            <span class="screen-only">
-              Would you like to <a href="" ng-click="addEpisode()">add one</a>?
-            </span>
           </p>
         </div>
         {% endblock table %}

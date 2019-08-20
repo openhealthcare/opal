@@ -1,4 +1,61 @@
+### 0.18.0 (Major Release)
+
+* DjangoRESTFramework 3.7.4 -> 3.10.2
+
+#### Updates to the Dependency Graph
+
+### 0.17.0 (Major Release)
+
+#### Javascript API removals
+
+Removes the function Episode.isDischarged() (This was rarely if ever used,
+and no longer an accurate represenation of dischargedness.)
+
+Removes the Episode.getNumberOfItems method which is rarely used.
+
+Removes the methods PatientDetailCtrl.dischargeEpisode() and PatientListCtrl.dischargeEpisode()
+(However you're discharging episodes as of 0.17 it would be strongly unadvisable to do it this way.)
+
+Removes PatientList.removeFromMine()
+(The special casing of the 'Mine' list is strongly unadvised and set for complete removal.)
+
+Removes the front end Flow service
+
+#### Miscelanious changes
+
+Bumps Flake8 version to 3.7.8 - new code will now be required to pass flake8 v3.7.8
+
+#### Updates to the Dependency Graph
+
+* Jinja2: 2.10 -> 2.10.1
+* Psycopg2: 2.7.6.1 -> 2.8.3
+* Requests: 2.20.1 -> 2.22.0
+
+#### python3
+Opal now only supports python 3.5 - python 3.7
+
+### 0.16.0 (Major Release)
+
+Adds serialize_date, serialize_datetime, serialize_time utility functions to serialize date/datetime/time to
+strings.
+
+Diagnosis.details is now a text field.
+
+Changes the requirements.txt files that get created when we create an opal application or plugin to use `python-dateutil==2.7.5`
+
+### 0.15.0 (Major Release)
+
+Adds an optional setting OPAL_DEFAULT_SEARCH_FIELDS that specifies the fields used to
+search in when a criteria isn't specified.
+
+### 0.14.2 (Minor Release)
+
+Documentation fix, we're on python 3.4 now.
+
 ### 0.14.1 (Minor Release)
+
+The search plugin was not excluding search strings from analytics.
+This change makes it so that it does.
 
 ### 0.14.0 (Major Release)
 

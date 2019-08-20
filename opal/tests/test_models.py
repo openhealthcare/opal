@@ -3,7 +3,7 @@ Unittests for opal.models
 """
 import os
 import datetime
-from mock import patch, MagicMock
+from mock import patch
 
 from django.conf import settings
 from django.utils import timezone
@@ -428,8 +428,8 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual(hats, "Hats")
 
     def test_get_title_over_reverse_foreign_key(self):
-        hats = HouseOwner._get_field_title("house")
-        self.assertEqual(hats, "Houses")
+        houses = HouseOwner._get_field_title("house")
+        self.assertEqual(houses, "Houses")
 
     def test_verbose_name(self):
         only_words = FamousLastWords._get_field_title("words")
@@ -462,6 +462,10 @@ class SubrecordTestCase(OpalTestCase):
 
     def test_get_defaults_from_free_text_and_foreign_key_lambda(self):
         self.assertEqual("spaniel", HoundOwner._get_field_default("dog"))
+
+    def test_get_defaults_from_reverse_foreign_key(self):
+        houses = HouseOwner._get_field_default("house")
+        self.assertEqual([], houses)
 
     def test_get_defaults_from_ftfk_when_there_are_no_defaults(self):
         self.assertEqual(None, Colour._get_field_default("name"))

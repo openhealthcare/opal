@@ -144,11 +144,6 @@ describe('Episode', function() {
         expect(episode.getFullName()).toEqual('John Smith');
     });
 
-    it('should know how many items it has in each column', function() {
-        expect(episode.getNumberOfItems('demographics')).toBe(1);
-        expect(episode.getNumberOfItems('diagnosis')).toBe(2);
-    });
-
     it('getTags() should get the current tags', function(){
         expect(episode.getTags()).toEqual(['mine', 'tropical']);
     });
@@ -192,9 +187,8 @@ describe('Episode', function() {
             episode,
             opalTestHelper.getRecordLoaderData().diagnosis
         );
-        expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         episode.addItem(item);
-        expect(episode.getNumberOfItems('diagnosis')).toBe(3);
+        expect(_.last(episode.diagnosis).id).toBe(104)
     });
 
     it('should addItems() for items without an entry on episode', function() {
@@ -317,12 +311,6 @@ describe('Episode', function() {
                 expect($window.alert).toHaveBeenCalledWith('Item could not be saved');
             });
 
-        });
-
-        describe('isDischarged()', function() {
-            it('should return true', function() {
-                expect(episode.isDischarged()).toEqual(true);
-            });
         });
 
         describe('findByHospitalNumber()', function (){

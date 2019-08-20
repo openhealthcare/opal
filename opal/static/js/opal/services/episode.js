@@ -60,10 +60,6 @@ angular.module('opal.services')
                 return this.demographics[0].first_name + ' ' + this.demographics[0].surname;
             },
 
-            getNumberOfItems: function(columnName) {
-                return this[columnName].length;
-            },
-
             // Getter function to return active episode tags.
             // Default implementation just hits tagging
             getTags: function(){
@@ -239,14 +235,6 @@ recently changed it - refresh the page and try again');
                 return deferred.promise;
             },
 
-
-            //
-            // Predicate to determine whether this episode is discharged or not
-            //
-            isDischarged: function(){
-                return this.location[0].category == 'Discharged' ||
-                    (this.end && moment(this.end).isBefore(moment()));
-            }
         }; // Closes prototype
 
 

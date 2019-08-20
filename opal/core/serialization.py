@@ -7,7 +7,7 @@ import datetime
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from django.utils.dateformat import format
+from django.utils.dateformat import format as dt_format
 import six
 
 
@@ -56,21 +56,42 @@ def deserialize_date(value):
     return dt.date()
 
 
+def serialize_date(some_date):
+    """
+    Returns the string representation of a date
+    """
+    return dt_format(
+        datetime.datetime.combine(
+            some_date, datetime.datetime.min.time()
+        ), settings.DATE_FORMAT
+    )
+
+
+def serialize_datetime(some_datetime):
+    """
+    Returns the string representation of a datetime
+    """
+    return dt_format(some_datetime, settings.DATETIME_FORMAT)
+
+
+def serialize_time(some_time):
+    """
+    Returns the string representation of a time
+    """
+    return dt_format(some_time, settings.TIME_FORMAT)
+
+
 def _temporal_thing_to_string(thing):
     """
     If THING is a time, date, or datetime, return a string representation of it
     otherwise, return THING unchanged.
     """
     if isinstance(thing, datetime.time):
-        return format(thing, settings.TIME_FORMAT)
+        return serialize_time(thing)
     elif isinstance(thing, datetime.datetime):
-        return format(thing, settings.DATETIME_FORMAT)
+        return serialize_datetime(thing)
     elif isinstance(thing, datetime.date):
-        return format(
-            datetime.datetime.combine(
-                thing, datetime.datetime.min.time()
-            ), settings.DATE_FORMAT
-        )
+        return serialize_date(thing)
     else:
         return thing
 
