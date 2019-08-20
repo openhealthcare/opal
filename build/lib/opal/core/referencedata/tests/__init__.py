@@ -1,3 +1,0 @@
-"""
-opal.core.referencedata package
-"""
