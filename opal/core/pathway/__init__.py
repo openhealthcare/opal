@@ -12,7 +12,8 @@ from opal.core.pathway.pathways import (
 __all__ = [
     "delete_others",
     "Step",
-    "HelpTextStep" "RedirectsToPatientMixin",
+    "HelpTextStep",
+    "RedirectsToPatientMixin",
     "Pathway",
     "WizardPathway",
     "PagePathway",
