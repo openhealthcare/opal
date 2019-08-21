@@ -2,6 +2,9 @@
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
+#### Serializer bugs
+For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+
 #### Updates to the Dependency Graph
 
 ### 0.17.1 (Minor Release)
