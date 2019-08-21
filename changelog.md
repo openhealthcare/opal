@@ -2,13 +2,19 @@
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
-
 #### FindPatientStep removal
 
-Removes the FindPatientStep as in reality this is not suitable for purposes. We find custom logic
-is often required.
+Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
+and re-written this step. (If there is a common case, we don't know what it is yet.)
+
+#### Serializer bugs
+
+For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
 
 #### Updates to the Dependency Graph
+
+### 0.17.1 (Minor Release)
+Removes a now deleted file from the default application javascripts list
 
 ### 0.17.0 (Major Release)
 
