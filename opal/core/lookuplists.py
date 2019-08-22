@@ -169,7 +169,7 @@ def load_lookuplist(data):
     total_synonyms_created = 0
 
     for model in lookuplists():
-        name = model.__name__.lower()
+        name = model.get_api_name()
         if name in data:
             logging.info('Loading {0}'.format(name))
             num += 1
