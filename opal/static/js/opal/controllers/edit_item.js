@@ -81,20 +81,4 @@ angular.module('opal.controllers').controller(
 		        $modalInstance.close('cancel');
 	        };
 
-            $scope.prepopulate = function($event) {
-                $event.preventDefault();
-                var data = $($event.target).data()
-                _.each(_.keys(data), function(key){
-                    if(data[key] == 'true'){
-                        data[key] = true;
-                        return
-                    }
-                    if(data[key] == 'false'){
-                        data[key] = false;
-                        return
-                    }
-                });
-                angular.extend($scope.editing[item.columnName], data);
-            };
-
     });
