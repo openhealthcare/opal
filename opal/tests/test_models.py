@@ -77,11 +77,6 @@ class PatientTestCase(OpalTestCase):
             episode.category_name
         )
 
-    def test_create_episode_category(self):
-        patient = models.Patient.objects.create()
-        e = patient.create_episode(category_name='Outpatient')
-        self.assertEqual('Outpatient', e.category_name)
-
     def test_bulk_update_patient_subrecords(self):
         original_patient = models.Patient()
 
