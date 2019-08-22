@@ -7,9 +7,10 @@
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
 and re-written this step. (If there is a common case, we don't know what it is yet.)
 
-#### Serializer bugs
+#### Minor Bugfixes
 
-For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* Deletes a directory previously left as an artifact of scaffolding at ../../js/app/ (1554)
 
 #### Updates to the Dependency Graph
 
