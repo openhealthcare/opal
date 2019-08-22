@@ -2,6 +2,12 @@
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
+#### Remove additional EpisodeCategories
+
+The Outpatient and Liaison episode categories have been removed from `opal.core.episodes`. Defining
+these here rather than expecting applications to define them in application land means that overriding
+templates can only be done via monkeypatching.
+
 #### FindPatientStep removal
 
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
