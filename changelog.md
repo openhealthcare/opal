@@ -1,6 +1,17 @@
 ### 0.18.0 (Major Release)
 
+#### Load lookuplist data format
+
+Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
+from the value of `.get_api_name()`.
+
 * DjangoRESTFramework 3.7.4 -> 3.10.2
+
+#### Remove additional EpisodeCategories
+
+The Outpatient and Liaison episode categories have been removed from `opal.core.episodes`. Defining
+these here rather than expecting applications to define them in application land means that overriding
+templates can only be done via monkeypatching.
 
 #### FindPatientStep removal
 
@@ -11,6 +22,18 @@ and re-written this step. (If there is a common case, we don't know what it is y
 
 The `can_see_pid` method of profiles on both the front and back end was tied to hard-coded roles which
 were impossible to override.
+
+#### Micro test removals
+
+A large number of microbiology specific models and lookuplists have been removed from this version of
+Opal along with the Investigation model. This code was rarely used and turned out to be incompatible
+wiht subsequent LIMS system integration. We would advise anyone using it to incorporate these models
+into their own applications, but consider moving away.
+
+#### Javascript API removals
+
+Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
+for complex form interactions.
 
 #### Serializer bugs
 
