@@ -7,6 +7,11 @@
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
 and re-written this step. (If there is a common case, we don't know what it is yet.)
 
+#### Profile can_see_pid removal
+
+The `can_see_pid` method of profiles on both the front and back end was tied to hard-coded roles which
+were impossible to override.
+
 #### Serializer bugs
 
 For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
