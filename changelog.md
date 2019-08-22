@@ -2,6 +2,10 @@
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
+#### Ment.io and Macro removal
+
+The Macro feature and related Ment.io library have been removed. (No known applications used these features.)
+
 #### FindPatientStep removal
 
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
