@@ -90,24 +90,6 @@
             {name: 'date_of_diagnosis', type: 'date'},
         ]
       },
-      investigation: {
-        name:  'investigation',
-        single: false,
-        fields: [
-            {name: 'result', type: 'string'},
-            {name: 'date_ordered', type: 'date'},
-        ]
-      },
-      microbiology_test: {
-        name:  'microbiology_test',
-        single: false,
-        fields: [
-            {name: 'result', type: 'string'},
-            {name: 'consistency_token', type: 'string'},
-            {name: 'test', type: 'string'},
-            {name: 'c_difficile_toxin', type: 'string'}
-        ]
-      },
       tagging: {
           "name": "tagging",
           "single": true,
