@@ -35,9 +35,9 @@ describe('EditItemCtrl', function (){
         referencedata = opalTestHelper.getReferenceData();
         $scope        = $rootScope.$new();
         item          = new Item(
-            {columnName: 'investigation'},
+            {columnName: 'diagnosis'},
             episode,
-            $rootScope.fields.investigation
+            $rootScope.fields.diagnosis
         );
 
         fakeModalInstance = {
@@ -61,12 +61,6 @@ describe('EditItemCtrl', function (){
 
     });
 
-    describe('newly-created-controller', function (){
-        it('Should have columname investigation', function () {
-            expect($scope.columnName).toBe('investigation');
-        });
-    });
-
     describe('scope setup', function(){
       it('Should hoist metadata onto the scope', function () {
           expect($scope.metadata).toBe(metadataCopy);
@@ -76,11 +70,6 @@ describe('EditItemCtrl', function (){
           expect($scope.episode_category).toBe("Inpatient");
       })
 
-      it('should track analytics data', function(){
-          expect($analytics.eventTrack).toHaveBeenCalledWith(
-            "investigation", {category: "EditItem", label: "Inpatient"}
-          );
-      });
     })
 
     describe('editingMode()', function() {
@@ -92,27 +81,6 @@ describe('EditItemCtrl', function (){
     });
 
     describe('Saving items', function (){
-
-        it('Should save the current item', function () {
-            $scope.$digest();
-            var callArgs;
-            var deferred = $q.defer();
-            spyOn($scope, 'preSave');
-            spyOn(item, 'save').and.callFake(function() {
-                return deferred.promise;
-            });
-            $scope.save('save');
-            deferred.resolve("episode returned");
-            $scope.$digest();
-
-            var preSaveCallArgs = $scope.preSave.calls.mostRecent().args;
-            expect(preSaveCallArgs.length).toBe(1);
-            expect(preSaveCallArgs[0]).toBe($scope.editing);
-
-            callArgs = item.save.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0]).toBe($scope.editing.investigation);
-        });
 
         it('should save the episode if we have changed it', function() {
             $scope.$digest();
@@ -194,118 +162,6 @@ describe('EditItemCtrl', function (){
             expect(fakeModalInstance.close).toHaveBeenCalledWith('cancel');
         });
 
-    });
-
-    describe('prepopulate()', function() {
-        it('should extend the item', function() {
-            var mock_event = {
-                preventDefault: function(){}
-            }
-            //            $ = jasmine.createSpy().and.callFake(function(what){ console.log(what)})
-            var spy = spyOn(jQuery.fn, 'data').and.returnValue({'foo': 'true', 'bar': 'false'});
-
-            $scope.prepopulate(mock_event);
-            expect(spy).toHaveBeenCalled();
-            expect($scope.editing.investigation.foo).toEqual(true);
-            expect($scope.editing.investigation.bar).toEqual(false);
-        });
-    });
-
-    describe('testType', function(){
-        beforeEach(function(){
-            existingEpisode = new Episode(opalTestHelper.getEpisodeData());
-
-            // when we prepopulate we should not remove the consistency_token
-            existingEpisode.microbiology_test = [{
-                test: "T brucei Serology",
-                consistency_token: "23423223"
-            }];
-
-            item = new Item(
-                existingEpisode.microbiology_test[0],
-                existingEpisode,
-                $rootScope.fields.microbiology_test
-            );
-
-            $scope = $rootScope.$new();
-            controller = $controller('EditItemCtrl', {
-                $scope        : $scope,
-                $timeout      : $timeout,
-                $modalInstance: fakeModalInstance,
-                item          : item,
-                metadata      : metadataCopy,
-                profile       : profile,
-                episode       : existingEpisode,
-                ngProgressLite: ngProgressLite,
-                referencedata: referencedata,
-            });
-            // We need to fire the promise - the http expectation is set above.
-            $scope.$apply();
-
-        });
-
-        it('on initialisation, update the test type, but not the test details', function(){
-          $scope = $rootScope.$new();
-          item.test = "C diff";
-          item.c_difficile_toxin = "someToxin";
-          controller = $controller('EditItemCtrl', {
-              $scope        : $scope,
-              $timeout      : $timeout,
-              $modalInstance: fakeModalInstance,
-              item          : item,
-              metadata      : metadataCopy,
-              profile       : profile,
-              episode       : existingEpisode,
-              ngProgressLite: ngProgressLite,
-              referencedata: referencedata,
-          });
-          expect($scope.editing.microbiology_test.test).toEqual("C diff");
-          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("someToxin");
-        });
-
-        it("if the test hasn't changed, don't nuke clean other fields", function(){
-          $scope.editing.microbiology_test.test = "C diff";
-          $scope.$digest();
-          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
-          $scope.editing.microbiology_test.c_difficile_toxin = "someToxin";
-          $scope.editing.microbiology_test.test = "C diff";
-          $scope.$digest();
-          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("someToxin");
-        });
-
-        it('should prepopulate microbiology tests', function(){
-            $scope.editing.microbiology_test.test = "C diff";
-            $scope.$digest();
-            expect($scope.editing.microbiology_test.c_difficile_antigen).toEqual("pending");
-            expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
-            $scope.editing.microbiology_test.test = ""
-            $scope.$digest();
-            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
-            expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
-            expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
-        });
-
-        it('should should not clean _client, id, date ordered or episode id', function(){
-            var today = moment().format('DD/MM/YYYY');
-            $scope.editing.microbiology_test.test = "C diff";
-            $scope.editing.microbiology_test.alert_investigation = true;
-            $scope.$digest();
-            $scope.editing.microbiology_test.c_difficile_antigen = "pending";
-            $scope.editing.microbiology_test.episode_id = 1;
-            $scope.editing.microbiology_test.id = 2;
-            $scope.editing.microbiology_test.date_ordered = today;
-            $scope.editing.microbiology_test.consistency_token = "122112";
-            $scope.editing.microbiology_test.test = "";
-            $scope.editing.microbiology_test._client.something = "important"
-            $scope.$digest();
-            expect($scope.editing.microbiology_test._client.something).toEqual("important");
-            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
-            expect($scope.editing.microbiology_test.episode_id).toBe(1);
-            expect($scope.editing.microbiology_test.id).toBe(2);
-            expect($scope.editing.microbiology_test.consistency_token).toBe("122112");
-            expect($scope.editing.microbiology_test.date_ordered).toBe(today);
-            expect($scope.editing.microbiology_test.alert_investigation).toBe(true);
-        });
     });
 
 });

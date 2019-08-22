@@ -11,6 +11,18 @@ The Macro feature and related Ment.io library have been removed. (No known appli
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
 and re-written this step. (If there is a common case, we don't know what it is yet.)
 
+#### Micro test removals
+
+A large number of microbiology specific models and lookuplists have been removed from this version of
+Opal along with the Investigation model. This code was rarely used and turned out to be incompatible
+wiht subsequent LIMS system integration. We would advise anyone using it to incorporate these models
+into their own applications, but consider moving away.
+
+#### Javascript API removals
+
+Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
+for complex form interactions.
+
 #### Serializer bugs
 
 For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
