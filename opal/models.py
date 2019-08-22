@@ -531,8 +531,8 @@ class Patient(models.Model):
                             {"drug": "paracetomol"}
                             {"drug": "aspirin"}
                           ],
-                      "investigation":[
-                            {"name": "some test", "details": "some details"}
+                      "diagnosis":[
+                            {"condition": "some test", "details": "some details"}
                           ]
                      }
         """
