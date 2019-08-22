@@ -532,7 +532,10 @@ class Patient(models.Model):
                             {"drug": "aspirin"}
                           ],
                       "diagnosis":[
-                            {"condition": "some test", "details": "some details"}
+                            {
+                                "condition": "some test",
+                                "details": "some details"
+                            }
                           ]
                      }
         """
