@@ -15,13 +15,3 @@ class MacroMetadataTestCase(OpalTestCase):
             'macros': [{'expanded': 'the expanded', 'label': 'the title'}]
         }
         self.assertEqual(expected, metadata.MacrosMetadata.to_dict())
-
-class MicoTestDefaultsTestCase(OpalTestCase):
-
-    def test_to_dict(self):
-        expected = {
-                    'igm': 'pending',
-                    'igg': 'pending'
-                }
-        as_dict = metadata.MicroTestDefaultsMetadata.to_dict()
-        self.assertEqual(expected, as_dict['micro_test_defaults']['micro_test_serology'])
