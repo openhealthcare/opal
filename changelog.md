@@ -1,5 +1,10 @@
 ### 0.18.0 (Major Release)
 
+#### Load lookuplist data format
+
+Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
+from the value of `.get_api_name()`.
+
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
 #### FindPatientStep removal
