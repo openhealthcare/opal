@@ -12,5 +12,3 @@ from opal.core import discoverable
 
 class Metadata(discoverable.DiscoverableFeature):
     module_name = 'metadata'
-
-
