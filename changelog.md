@@ -35,9 +35,10 @@ into their own applications, but consider moving away.
 Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
 for complex form interactions.
 
-#### Serializer bugs
+#### Minor Bugfixes
 
-For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* Deletes a directory previously left as an artifact of scaffolding at ../../js/app/ (1554)
 
 #### Updates to the Dependency Graph
 
