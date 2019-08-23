@@ -73,24 +73,6 @@ describe('UserProfile', function(){
 
         });
 
-        describe('can_see_pid', function() {
-
-            it('should be true when we have none of the scary roles', function() {
-                expect(profile.can_see_pid()).toBe(true);
-            });
-
-            it('should be false when researcher', function() {
-                profile.roles['default'] = ['researcher']
-                expect(profile.can_see_pid()).toBe(false);
-            });
-
-            it('should be false when scientist', function() {
-                profile.roles['default'] = ['scientist']
-                expect(profile.can_see_pid()).toBe(false);
-            });
-
-        });
-
         describe('can_edit', function() {
 
             it('should be true by default', function() {

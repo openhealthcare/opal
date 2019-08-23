@@ -18,6 +18,11 @@ templates can only be done via monkeypatching.
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
 and re-written this step. (If there is a common case, we don't know what it is yet.)
 
+#### Profile can_see_pid removal
+
+The `can_see_pid` method of profiles on both the front and back end was tied to hard-coded roles which
+were impossible to override.
+
 #### Micro test removals
 
 A large number of microbiology specific models and lookuplists have been removed from this version of
