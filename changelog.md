@@ -1,5 +1,10 @@
 ### 0.18.0 (Major Release)
 
+#### Load lookuplist data format
+
+Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
+from the value of `.get_api_name()`.
+
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
 #### Ment.io and Macro removal
@@ -17,6 +22,11 @@ templates can only be done via monkeypatching.
 Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
 and re-written this step. (If there is a common case, we don't know what it is yet.)
 
+#### Profile can_see_pid removal
+
+The `can_see_pid` method of profiles on both the front and back end was tied to hard-coded roles which
+were impossible to override.
+
 #### Micro test removals
 
 A large number of microbiology specific models and lookuplists have been removed from this version of
@@ -29,9 +39,10 @@ into their own applications, but consider moving away.
 Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
 for complex form interactions.
 
-#### Serializer bugs
+#### Minor Bugfixes
 
-For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* Deletes a directory previously left as an artifact of scaffolding at ../../js/app/ (1554)
 
 #### Updates to the Dependency Graph
 

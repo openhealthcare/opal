@@ -184,7 +184,6 @@
     var userProfile = {
         readonly   : false,
         can_extract: true,
-        can_see_pid: function(){return true; }
     };
 
     return {

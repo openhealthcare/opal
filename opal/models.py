@@ -508,7 +508,10 @@ class Patient(models.Model):
                             {"drug": "aspirin"}
                           ],
                       "diagnosis":[
-                            {"condition": "some test", "details": "some details"}
+                            {
+                                "condition": "some test",
+                                "details": "some details"
+                            }
                           ]
                      }
         """
@@ -1437,13 +1440,6 @@ class UserProfile(models.Model):
             roles.update(plugin().roles(self.user))
         roles['default'] = [r.name for r in self.roles.all()]
         return roles
-
-    @property
-    def can_see_pid(self):
-        all_roles = itertools.chain(*list(self.get_roles().values()))
-        # TODO: Remove these hardcoded role anmes
-        return not any(r for r in
-                       all_roles if r == "researcher" or r == "scientist")
 
     @property
     def explicit_access_only(self):
