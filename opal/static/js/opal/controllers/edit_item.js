@@ -29,7 +29,6 @@ angular.module('opal.controllers').controller(
             $scope.columnName = item.columnName;
             _.extend($scope, referencedata.toLookuplists());
 
-            };
 
             $scope.delete = function(){
                 var deferred = $q.defer();
