@@ -42,6 +42,11 @@ would be better placed at present in an application rather than the core framewo
 Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
 for complex form interactions.
 
+#### Flow based controllers removed
+
+Removes the HospitalNumberCtrl and AddEpisodeCtrl along with related tests and templates. Pathways
+can perform thse operations significantly more flexibly.
+
 #### Minor Bugfixes
 
 * For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
