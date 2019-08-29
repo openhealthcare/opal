@@ -30,6 +30,11 @@ Opal along with the Investigation model. This code was rarely used and turned ou
 wiht subsequent LIMS system integration. We would advise anyone using it to incorporate these models
 into their own applications, but consider moving away.
 
+#### Line Lookuplist removals
+
+Removes line removal reason, complication, site and type lookuplists. These are rarely if used and
+would be better placed at present in an application rather than the core framework.
+
 #### Javascript API removals
 
 Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
