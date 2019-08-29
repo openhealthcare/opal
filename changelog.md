@@ -7,6 +7,10 @@ from the value of `.get_api_name()`.
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 
+#### Ment.io and Macro removal
+
+The Macro feature and related Ment.io library have been removed. (No known applications used these features.)
+
 #### Remove additional EpisodeCategories
 
 The Outpatient and Liaison episode categories have been removed from `opal.core.episodes`. Defining

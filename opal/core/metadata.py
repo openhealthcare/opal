@@ -12,15 +12,3 @@ from opal.core import discoverable
 
 class Metadata(discoverable.DiscoverableFeature):
     module_name = 'metadata'
-
-
-class MacrosMetadata(Metadata):
-    slug = 'macros'
-
-    @classmethod
-    def to_dict(klass, **kw):
-        from opal.models import Macro
-
-        return {
-            klass.slug: Macro.to_dict()
-        }

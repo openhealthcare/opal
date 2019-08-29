@@ -1,11 +1,9 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary, $controller, Schema, controller, $rootScope;
     var ExtractSchema;
-
 
     var optionsData = {
         condition: ['Another condition', 'Some condition'],

@@ -124,7 +124,6 @@
                 c_difficile_toxin: "pending"
             }
         },
-        macros: [],
         tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
         tags: {
             opat_referrals: {
