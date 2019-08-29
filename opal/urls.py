@@ -5,7 +5,6 @@ from django.conf.urls import include, url
 from django.contrib.auth.views import logout, password_change
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
-from django.views.generic import TemplateView
 
 from opal import views
 from opal.core import api, subrecords, plugins
