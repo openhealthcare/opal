@@ -21,9 +21,7 @@
         <div class="panel-heading">
           <b>
             <i class="fa fa-user"></i>
-            <span ng-show="profile.can_see_pid()">
               [[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]
-            </span>
           </b>
           {% if request.user.is_staff %}
           {% block stafftools %}
@@ -38,14 +36,14 @@
 
         {% block sidebar %}
         <ul class="list-group">
-          <li class="list-group-item" ng-show="profile.can_see_pid()">
+          <li class="list-group-item">
             <p>
               <a class="btn btn-secondary screen-only" ng-href='[[ "#/patient/" + episode.demographics[0].patient_id + "/" + episode.id]]'>
                 <i class="fa fa-search-plus"></i> Patient Details
               </a>
             </p>
           </li>
-          <li class="list-group-item" ng-show="profile.can_see_pid()">
+          <li class="list-group-item">
             <h4>
               <i class="fa fa-users"></i> Teams
               {% if patient_list.allow_edit_teams %}
@@ -73,7 +71,6 @@
 
       </div>
       <div class="panel panel-default screen-only hidden-sm"
-           ng-hide="!profile.can_see_pid()"
            >
         <div class="panel-heading">
           <h4>

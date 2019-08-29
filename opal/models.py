@@ -531,8 +531,11 @@ class Patient(models.Model):
                             {"drug": "paracetomol"}
                             {"drug": "aspirin"}
                           ],
-                      "investigation":[
-                            {"name": "some test", "details": "some details"}
+                      "diagnosis":[
+                            {
+                                "condition": "some test",
+                                "details": "some details"
+                            }
                           ]
                      }
         """
@@ -1225,130 +1228,6 @@ class MaritalStatus(lookuplists.LookupList):
         verbose_name_plural = "Marital statuses"
 
 
-class Micro_test_c_difficile(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test C difficile"
-        verbose_name_plural = "Micro tests C difficile"
-
-
-class Micro_test_csf_pcr(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test CSF PCR"
-        verbose_name_plural = "Micro tests CSF PCR"
-
-
-class Micro_test_ebv_serology(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test EBV serology"
-        verbose_name_plural = "Micro tests EBV serology"
-
-
-class Micro_test_hepititis_b_serology(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test hepatitis B serology"
-        verbose_name_plural = "Micro tests hepatitis B serology"
-
-
-class Micro_test_hiv(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test HIV"
-        verbose_name_plural = "Micro tests HIV"
-
-
-class Micro_test_leishmaniasis_pcr(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test leishmaniasis PCR"
-        verbose_name_plural = "Micro tests leishmaniasis PCR"
-
-
-class Micro_test_mcs(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test MCS"
-        verbose_name_plural = "Micro tests MCS"
-
-
-class Micro_test_other(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test other"
-        verbose_name_plural = "Micro tests other"
-
-
-class Micro_test_parasitaemia(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test parasitaemia"
-        verbose_name_plural = "Micro tests parasitaemia"
-
-
-class Micro_test_respiratory_virus_pcr(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test respiratory virus PCR"
-        verbose_name_plural = "Micro tests respiratory virus PCR"
-
-
-class Micro_test_serology(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test serology"
-        verbose_name_plural = "Micro tests serology"
-
-
-class Micro_test_single_igg_test(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test single IgG test"
-        verbose_name_plural = "Micro tests single IgG test"
-
-
-class Micro_test_single_test_pos_neg(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test single test pos neg"
-        verbose_name_plural = "Micro tests single test pos neg"
-
-
-class Micro_test_single_test_pos_neg_equiv(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test single test pos neg equiv"
-        verbose_name_plural = "Micro tests single test pos neg equiv"
-
-
-class Micro_test_stool_parasitology_pcr(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Micro test stool parasitology PCR"
-        verbose_name_plural = "Micro tests stool parasitology PCR"
-
-
-class Micro_test_stool_pcr(lookuplists.LookupList):
-
-    class Meta:
-        verbose_name = "Micro test stool PCR"
-        verbose_name_plural = "Micro tests stool PCR"
-
-
-class Micro_test_swab_pcr(lookuplists.LookupList):
-
-    class Meta:
-        verbose_name = "Micro test swab PCR"
-        verbose_name_plural = "Micro tests swab PCR"
-
-
-class Micro_test_syphilis_serology(lookuplists.LookupList):
-
-    class Meta:
-        verbose_name = "Micro test syphilis serology"
-        verbose_name_plural = "Micro tests syphilis serology"
-
-
-class Micro_test_viral_load(lookuplists.LookupList):
-
-    class Meta:
-        verbose_name = "Micro test viral load"
-        verbose_name_plural = "Micro tests viral load"
-
-
-class Microbiology_organism(lookuplists.LookupList):
-
-    class Meta:
-        verbose_name = "Microbiology organism"
-
-
 class ReferralType(lookuplists.LookupList):
     pass
 
@@ -1513,67 +1392,6 @@ class PastMedicalHistory(EpisodeSubrecord):
         verbose_name_plural = "Past medical histories"
 
 
-class Investigation(EpisodeSubrecord):
-    _sort = 'date_ordered'
-    _icon = 'fa fa-crosshairs'
-
-    POS_NEG_PENDING = (
-        ("pending", "pending",),
-        ("positive", "positive",),
-        ("negative", "negative",),
-    )
-
-    test                  = models.CharField(max_length=255)
-    date_ordered          = models.DateField(null=True, blank=True)
-    details               = models.CharField(max_length=255, blank=True)
-    microscopy            = models.CharField(max_length=255, blank=True)
-    organism              = models.CharField(max_length=255, blank=True)
-    sensitive_antibiotics = models.CharField(max_length=255, blank=True)
-    resistant_antibiotics = models.CharField(max_length=255, blank=True)
-    result                = models.CharField(max_length=255, blank=True)
-    igm                   = models.CharField(max_length=20, blank=True)
-    igg                   = models.CharField(max_length=20, blank=True)
-    vca_igm               = models.CharField(max_length=20, blank=True)
-    vca_igg               = models.CharField(max_length=20, blank=True)
-    ebna_igg              = models.CharField(max_length=20, blank=True)
-    hbsag                 = models.CharField(max_length=20, blank=True)
-    anti_hbs              = models.CharField(max_length=20, blank=True)
-    anti_hbcore_igm       = models.CharField(max_length=20, blank=True)
-    anti_hbcore_igg       = models.CharField(max_length=20, blank=True)
-    rpr                   = models.CharField(max_length=20, blank=True)
-    tppa                  = models.CharField(max_length=20, blank=True)
-    viral_load            = models.CharField(max_length=20, blank=True)
-    parasitaemia          = models.CharField(max_length=20, blank=True)
-    hsv                   = models.CharField(max_length=20, blank=True)
-    vzv                   = models.CharField(max_length=20, blank=True)
-    syphilis              = models.CharField(max_length=20, blank=True)
-    c_difficile_antigen   = models.CharField(max_length=20, blank=True)
-    c_difficile_toxin     = models.CharField(max_length=20, blank=True)
-    species               = models.CharField(max_length=20, blank=True)
-    hsv_1                 = models.CharField(max_length=20, blank=True)
-    hsv_2                 = models.CharField(max_length=20, blank=True)
-    enterovirus           = models.CharField(max_length=20, blank=True)
-    cmv                   = models.CharField(max_length=20, blank=True)
-    ebv                   = models.CharField(max_length=20, blank=True)
-    influenza_a           = models.CharField(max_length=20, blank=True)
-    influenza_b           = models.CharField(max_length=20, blank=True)
-    parainfluenza         = models.CharField(max_length=20, blank=True)
-    metapneumovirus       = models.CharField(max_length=20, blank=True)
-    rsv                   = models.CharField(max_length=20, blank=True)
-    adenovirus            = models.CharField(max_length=20, blank=True)
-    norovirus             = models.CharField(max_length=20, blank=True)
-    rotavirus             = models.CharField(max_length=20, blank=True)
-    giardia               = models.CharField(max_length=20, blank=True)
-    entamoeba_histolytica = models.CharField(max_length=20, blank=True)
-    cryptosporidium       = models.CharField(max_length=20, blank=True)
-    rhinovirus            = models.CharField(
-        max_length=20, blank=True, choices=POS_NEG_PENDING)
-
-    class Meta:
-        abstract = True
-        verbose_name = 'Investigations'
-
-
 class Role(models.Model):
     name = models.CharField(max_length=200)
 
@@ -1646,13 +1464,6 @@ class UserProfile(models.Model):
             roles.update(plugin().roles(self.user))
         roles['default'] = [r.name for r in self.roles.all()]
         return roles
-
-    @property
-    def can_see_pid(self):
-        all_roles = itertools.chain(*list(self.get_roles().values()))
-        # TODO: Remove these hardcoded role anmes
-        return not any(r for r in
-                       all_roles if r == "researcher" or r == "scientist")
 
     @property
     def explicit_access_only(self):
