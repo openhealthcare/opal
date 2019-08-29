@@ -52,6 +52,18 @@ can perform thse operations significantly more flexibl.y
 Removed an undocumented template `modals/_allergies_sidebar.html` which was rarely used and more suited
 to being included in individual applications than the framework itself.
 
+#### Stories
+
+The Stories functionality is not clearly more useful than simply having an html template file in an
+individual application. The pattern of having them as individual feature files which are not executalbe
+by e.g. Cucumber adds complexity but no value. Explicit acceptance tests are encouraged for applications,
+but no longer live as part of Opal core.
+
+#### Design Patterns
+
+Removes the design patterns library as this is incompatible with the new 'skinability' approach. Such
+patterns pages are encouraged for large applications or standalone themes.
+
 #### Minor Bugfixes
 
 * For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
