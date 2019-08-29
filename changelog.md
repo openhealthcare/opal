@@ -5,9 +5,6 @@
 Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
 from the value of `.get_api_name()`.
 
-* DjangoRESTFramework 3.7.4 -> 3.10.2
-* python-dateutil 2.7.5 -> 2.8.0
-
 #### Remove additional EpisodeCategories
 
 The Outpatient and Liaison episode categories have been removed from `opal.core.episodes`. Defining
@@ -42,6 +39,10 @@ for complex form interactions.
 * Deletes a directory previously left as an artifact of scaffolding at ../../js/app/ (1554)
 
 #### Updates to the Dependency Graph
+
+* DjangoRESTFramework 3.7.4 -> 3.10.2
+* python-dateutil 2.7.5 -> 2.8.0
+
 
 ### 0.17.1 (Minor Release)
 Removes a now deleted file from the default application javascripts list
