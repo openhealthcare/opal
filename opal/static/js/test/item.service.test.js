@@ -126,6 +126,18 @@ describe('Item', function() {
                 expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 30));
             });
 
+          describe('tagging special casing', function() {
+
+            it('should set the ids required', function() {
+              var item = new Item(episodeData.tagging[0], episode, recordSchema.tagging);
+              $httpBackend.expectPUT('/api/v0.1/tagging/123/', {'main': true, 'id': 123}).respond({});
+              item.save({'main': true});
+              $httpBackend.flush();
+              expect(item.id).toBe(episode.id);
+            });
+
+          });
+
         });
 
         describe('Failing save() calls', function() {
