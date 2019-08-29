@@ -46,6 +46,7 @@ Also removes a series of Angular filters which were deemed of limited re-use pot
 add such filters themselves trivially.
 
 * microresult
+* boxed
 
 #### Flow based controllers removed
 
