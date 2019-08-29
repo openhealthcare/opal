@@ -45,7 +45,12 @@ for complex form interactions.
 #### Flow based controllers removed
 
 Removes the HospitalNumberCtrl and AddEpisodeCtrl along with related tests and templates. Pathways
-can perform thse operations significantly more flexibly.
+can perform thse operations significantly more flexibl.y
+
+#### Allergies sidebar
+
+Removed an undocumented template `modals/_allergies_sidebar.html` which was rarely used and more suited
+to being included in individual applications than the framework itself.
 
 #### Minor Bugfixes
 
