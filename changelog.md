@@ -47,6 +47,7 @@ add such filters themselves trivially.
 
 * microresult
 * boxed
+* plural
 
 #### Flow based controllers removed
 
