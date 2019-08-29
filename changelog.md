@@ -42,6 +42,11 @@ would be better placed at present in an application rather than the core framewo
 Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
 for complex form interactions.
 
+Also removes a series of Angular filters which were deemed of limited re-use potential. Applications may
+add such filters themselves trivially.
+
+* microresult
+
 #### Flow based controllers removed
 
 Removes the HospitalNumberCtrl and AddEpisodeCtrl along with related tests and templates. Pathways
