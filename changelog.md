@@ -5,6 +5,10 @@
 Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
 from the value of `.get_api_name()`.
 
+#### Ment.io and Macro removal
+
+The Macro feature and related Ment.io library have been removed. (No known applications used these features.)
+
 #### Remove additional EpisodeCategories
 
 The Outpatient and Liaison episode categories have been removed from `opal.core.episodes`. Defining
@@ -27,6 +31,11 @@ A large number of microbiology specific models and lookuplists have been removed
 Opal along with the Investigation model. This code was rarely used and turned out to be incompatible
 wiht subsequent LIMS system integration. We would advise anyone using it to incorporate these models
 into their own applications, but consider moving away.
+
+#### Line Lookuplist removals
+
+Removes line removal reason, complication, site and type lookuplists. These are rarely if used and
+would be better placed at present in an application rather than the core framework.
 
 #### Javascript API removals
 

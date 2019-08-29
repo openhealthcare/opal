@@ -466,30 +466,6 @@ class Synonym(models.Model):
         return self.name
 
 
-class Macro(models.Model):
-    """
-    A Macro is a user-expandable text sequence that allows us to
-    enter "github-style" #foo text blocks from an admin defined
-    list and then have them expand to cover frequent entries.
-    """
-    HELP_TITLE = "The text that will display in the dropdown. No spaces!"
-    HELP_EXPANDED = "This is the text that it will expand to."
-
-    title    = models.CharField(max_length=200, help_text=HELP_TITLE)
-    expanded = models.TextField(help_text=HELP_EXPANDED)
-
-    def __str__(self):
-        return self.title
-
-    @classmethod
-    def to_dict(klass):
-        """
-        Return a serialised version of our Macros ready to be JSON'd
-        """
-        return [dict(expanded=m.expanded, label=m.title)
-                for m in klass.objects.all()]
-
-
 class Patient(models.Model):
 
     objects = managers.PatientQueryset.as_manager()
@@ -1200,27 +1176,6 @@ class Ward(lookuplists.LookupList):
 class Speciality(lookuplists.LookupList):
     class Meta:
         verbose_name_plural = "Specialities"
-
-
-# These should probably get refactored into opal-opat in 0.5
-class Line_complication(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line complication"
-
-
-class Line_removal_reason(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line removal reason"
-
-
-class Line_site(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line site"
-
-
-class Line_type(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Line type"
 
 
 class MaritalStatus(lookuplists.LookupList):

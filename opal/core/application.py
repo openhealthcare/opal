@@ -30,13 +30,10 @@ class OpalApplication(object):
             "js/lib/angulartics-0.17.2/angulartics.min.js",
             "js/lib/angulartics-0.17.2/angulartics-ga.min.js",
 
-            "js/lib/bower_components/ment.io/dist/mentio.js",
-            "js/lib/bower_components/ment.io/dist/templates.js",
             # "js/ui-select/dist/select.js",
             "js/lib/bower_components/angular-ui-select/dist/select.js",
             "js/lib/bower_components/ng-idle/angular-idle.js",
             "js/lib/bower_components/angular-local-storage/dist/angular-local-storage.js",  # noqa: E501
-            "js/lib/bower_components/ment.io/dist/templates.js",
             "js/lib/bower_components/angular-growl-v2/build/angular-growl.js",
             "js/lib/jquery-plugins/idle-timer.js",
             "js/lib/jquery-plugins/jquery.stickytableheaders.js",

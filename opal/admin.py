@@ -204,4 +204,3 @@ for subclass in episode_subrecords():
 
 admin.site.register(models.ContactNumber, MyAdmin)
 admin.site.register(models.Role, MyAdmin)
-admin.site.register(models.Macro, MyAdmin)
