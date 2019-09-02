@@ -48,6 +48,8 @@ add such filters themselves trivially.
 * microresult
 * boxed
 * plural
+* shortDate
+* shortDateTime
 
 #### Flow based controllers removed
 
