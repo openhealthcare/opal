@@ -1,5 +1,10 @@
 ### 0.18.0 (Major Release)
 
+#### Removes and updates middleware
+Adds the setting CSRF_HEADER_NAME = "HTTP_X_XSRF_TOKEN".
+As this is what is expected by angular, removes the middleware that did the switch
+
+
 #### Load lookuplist data format
 
 Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
@@ -101,7 +106,6 @@ Removes PatientList.removeFromMine()
 (The special casing of the 'Mine' list is strongly unadvised and set for complete removal.)
 
 Removes the front end Flow service
-
 
 #### Miscelanious changes
 
