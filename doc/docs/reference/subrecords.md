@@ -224,3 +224,35 @@ fields external_system and external_identifier to allow us to track where
 they come from and how they are referenced by that system.
 
 These fields are then often used in forms to make the data read only
+
+
+### Specific subrecords
+
+#### Demographics
+Opal ships with a demographics model that models personally identifying information for a patient.
+
+This model maps
+
+ - `hospital_number`
+ - `nhs_number`
+ - `surname`
+ - `first_name`
+ - `middle name`
+ - `title`
+ - `date_of_birth`
+ - `marital_status`
+ - `religion`
+ - `date_of_death`
+ - `post_code`
+ - `birth_place`
+ - `ethnicity`
+ - `death_indicator`
+ - `sex`
+
+It also has the properties:
+
+ - `name` - The first name and the surname combined.
+ - `age` - The current age of the patient (today - their date of birth)
+
+
+

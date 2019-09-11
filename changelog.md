@@ -1,5 +1,8 @@
 ### 0.18.0 (Major Release)
 
+#### Demographics model change
+Adds the `age` property to demographics that returns the patient's age.
+
 #### Load lookuplist data format
 
 Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
