@@ -46,7 +46,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'opal.middleware.AngularCSRFRename',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -253,6 +252,8 @@ CONTACT_EMAIL = []
 DEFAULT_FROM_EMAIL = 'hello@example.com'
 DEFAULT_DOMAIN = 'http://{{ name }}.com/'
 
+
+CSRF_HEADER_NAME = "HTTP_X_XSRF_TOKEN"
 
 # ========== PROJECT ==========
 OPAL_BRAND_NAME = '{{ name }}'

@@ -3,6 +3,9 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.17.0 -> v0.18.0
+We now rename the CSRF request variable in the settings to what angular expects. Please remove the old `opal.middleware.AngularCSRFRename` as this is no longer required and update your settings to include `CSRF_HEADER_NAME = "HTTP_X_XSRF_TOKEN"`
+
 #### v0.15.0 -> v0.16.0
 Diagnosis.details is now a text field. Please make and run migrations if you are
 using it in your app.
