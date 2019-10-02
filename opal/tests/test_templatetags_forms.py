@@ -345,7 +345,7 @@ class DateTimePickerTestCase(TestCase):
     def test_generic(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" %}')
         rendered = template.render(Context({}))
-        self.assertEqual(rendered.count('editing.colour.name'), 2)
+        self.assertEqual(rendered.count('editing.colour.name'), 4)
 
     def test_label_date(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" date_label="something" %}')
