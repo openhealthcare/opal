@@ -49,6 +49,9 @@ add such filters themselves trivially.
 * boxed
 * plural
 
+Removes the undocumented `UserProfile.can_edit` method. This made assumptions about specific named roles
+which were unconfigurable and was thus unlikely to be useful.
+
 #### Flow based controllers removed
 
 Removes the HospitalNumberCtrl and AddEpisodeCtrl along with related tests and templates. Pathways
