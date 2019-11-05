@@ -55,7 +55,10 @@ which were unconfigurable and was thus unlikely to be useful.
 #### Flow based controllers removed
 
 Removes the HospitalNumberCtrl and AddEpisodeCtrl along with related tests and templates. Pathways
-can perform thse operations significantly more flexibl.y
+can perform thse operations significantly more flexibly.
+
+This has also resulted in removing the undocumented Episode method `findByHospitalNumber` which was
+used by the flow controllers.
 
 #### Allergies sidebar
 
