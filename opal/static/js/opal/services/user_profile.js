@@ -20,15 +20,6 @@ angular.module('opal.services')
                 return this.active_roles().indexOf(role) != -1;
             };
 
-            this.can_edit = function(record_name){
-                // This is non-scalable.
-                if(this.has_role('scientist')){
-                    if(['lab_test', 'ridrti_test'].indexOf(record_name) == -1){
-                        return false;
-                    }
-                }
-                return true;
-            };
         };
 
         var load = function(){
