@@ -5,7 +5,11 @@ application to a later version where there are extra steps required.
 
 
 #### v0.17.1 -> v0.18.0
-Changes style sheets in applicatin/plugin objects to apply to all media rather than just screen. If for example you are using print views, please test these still render appropriately.
+
+Style sheets loaded via Opal Applicatin or Plugin objects are now included with the attribute `media="all"`
+rather than `media="screen".
+
+This may affect how pages in your application print and require additional print styles.
 
 
 #### v0.15.0 -> v0.16.0
