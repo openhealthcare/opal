@@ -71,6 +71,9 @@ but no longer live as part of Opal core.
 Removes the design patterns library as this is incompatible with the new 'skinability' approach. Such
 patterns pages are encouraged for large applications or standalone themes.
 
+#### Plugin/Application stylesheet changes
+Changes style sheets in applicatin/plugin objects to apply to all media rather than just screen.
+
 #### Minor Bugfixes
 
 * For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
