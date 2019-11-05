@@ -71,8 +71,10 @@ but no longer live as part of Opal core.
 Removes the design patterns library as this is incompatible with the new 'skinability' approach. Such
 patterns pages are encouraged for large applications or standalone themes.
 
-#### Plugin/Application stylesheet changes
-Changes style sheets in applicatin/plugin objects to apply to all media rather than just screen.
+#### Plugin/Application stylesheet media atribute
+
+Style sheets loaded via Opal Applicatin or Plugin objects are now included with the attribute `media="all"`
+rather than `media="screen".
 
 #### Minor Bugfixes
 
