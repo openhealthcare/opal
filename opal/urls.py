@@ -13,8 +13,6 @@ from opal.forms import ChangePasswordForm
 api.initialize_router()
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view()),
-
     url(r'^accounts/login/$', views.check_password_reset, name='login'),
 
     url(r'^accounts/logout/$',
