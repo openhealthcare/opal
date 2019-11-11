@@ -1,0 +1,19 @@
+/* New stylesheet for Opal */
+.h-viewport {
+  height: calc(100vh - 40px) !important;
+  margin-top: 40px; }
+
+.scroll-y {
+  overflow-y: scroll; }
+
+.login {
+  -o-transition: .4s;
+  -ms-transition: .4s;
+  -moz-transition: .4s;
+  -webkit-transition: .4s;
+  transition: .4s; }
+
+.login.submitted {
+  margin-top: -2750px; }
+
+/*# sourceMappingURL=opal.1.0.css.map */

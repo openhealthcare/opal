@@ -1,0 +1,71 @@
+{% load staticfiles %}
+{% load compress %}
+{% load application %}
+{% load plugins %}
+
+<!doctype html>
+
+<html>
+  <head>
+    <!-- Sometimes your system administrater will helpfully configure IE to use old document modes by default. You don't want that here. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <!--[if lte IE 8]>
+	    <script type="text/javascript" src="{% static "js/lib/utils/json3.min.js" %}"></script>
+        <![endif]-->
+         <meta charset="utf-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
+         <title>{{ OPAL_BRAND_NAME }}</title>
+
+         <script type="text/javascript">
+           var initials = "{{ request.user.first_name|slice:":1" }} {{ request.user.last_name }}"
+           var settings = {
+             LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
+           }
+           var version = '{{VERSION_NUMBER}}';
+         </script>
+
+         {% compress js %}
+         <!-- Add javascript here later -->
+         {% block application_javascript %}{% endblock %}
+         {% endcompress %}
+
+         <!-- Bootstrap -->
+         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                 integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                 integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                 integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+         {% compress css %}
+         <link href="{% static "css/opal.1.0.css" %}" rel="stylesheet" media="all">
+         {% block application_styles %}{% endblock %}
+         {% endcompress %}
+
+         <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
+
+  </head>
+  <body>
+    {% block application %}{% endblock %}
+    <!-- google analytics -->
+    {% block analytics %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      {% if OPAL_ANALYTICS_NODOMAIN %}
+      ga('create', '{{ OPAL_ANALYTICS_ID }}', {
+        'cookieDomain': 'none'
+      });
+      {% else %}
+      ga('create', '{{ OPAL_ANALYTICS_ID }}', 'auto');
+      {% endif %}
+    </script>
+    {% endblock analytics %}
+  </body>
+</html>

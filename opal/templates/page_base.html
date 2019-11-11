@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load menus %}
+
+{% block application %}
+
+{% block top_navbar %}
+{% if request.user.is_authenticated %}
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+    {{ OPAL_BRAND_NAME }}
+  </a>
+  <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+  <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link" href="#">Search</a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block container %}
+<div class="container-fluid h-viewport">
+  <div class="row h-100">
+    {% block side_navbar %}
+    {% menu %}
+    {% endblock %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 h-100 scroll-y">
+    {% block content %}
+
+    <h2>page.html Block: content</h2>
+    <p>
+      Override this block in your template to render content into the main app viewport.
+    </p>
+    {% endblock %}
+    </main>
+
+  </div>
+</div>
+
+{% endblock %}
+{% endblock %}

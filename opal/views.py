@@ -114,7 +114,7 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'opal.html'
+    template_name = 'welcome.html'
 
 
 def check_password_reset(request, *args, **kwargs):
