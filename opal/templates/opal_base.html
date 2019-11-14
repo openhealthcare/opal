@@ -15,15 +15,6 @@
          <meta charset="utf-8">
          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
          <title>{{ OPAL_BRAND_NAME }}</title>
-
-         <script type="text/javascript">
-           var initials = "{{ request.user.first_name|slice:":1" }} {{ request.user.last_name }}"
-           var settings = {
-             LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
-           }
-           var version = '{{VERSION_NUMBER}}';
-         </script>
-
          {% compress js %}
          <!-- Add javascript here later -->
          {% block application_javascript %}{% endblock %}
