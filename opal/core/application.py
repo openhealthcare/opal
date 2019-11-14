@@ -46,7 +46,7 @@ class OpalApplication(object):
         # we import here as settings must be set before this is imported
         from django.contrib.auth.views import logout as logout_view
         logout = menus.MenuItem(
-            href=reverse(logout_view), icon="fa-sign-out", index=1000
+            href=reverse(logout_view), icon="fa-sign-out", index=1000, display="Log Out"
         )
         admin = menus.MenuItem(
             href="/admin/", icon="fa-cogs", display="Admin",
