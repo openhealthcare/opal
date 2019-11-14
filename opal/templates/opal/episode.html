@@ -1,0 +1,12 @@
+{% load panels %}
+
+  <div class="row">
+    <div class="col">
+      {% record_panel models.PastMedicalHistory %}
+      {% record_panel models.Diagnosis %}
+      {% record_panel models.Treatment %}
+    </div>
+    <div class="col">
+      {% record_panel models.PatientConsultation %}
+    </div>
+  </div>

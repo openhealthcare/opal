@@ -10,16 +10,17 @@ import logging
 import random
 import os
 
-from django.utils import timezone
-from django.db import models, transaction
-from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
-from django.utils.encoding import force_str
+from django.db import models, transaction
+from django.db.models import Q
 from django.db.models.signals import post_save
+from django.template.loader import get_template
+from django.urls import reverse
+from django.utils.encoding import force_str
+from django.utils import timezone
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -477,7 +478,7 @@ class Patient(models.Model):
         """
         Return the URL for this patient
         """
-        return '/#/patient/{}'.format(self.id)
+        return reverse('patient_detail', args=[self.pk])
 
     def demographics(self):
         """
@@ -876,13 +877,14 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     class Meta:
         abstract = True
 
+
     def __str__(self):
-        if self.created:
-            return '{0}: {1} {2}'.format(
-                self.get_api_name(), self.id, self.created
-            )
-        else:
-            return '{0}: {1}'.format(self.get_api_name(), self.id)
+        template = get_template(self.get_display_template())
+        return template.render({'record': self})
+
+    @classmethod
+    def get_class_name(cls):
+        return cls.__name__
 
     @classmethod
     def get_api_name(cls):
@@ -1024,6 +1026,10 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
             subrecord.update_from_dict(a_dict, user, force=force)
             result.append(subrecord)
         return result
+
+    def get_edit_url(self):
+        return reverse('edit-subrecord', args=[self.get_class_name(), self.pk])
+
 
 
 class PatientSubrecord(Subrecord):
@@ -1251,6 +1257,9 @@ class Demographics(PatientSubrecord):
     @property
     def name(self):
         return '{0} {1}'.format(self.first_name, self.surname)
+
+    def as_banner(self):
+        return f'{self.name} {self.hospital_number} {self.date_of_birth} {self.sex}'
 
     class Meta:
         abstract = True
@@ -1502,7 +1511,7 @@ class PatientConsultation(EpisodeSubrecord):
         abstract = True
         verbose_name = "Patient Consultation"
 
-    when = models.DateTimeField(null=True, blank=True)
+    when = models.DateField(null=True, blank=True)
     initials = models.CharField(
         max_length=255, blank=True,
         help_text="The initials of the user who gave the consult."
@@ -1513,19 +1522,13 @@ class PatientConsultation(EpisodeSubrecord):
     )
     discussion = models.TextField(blank=True)
 
-    def set_when(self, incoming_value, user, *args, **kwargs):
-        if incoming_value:
-            self.when = serialization.deserialize_datetime(incoming_value)
-        else:
-            self.when = timezone.make_aware(datetime.datetime.now())
-
 
 class SymptomComplex(EpisodeSubrecord):
     _icon = 'fa fa-stethoscope'
 
     class Meta:
         abstract = True
-        verbose_name = "Symptoms"
+        verbose_name = "Symptom"
         verbose_name_plural = "Symptom complexes"
 
     symptoms = models.ManyToManyField(

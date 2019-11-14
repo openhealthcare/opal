@@ -1,0 +1,15 @@
+{% extends 'page.html' %}
+
+{% block content %}
+  <section class="container">
+    <div class="row">
+      <h1 class="col">{{ patient.demographics.as_banner }}</h1>
+    </div>
+  {% for episode in patient.episode_set.all %}
+    <h3>
+      Episode {% if episode.start %} {{ episode.start }} {% endif %} {{ forloop.counter }}
+    </h3>
+    {% include episode.category.detail_template %}
+  {% endfor %}
+  </section>
+{% endblock %}

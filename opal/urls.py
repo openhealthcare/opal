@@ -5,9 +5,11 @@ from django.conf.urls import include, url
 from django.contrib.auth.views import logout, password_change
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
+from django.urls import path
 
 from opal import views
 from opal.core import api, subrecords, plugins
+from opal.core.forms import EditSubrecordView, CreateSubrecordView
 from opal.forms import ChangePasswordForm
 
 api.initialize_router()
@@ -19,6 +21,11 @@ urlpatterns = [
         logout, {'next_page': '/'},
         name='logout'),
 
+    path('patient/<int:pk>/', views.PatientDetailView.as_view(), name='patient_detail'),
+
+
+
+
     url(r'^accounts/change-password/?$',
         password_change,
         {'post_change_redirect': '/',
@@ -29,17 +36,6 @@ urlpatterns = [
 
     url(r'^admin/', admin.site.urls),
 
-    # Template views
-    url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$',
-        views.PatientListTemplateView.as_view(),
-        name="patient_list_template_view"),
-
-    url(r'^templates/patient_detail.html$',
-        views.PatientDetailTemplateView.as_view(), name="patient_detail"),
-
-    url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
-        views.EpisodeDetailTemplateView.as_view(), name="episode_detail"),
-
     # New Public facing API urls
     url(r'api/v0.1/', include(api.router.urls)),
 
@@ -48,6 +44,18 @@ urlpatterns = [
 
     url(r'^templates/forms/(?P<model>[0-9a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),
+
+
+    path(
+        'form/<str:model>/<int:episode_id>/create/',
+        CreateSubrecordView.as_view(),
+        name='create-subrecord'
+    ),
+    path(
+        'form/<str:model>/<int:pk>/edit/',
+        EditSubrecordView.as_view(),
+        name='edit-subrecord'
+    ),
 
 ]
 

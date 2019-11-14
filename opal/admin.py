@@ -97,7 +97,7 @@ class EpisodeAdmin(VersionAdmin):
     ]
 
     def episode_detail_url(self, obj):
-        return "/#/patient/{0}/{1}".format(obj.patient_id, obj.id)
+        return obj.patient.get_absolute_url()
 
     def episode_detail_link(self, obj):
         return format_html(

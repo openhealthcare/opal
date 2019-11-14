@@ -8,7 +8,7 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.views.generic import TemplateView
+from django.views.generic import ListView, DetailView, TemplateView, DeleteView
 
 from opal import models
 from opal.core import application, detail, episodes
@@ -20,6 +20,15 @@ from opal.utils.banned_passwords import banned
 app = application.get_app()
 
 Synonym = models.Synonym
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'welcome.html'
+
+
+class PatientDetailView(DetailView):
+    template_name       = 'opal/patient_detail.html'
+    model               = models.Patient
+    context_object_name = 'patient'
 
 
 class PatientListTemplateView(LoginRequiredMixin, TemplateView):
@@ -71,50 +80,48 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         return [PatientList.template_name]
 
 
-class PatientDetailTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'patient_detail.html'
+# class PatientDetailTemplateView(LoginRequiredMixin, TemplateView):
+#     template_name = 'patient_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(
-            PatientDetailTemplateView, self
-        ).get_context_data(**kwargs)
+#     def get_context_data(self, **kwargs):
+#         context = super(
+#             PatientDetailTemplateView, self
+#         ).get_context_data(**kwargs)
 
-        # django likes to try and initialise classes, even when we
-        # don't want it to, so vars it
-        context['episode_categories'] = [
-            vars(i) for i in episodes.EpisodeCategory.list()
-        ]
+#         # django likes to try and initialise classes, even when we
+#         # don't want it to, so vars it
+#         context['episode_categories'] = [
+#             vars(i) for i in episodes.EpisodeCategory.list()
+#         ]
 
-        # We cast this to a list because it's a generator but we want to
-        # consume it twice in the template
-        context['detail_views'] = list(
-            detail.PatientDetailView.for_user(self.request.user)
-        )
-        return context
-
-
-# TODO: ?Remove this ?
-class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
-    def get(self, *args, **kwargs):
-        self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])
-        return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
-
-    def get_template_names(self):
-        names = [
-            'detail/{0}.html'.format(self.episode.category_name.lower()),
-            'detail/default.html'
-        ]
-        return names
-
-    def get_context_data(self, **kwargs):
-        context = super(
-            EpisodeDetailTemplateView, self
-        ).get_context_data(**kwargs)
-        return context
+#         # We cast this to a list because it's a generator but we want to
+#         # consume it twice in the template
+#         context['detail_views'] = list(
+#             detail.PatientDetailView.for_user(self.request.user)
+#         )
+#         return context
 
 
-class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'welcome.html'
+# # TODO: ?Remove this ?
+# class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
+#     def get(self, *args, **kwargs):
+#         self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])
+#         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
+
+#     def get_template_names(self):
+#         names = [
+#             'detail/{0}.html'.format(self.episode.category_name.lower()),
+#             'detail/default.html'
+#         ]
+#         return names
+
+#     def get_context_data(self, **kwargs):
+#         context = super(
+#             EpisodeDetailTemplateView, self
+#         ).get_context_data(**kwargs)
+#         return context
+
+
 
 
 def check_password_reset(request, *args, **kwargs):
