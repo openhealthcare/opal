@@ -1,0 +1,9 @@
+<div class="form-group">
+  <label for="{{ field }}">{{ label }}</label>
+  <select class="form-control">
+    <option value="" selected>---------</option>
+    {% for item in lookuplist %}
+      <option>{{ item }}</option>
+    {% endfor %}
+  </select>
+</div>

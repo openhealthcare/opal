@@ -1,0 +1,20 @@
+<div class="form-group">
+  {% if lookuplist %}
+    <datalist id="{{ field }}_list">
+      {% for item in lookuplist %}
+        <option value="{{ item }}">
+      {% endfor %}
+    </datalist>
+  {% endif %}
+  <label for="{{ field }}">{{ label }}</label>
+  <input
+    class="form-control"
+    type="{{ element_type }}"
+    id="{{ field }}"
+    {% if value %}value="{{ value }}"{% endif %}
+    name="{{ field }}"
+    {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if lookuplist %}list="{{ field }}_list"{% endif %}
+    >
+</div>

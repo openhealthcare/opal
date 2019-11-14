@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label for="{{ field }}">{{ label }}</label>
+  <input
+    type="date"
+    {% if value %}value="{{ value }}"{% endif %}
+    id="{{ field }}"
+    name="{{ field }}"
+    class="form-control"
+    >
+</div>
