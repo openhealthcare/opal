@@ -16,3 +16,4 @@ node_modules
 *.swp
 .vscode
 doc/site
+.sass-cache
