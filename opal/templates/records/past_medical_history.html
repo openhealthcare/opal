@@ -1,3 +1,7 @@
-[[item.condition]]
-<span ng-show="item.year">([[item.year]])</span>
-<span ng-show="item.details">([[item.details]])</span>
+{{ record.condition }}
+{% if record.year %}
+({{ record.year }})
+{% endif %}
+{% if record.details %}
+<br />{{ record.details }}
+{% endif %}

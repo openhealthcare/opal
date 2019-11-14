@@ -1,4 +1,8 @@
-[[item.date_of_diagnosis | displayDate ]]
-<span ng-show="item.provisional">?</span>
-[[ item.condition ]]
-<span ng-show="item.details"><br />[[ item.details ]]</span>
+{% if record.provisional %}?{% endif %}
+{{ record.condition }}
+{% if record.date_of_diagnosis %}
+  {{ record.date_of_diagnosis }}
+{% endif %}
+{% if record.details %}
+  <br />{{ record.details }}
+{% endif %}
