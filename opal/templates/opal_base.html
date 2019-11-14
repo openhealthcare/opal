@@ -50,22 +50,6 @@
   </head>
   <body {% block body_attrs %}{% endblock %}>
     {% block application %}{% endblock %}
-    <!-- google analytics -->
-    {% block analytics %}
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      {% if OPAL_ANALYTICS_NODOMAIN %}
-      ga('create', '{{ OPAL_ANALYTICS_ID }}', {
-        'cookieDomain': 'none'
-      });
-      {% else %}
-      ga('create', '{{ OPAL_ANALYTICS_ID }}', 'auto');
-      {% endif %}
-    </script>
-    {% endblock analytics %}
+    {% block end_body %}{% endblock %}
   </body>
 </html>
