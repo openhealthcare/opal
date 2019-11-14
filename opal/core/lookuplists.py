@@ -156,6 +156,25 @@ def lookuplists():
             yield lookuplist
 
 
+def get_lookuplist(name):
+    """
+    Return a lookuplist called NAME
+    """
+    for lookuplist in lookuplists():
+        if lookuplist.get_api_name() == name:
+            return lookuplist
+
+
+def get_values_from_api_name(api_name):
+    """
+    Return all values in the lookuplist called NAME
+    """
+    lookuplist = get_lookuplist(api_name)
+    if not lookuplist:
+        return []
+    return list(lookuplist.objects.all().values_list("name", flat=True))
+
+
 def load_lookuplist(data):
     """
         returns num, total_created, total_synonyms_created
