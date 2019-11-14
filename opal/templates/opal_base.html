@@ -48,7 +48,7 @@
          <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
 
   </head>
-  <body>
+  <body {% block body_attrs %}{% endblock %}>
     {% block application %}{% endblock %}
     <!-- google analytics -->
     {% block analytics %}

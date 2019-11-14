@@ -1,10 +1,19 @@
 /* New stylesheet for Opal */
 
+html,body.login {
+    height: 100%;
+}
+
+h1 {
+    margin-top   : 1em;
+    margin-bottom: 1em;
+}
+
 //
 // Rather than .h-100 we want 100 less the navbar
 //
 .h-viewport{
-    height: calc(100vh - 40px) !important;
+    height    : calc(100vh - 40px) !important;
     margin-top: 40px;
 }
 
@@ -18,10 +27,13 @@
 // Requires jQuery in registration/login.html to work
 //
 .login {
-    -o-transition:.4s;
-    -ms-transition:.4s;
-    -moz-transition:.4s;
+    -o-transition     :.4s;
+    -ms-transition    :.4s;
+    -moz-transition   :.4s;
     -webkit-transition:.4s;
-    transition:.4s;
+    transition        :.4s;
 }
-.login.submitted { margin-top: -2750px; }
+
+.login.submitted {
+    margin-top: -2750px;
+}
