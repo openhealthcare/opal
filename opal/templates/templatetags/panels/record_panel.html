@@ -1,0 +1,22 @@
+<div class="card mb-3">
+  <div class="card-header">
+    <h3>
+      {{ model.get_display_name }}
+      {% if not singleton %}
+      <small>
+        <a class="float-right"  href="{% url 'create-subrecord' model=model.get_class_name episode_id=episode.id %}">
+          add
+        </a>
+      </small>
+      {% endif %}
+    </h3>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for record in records %}
+    <li class="list-group-item">
+      <a class="float-right" href="{{ record.get_edit_url }}">edit</a>
+      {{ record }}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
