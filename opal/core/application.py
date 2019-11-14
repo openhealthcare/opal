@@ -22,7 +22,7 @@ class OpalApplication(object):
             index=0
         )
     ]
-    default_episode_category = 'Inpatient'
+    default_episode_category = 'Episode'
 
     @classmethod
     def get_core_javascripts(klass, namespace):

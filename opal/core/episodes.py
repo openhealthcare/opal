@@ -87,11 +87,6 @@ class EpisodeCategory(DiscoverableFeature):
         self.episode.stage = stage
 
 
-class InpatientEpisode(EpisodeCategory):
-    display_name    = 'Inpatient'
-    detail_template = 'detail/inpatient.html'
-    stages          = [
-        'Inpatient',
-        'Followup',
-        'Discharged'
-    ]
+class OpalEpisode(EpisodeCategory):
+    display_name    = 'Episode'
+    detail_template = 'opal/episode.html'
