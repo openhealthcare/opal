@@ -128,7 +128,7 @@ class SubrecordForm(Form):
                 episode = self.instance.episode
                 patient = episode.patient
             if ispatientsubrecord:
-                patient = instance.patient
+                patient = self.instance.patient
                 episode = None
 
         else: # Create
