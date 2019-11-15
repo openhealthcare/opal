@@ -19,10 +19,12 @@
                  >
         </div>
       </form>
+      {% if results.total_count > 0 %}
       <h3 class="mb-3">
         We've found <strong>{{ results.total_count }}</strong>
         patient{% if results.total_count > 1 %}s{% endif %}
       </h3>
+      {% endif %}
       {% for result in results.object_list %}
       <div class="mt-5">
         <h4>
