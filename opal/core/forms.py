@@ -16,6 +16,10 @@ from opal.utils import _itersubclasses
 #
 
 class Form(object):
+    """
+    The base form object
+    """
+    template_name = None
 
     @classmethod
     def get_name(klass):
@@ -50,7 +54,11 @@ class Form(object):
 
 
 class SubrecordForm(Form):
-    model = None
+    """
+    A form that deals with one subrecord
+    """
+    model              = None
+    form_template_name = None
 
     def __init__(self, *a, **k):
         self.instance = None
@@ -59,8 +67,19 @@ class SubrecordForm(Form):
         super().__init__(*a, **k)
 
     def __str__(self):
-        template = get_template(self.model.get_form_template())
+        template = self.get_form_template()
         return template.render({'instance': self.instance})
+
+    def get_form_template(self):
+        """
+        Override this to use something non-standard for a subrecord form.
+
+        Looks in self.form_template_name first
+        Defaults to self.model.get_form_template()
+        """
+        if self.form_template_name:
+            return get_template(self.form_template_name)
+        return get_template(self.model.get_form_template())
 
     def consistency_token(self):
         if self.instance is None:
