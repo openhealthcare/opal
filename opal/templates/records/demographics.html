@@ -1,6 +1,30 @@
-[[item.hospital_number]]<br />
-[[item.first_name]] [[item.surname]]<br />
-<span ng-show="item.date_of_birth">
-  [[item.date_of_birth | displayDate ]] ([[ item.date_of_birth | age ]])<br />
-</span>
-[[ item.country_of_birth ]] [[ item.ethnicity ]]<br />
+<div class="row">
+  <div class="col-md-2">
+    <b>Name</b>
+  </div>
+  <div class="col-md-4">
+    {{ record.first_name }}
+    {{ record.surname }}
+  </div>
+  <div class="col-md-2">
+    <b>DOB</b>
+  </div>
+  <div class="col-md-4">
+    {{ record.date_of_birth }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2">
+    <b>Hosp. #</b>
+  </div>
+  <div class="col-md-4">
+    {{ record.hospital_number }}
+  </div>
+  <div class="col-md-2">
+    <b>Sex</b>
+  </div>
+  <div class="col-md-4">
+    {{ record.sex }}
+  </div>
+</div>
