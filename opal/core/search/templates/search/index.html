@@ -1,17 +1,41 @@
-{% extends 'opal.html' %}
+{% extends 'page.html' %}
 
-{% load plugins %}
-
-{% block ngapp %}opal.search{% endblock %}
-{% block angularapp %}
-  {{ block.super }}
-  {% plugin_javascripts 'opal.search' %}
+{% block navbar_search %}
+{% comment %} We don't need one in the navbar as well ! {% endcomment %}
 {% endblock %}
-{% block nav_search %}
-  {% comment %}
-    don't show the nav search in on the search page
-  {% endcomment %}
-  <div ng-hide="$location.path().indexOf('extract') === -1">
-    {{ block.super }}
+
+{% block content %}
+<section class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-md-4">
+      <h1>Patient Search</h1>
+      <form method="GET" action=".">
+        <div class="form-group">
+          <input type="text"
+                 name="q"
+                 placeholder="Name or Hospital Number"
+                 class="form-control"
+                 {% if q %}value="{{ q }}"{% endif %}
+                 >
+        </div>
+      </form>
+      <h3 class="mb-3">
+        We've found <strong>{{ results.total_count }}</strong>
+        patient{% if results.total_count > 1 %}s{% endif %}
+      </h3>
+      {% for result in results.object_list %}
+      <div class="mt-5">
+        <h4>
+          <a href="{% url 'patient_detail' pk=result.patient_id %}">
+            {{ result.first_name }} {{ result.surname }} {{ result.hospital_number }}
+          </a>
+        </h4>
+        {% if result.date_of_birth %}
+        <p>({{ result.date_of_birth }})</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
   </div>
+</div>
 {% endblock %}

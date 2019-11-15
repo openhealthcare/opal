@@ -29,13 +29,34 @@ class SearchIndexView(LoginRequiredMixin, TemplateView):
     """
     template_name = 'search/index.html'
 
+    def get_context_data(self, *a, **k):
+        ctx = super().get_context_data(*a, **k)
+        ctx['q'] = self.request.GET.get('q', None)
+        if ctx['q']:
+            ctx['results'] = self.search(ctx['q'])
+        return ctx
 
-class SaveFilterModalView(TemplateView):
-    template_name = 'save_filter_modal.html'
+    def search(self, query_string):
+        """
+        If there is a search, do the search.
+        """
+        page_number = int(self.request.GET.get("page_number", 1))
+        query = queries.create_query(self.request.user, query_string)
+        patients = query.fuzzy_query()
+        paginated = _add_pagination(patients, page_number)
+        paginated_patients = paginated["object_list"]
 
+        # on postgres it blows up if we don't manually manage this
+        if not paginated_patients:
+            paginated_patients = models.Patient.objects.none()
 
-class SearchTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'search.html'
+        episodes = models.Episode.objects.filter(
+            patient__in=paginated_patients
+        )
+        paginated["object_list"] = query.get_aggregate_patients_from_episodes(
+            episodes
+        )
+        return paginated
 
 
 class ExtractTemplateView(LoginRequiredMixin, TemplateView):
@@ -169,45 +190,6 @@ class DownloadSearchView(View):
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp
         return resp
-
-
-class FilterView(View):
-
-    @ajax_login_required_view
-    def dispatch(self, *args, **kwargs):
-        return super(FilterView, self).dispatch(*args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        filters = models.Filter.objects.filter(user=self.request.user)
-        return json_response([f.to_dict() for f in filters])
-
-    def post(self, *args, **kwargs):
-        data = _get_request_data(self.request)
-        self.filter = models.Filter(user=self.request.user)
-        self.filter.update_from_dict(data)
-        return json_response(self.filter.to_dict())
-
-
-class FilterDetailView(View):
-    @ajax_login_required_view
-    def dispatch(self, *args, **kwargs):
-        try:
-            self.filter = models.Filter.objects.get(pk=kwargs['pk'])
-        except models.Filter.DoesNotExist:
-            return HttpResponseNotFound()
-        return super(FilterDetailView, self).dispatch(*args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        return json_response(self.filter.to_dict())
-
-    def put(self, *args, **kwargs):
-        data = _get_request_data(self.request)
-        self.filter.update_from_dict(data)
-        return json_response(self.filter.to_dict())
-
-    def delete(self, *args, **kwargs):
-        self.filter.delete()
-        return json_response('')
 
 
 class ExtractResultView(View):
