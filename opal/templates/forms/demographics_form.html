@@ -1,9 +1,30 @@
 {% load forms %}
-{% input "autofocus" field="Demographics.hospital_number" %}
-{% input field="Demographics.nhs_number" %}
-{% input field="Demographics.first_name" %}
-{% input field="Demographics.surname" %}
-{% date_of_birth_field %}
-{% select field="Demographics.sex" %}
-{% select field="Demographics.ethnicity" %}
-{% input field="Demographics.birth_place" %}
+<div class="row">
+  <div class="col-md-5">
+    {% input "autofocus" field="Demographics.hospital_number" %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-5">
+    {% input field="Demographics.first_name" %}
+  </div>
+  <div class="col-md-5 col-md-offset-1">
+    {% input field="Demographics.surname" %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-5">
+    {% date_of_birth_field %}
+  </div>
+  <div class="col-md-5 col-md-offset-1">
+    {% select field="Demographics.sex" %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-5">
+    {% select field="Demographics.ethnicity" %}
+  </div>
+  <div class="col-md-5 col-md-offset-1">
+    {% input field="Demographics.birth_place" %}
+  </div>
+</div>
