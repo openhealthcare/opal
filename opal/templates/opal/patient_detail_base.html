@@ -1,4 +1,5 @@
 {% extends 'page.html' %}
+{% load panels %}
 
 {% block content %}
   <section class="container">
@@ -7,6 +8,13 @@
         <h1 class="col">{{ patient.demographics.as_banner }}</h1>
       {% endblock %}
     </div>
+    {% block patient_subrecords %}
+      <div class="row">
+        <div class="col">
+          {% record_panel models.Demographics %}
+        </div>
+      </div>
+    {% endblock %}
     {% block episode_list %}
       {% for episode in patient.episode_set.all %}
         <h3>
