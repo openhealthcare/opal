@@ -398,7 +398,8 @@ class UpdatesFromDictMixin(SerialisableFields):
 
 
 class ToDictMixin(SerialisableFields):
-    """ serialises a model to a dictionary
+    """
+    Mixin that adds methods to serialise a subrecord to a dictionary
     """
     def to_dict(self, user, fields=None):
         """
@@ -423,27 +424,6 @@ class ToDictMixin(SerialisableFields):
             d[name] = value
 
         return d
-
-
-class Filter(models.Model):
-    """
-    Saved filters for users extracting data.
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
-    criteria = models.TextField()
-
-    def to_dict(self):
-        return dict(
-            id=self.pk,
-            name=self.name,
-            criteria=json.loads(self.criteria)
-        )
-
-    def update_from_dict(self, data):
-        self.criteria = json.dumps(data['criteria'])
-        self.name = data['name']
-        self.save()
 
 
 class ContactNumber(models.Model):
