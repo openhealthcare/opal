@@ -967,24 +967,6 @@ class PatientTestCase(OpalTestCase):
         expected = json_response(self.patient.to_dict(None)).content
         self.assertEqual(expected, response)
 
-    def test_stores_access_log(self):
-        self.assertEqual(0, models.PatientRecordAccess.objects.count())
-        response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk).content
-        self.assertEqual(1, models.PatientRecordAccess.objects.count())
-
-
-class PatientRecordAccessViewSetTestCase(OpalTestCase):
-
-    def test_retrieve(self):
-        patient = models.Patient.objects.create()
-        mock_request = MagicMock(name='request')
-        mock_request.user = self.user
-        models.PatientRecordAccess.objects.create(patient=patient, user=self.user)
-        response = api.PatientRecordAccessViewSet().retrieve(mock_request, pk=patient.pk).content
-        loaded = json.loads(response.decode('UTF-8'))
-        self.assertEqual(patient.id, loaded[0]['patient'])
-        self.assertEqual(self.user.username, loaded[0]['username'])
-
 
 class PatientListTestCase(TestCase):
 

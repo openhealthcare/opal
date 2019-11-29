@@ -553,18 +553,6 @@ class Patient(models.Model):
                     subclass.objects.create(patient=self)
 
 
-class PatientRecordAccess(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    user    = models.ForeignKey(User, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-
-    def to_dict(self, user):
-        return dict(
-            patient=self.patient.id,
-            datetime=self.created,
-            username=self.user.username
-        )
-
 
 class ExternallySourcedModel(models.Model):
     # the system upstream that contains this model

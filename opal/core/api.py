@@ -7,7 +7,7 @@ from rest_framework import routers, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from opal.models import (
-    Episode, Synonym, Patient, PatientRecordAccess,
+    Episode, Synonym, Patient,
     PatientSubrecord, UserProfile
 )
 from opal.core import (application, exceptions, lookuplists, metadata, plugins,
@@ -361,18 +361,7 @@ class PatientViewSet(LoginRequiredViewset):
 
     @patient_from_pk
     def retrieve(self, request, patient):
-        PatientRecordAccess.objects.create(patient=patient, user=request.user)
         return json_response(patient.to_dict(request.user))
-
-
-class PatientRecordAccessViewSet(LoginRequiredViewset):
-    base_name = 'patientrecordaccess'
-
-    def retrieve(self, request, pk=None):
-        return json_response([
-            a.to_dict(request.user) for a in
-            PatientRecordAccess.objects.filter(patient_id=pk)
-        ])
 
 
 class PatientListViewSet(LoginRequiredViewset):
@@ -418,7 +407,6 @@ def initialize_router():
     router.register('user', UserViewSet)
     router.register('tagging', TaggingViewSet)
     router.register('patientlist', PatientListViewSet)
-    router.register('patientrecordaccess', PatientRecordAccessViewSet)
 
     router.register('referencedata', ReferenceDataViewSet)
     router.register('metadata', MetadataViewSet)

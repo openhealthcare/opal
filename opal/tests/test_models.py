@@ -25,18 +25,6 @@ from opal.tests.models import (
 )
 
 
-class PatientRecordAccessTestCase(OpalTestCase):
-
-    def test_to_dict(self):
-        patient = models.Patient.objects.create()
-        access = models.PatientRecordAccess.objects.create(
-            user=self.user, patient=patient)
-        self.assertEqual(patient.id, access.to_dict(self.user)['patient'])
-        self.assertEqual(self.user.username, access.to_dict(self.user)['username'])
-        self.assertIsInstance(
-            access.to_dict(self.user)['datetime'], datetime.datetime
-        )
-
 
 class PatientTestCase(OpalTestCase):
 
