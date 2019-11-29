@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.html import format_html
@@ -89,7 +90,6 @@ class EpisodeAdmin(VersionAdmin):
         'category_name',
         'start',
         'end',
-        'episode_detail_link',
     ]
     list_filter = ['active', ]
     search_fields = [
@@ -103,19 +103,6 @@ class EpisodeAdmin(VersionAdmin):
 
     def identifier(self, obj):
         return obj.patient.demographics().hospital_number
-
-    def episode_detail_url(self, obj):
-        return obj.patient.get_absolute_url()
-
-    def episode_detail_link(self, obj):
-        return format_html(
-            "<a href='{url}'>{url}</a>", url=self.episode_detail_url(obj)
-        )
-
-    def view_on_site(self, obj):
-        return self.episode_detail_url(obj)
-
-    episode_detail_url.short_description = "Episode Detail URL"
 
 
 class PatientAdmin(VersionAdmin):
@@ -133,18 +120,16 @@ class PatientAdmin(VersionAdmin):
     def identifier(self, obj):
         return obj.demographics().hospital_number
 
-    def patient_detail_url(self, obj):
-        return "/#/patient/{0}".format(obj.id)
-
     def patient_detail_link(self, obj):
-        return format_html(
-            "<a href='{url}'>{url}</a>", url=self.patient_detail_url(obj)
+        url = reverse(
+            'patient_detail', kwargs=dict(pk=obj.pk)
         )
+        return format_html("<a href='{url}'>{url}</a>", url=url)
 
     def view_on_site(self, obj):
         return self.patient_detail_url(obj)
 
-    patient_detail_url.short_description = "Patient Detail Url"
+    patient_detail_link.short_description = "Patient Detail Url"
 
 
 class EpisodeSubrecordAdmin(VersionAdmin):
