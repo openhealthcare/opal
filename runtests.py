@@ -35,7 +35,6 @@ test_settings_config = dict(
     MIDDLEWARE=(
         'django.middleware.common.CommonMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
-        'opal.middleware.AngularCSRFRename',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
@@ -54,6 +53,7 @@ test_settings_config = dict(
         'djcelery',
         'opal',
         'opal.tests',
+        'opal.core.referencedata',
         'opal.core.search',
         'opal.core.pathway.tests.pathway_test',
         'opal.core.pathway',
@@ -124,6 +124,7 @@ if 'TRAVIS' in os.environ:
     }
 
 settings.configure(**test_settings_config)
+
 
 from opal.tests import dummy_opal_application  # NOQA
 

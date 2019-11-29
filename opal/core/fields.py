@@ -26,7 +26,8 @@ def enum(*args):
 
 
 class ForeignKeyOrFreeText(property):
-    """Field-like object that stores either foreign key or free text.
+    """
+    Field-like object that stores either foreign key or free text.
 
     On being added to a class, it creates two fields: a ForeignKey and a
     CharField.

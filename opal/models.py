@@ -28,7 +28,8 @@ from opal.core import (
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
 from opal.core import serialization
-from opal.core.fields import ForeignKeyOrFreeText
+from opal.core.fields import ForeignKeyOrFreeText, enum
+from opal.core.referencedata import models as referencemodels
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
@@ -440,23 +441,60 @@ class Synonym(models.Model):
 
 
 class Patient(models.Model):
+    """
+    An individual receiving health care
 
+    This model maps, generaly speaking, to the FHIR profile Patient.
+
+    - We allow one name per patient, and add the fields from a FHIR HumanName directly
+    - We do not implement the multipleBirth fields
+    - One Address per patient as a text field (complex address models can be easily added in application scope)
+    - We omit photo (Can be added in application scope as a subrecord)
+    - We add the fields birth_place and ethnicity as these have been frequently required
+    - We omit references to a communication, GP, managing organization and link (these can be added in application scope)
+    """
     objects = managers.PatientQueryset.as_manager()
+
+    SEX_CHOICES = enum('Male', 'Female', 'Other', 'Unknown')
+
+
+    # .identifier is implicit (a PatientSubrecord)
+    active            = models.BooleanField(default=True, help_text="Whether this patient record is in active use")
+
+    # .name fields loaded directly and accessible as a text string via the .name property
+    name_prefex       = models.CharField(max_length=255, blank=True, null=True, help_text="Parts that come before the name")
+    family_name       = models.CharField(max_length=255, blank=True, null=True, help_text="Often called 'Surname'")
+    given_names       = models.CharField(max_length=255, blank=True, null=True, help_text="Often called first. Also includes middle")
+    name_suffix       = models.CharField(max_length=255, blank=True, null=True, help_text="Parts that come after the name")
+
+    # .telecom is implicit (ContactPoint is a subrecord)
+
+    # This is equivalent to .gender in the FHIR Patient profile
+    sex               = models.CharField(max_length=50, choices=SEX_CHOICES, blank=True, null=True)
+
+    birth_date        = models.DateField(null=True, blank=True, verbose_name="Date of Birth")
+    deceased          = models.BooleanField(default=False, help_text="This field will be True if the patient is deceased.")
+    deceased_datetime = models.DateTimeField(null=True, blank=True, verbose_name="Date and time of death")
+
+    address_text      = models.TextField(blank=True, null=True, help_text="Text representation of the address")
+    marital_status    = ForeignKeyOrFreeText(referencemodels.MaritalStatus)
+
+    birth_place = ForeignKeyOrFreeText(referencemodels.Country, verbose_name="Country of Birth")
+    ethnicity = ForeignKeyOrFreeText(referencemodels.Ethnicity)
+
 
     def __str__(self):
         return 'Patient {0}'.format(self.id)
+
+    @property
+    def name(self):
+        return f"{self.name_prefix} {self.given_names} {self.family_name} {self.name_suffix}".strip()
 
     def get_absolute_url(self):
         """
         Return the URL for this patient
         """
         return reverse('patient_detail', args=[self.pk])
-
-    def demographics(self):
-        """
-        Shortcut method to return this patient's demographics.
-        """
-        return self.demographics_set.get()
 
     def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
@@ -1007,6 +1045,73 @@ class EpisodeSubrecord(Subrecord):
         abstract = True
 
 
+class Identifier(PatientSubrecord):
+    """
+    A unique identifier for a Patient e.g. their Hospital Number or NHS Number
+
+    While this model maps generally to the FHIR profile Identifier, we have chosen
+    not to implement period (time when this identifer was in use) in order to reduce
+    complexity.
+    """
+
+    # These choices taken from the FHIR valueset IdentifierUse
+    # https://www.hl7.org/fhir/valueset-identifier-use.html
+    USE_CHOICES = enum(
+        'Usual',    # The identifier recommended for display and use in real-world interactions.
+        'Official', # The identifier considered to be most trusted for the identification of this item.
+        'Temp',     # A temporary identifier.
+        'Old',      # The identifier id no longer considered valid, but may be relevant for search purposes.
+    )
+
+    value    = models.CharField(max_length=255, help_text="The actual identifier string")
+    id_type  = models.CharField(max_length=255, help_text="Description of ID")
+    use      = models.CharField(max_length=255, choices=USE_CHOICES, help_text="How should we use this ID")
+    assigner = models.CharField(max_length=255, help_text="Organization that issued this ID")
+
+
+class PatientContactDetail(PatientSubrecord):
+    """
+    A Contact detail for the patient
+
+    While this model maps generally to the FHIR profile ContactPoint
+    we have not implemented rank (order of use 1-n) or period (time when
+    the contact point was/in use) in order to reduce complexity.
+    """
+    # These choices taken from the FHIR valueset ContactPointSystem
+    SYSTEM_CHOICES = enum(
+        'Phone', 'Fax', 'Email', 'Pager', 'URL', 'SMS', 'Other'
+    )
+    USE_CHOICES    = enum(
+        'Home', 'Work', 'Temp', 'Old', 'Mobile'
+    )
+
+    system = models.CharField(max_length=50, blank=True, null=True, choices=SYSTEM_CHOICES)
+    value  = models.CharField(max_length=255, blank=True, null=True)
+    use    = models.CharField(max_length=255, blank=True, null=True, choices=USE_CHOICES)
+
+
+class PatientContact(PatientSubrecord):
+    """
+    A person or orgnization that can be contacted about the patient e.g. Next of kin
+
+    This maps broadly speaking to the FHIR Patient.contact with some exceptions for
+    simplicity
+    - we omit address
+    - we omit gender
+    - we omit Organization modelling
+    - we omit period
+    """
+    RELATIONSHIP_CHOICES = enum(
+        'Emergency Contact', 'Employer', 'Federal Agency', 'Insurance Company', 'Next-of-Kin',
+        'State Agency'
+    )
+
+    name_text    = models.CharField(max_length=255, blank=True, null=True)
+    relationship = models.CharField(max_length=255, blank=True, null=True, choices=RELATIONSHIP_CHOICES)
+    telecom      = models.TextField(blank=True, null=True, help_text="The phone, email or other details for this contact")
+
+
+
 class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
@@ -1059,261 +1164,12 @@ class Tagging(TrackedModel, models.Model):
         return result
 
 
-"""
-Base Lookup Lists
-"""
-
-
-class Antimicrobial_route(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Antimicrobial route"
-
-
-class Antimicrobial(lookuplists.LookupList):
-    pass
-
-
-class Antimicrobial_adverse_event(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Antimicrobial adverse event"
-
-
-class Antimicrobial_frequency(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Antimicrobial frequency"
-        verbose_name_plural = "Antimicrobial frequencies"
-
-
-class Clinical_advice_reason_for_interaction(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Clinical advice reason for interaction"
-        verbose_name_plural = "Clinical advice reasons for interaction"
-
-
-class PatientConsultationReasonForInteraction(lookuplists.LookupList):
-    class Meta:
-        verbose_name_plural = "Patient advice reasons for interaction"
-
-
-class Condition(lookuplists.LookupList):
-    pass
-
-
-class Destination(lookuplists.LookupList):
-    pass
-
-
-class Drug(lookuplists.LookupList):
-    pass
-
-
-class Drugfreq(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Drug frequency"
-        verbose_name_plural = "Drug frequencies "
-
-
-class Drugroute(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Drug route"
-
-
-class Duration(lookuplists.LookupList):
-    pass
-
-
-class Ethnicity(lookuplists.LookupList):
-    class Meta:
-        verbose_name_plural = "Ethnicities"
-
-
-class Gender(lookuplists.LookupList):
-    pass
-
-
-class Hospital(lookuplists.LookupList):
-    pass
-
-
-class Ward(lookuplists.LookupList):
-    pass
-
-
-class Speciality(lookuplists.LookupList):
-    class Meta:
-        verbose_name_plural = "Specialities"
-
-
-class MaritalStatus(lookuplists.LookupList):
-    class Meta:
-        verbose_name_plural = "Marital statuses"
-
-
-class ReferralType(lookuplists.LookupList):
-    pass
-
-
-class ReferralOrganisation(lookuplists.LookupList):
-    pass
-
-
-class Symptom(lookuplists.LookupList):
-    pass
-
-
-class Title(lookuplists.LookupList):
-    pass
-
-
-class Travel_reason(lookuplists.LookupList):
-    class Meta:
-        verbose_name = "Travel reason"
-
 
 """
-Base models
+Roles, access, and user models
 """
 
 
-class Demographics(PatientSubrecord):
-    _is_singleton = True
-    _icon = 'fa fa-user'
-
-    hospital_number = models.CharField(
-        max_length=255, blank=True,
-        help_text="The unique identifier for this patient at the hospital."
-    )
-    nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number"
-    )
-
-    surname = models.CharField(max_length=255, blank=True)
-    first_name = models.CharField(max_length=255, blank=True)
-    middle_name = models.CharField(max_length=255, blank=True, null=True)
-    title = ForeignKeyOrFreeText(Title)
-    date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name="Date of Birth"
-    )
-    marital_status = ForeignKeyOrFreeText(MaritalStatus)
-    religion = models.CharField(max_length=255, blank=True, null=True)
-    date_of_death = models.DateField(
-        null=True, blank=True, verbose_name="Date of Death"
-    )
-    post_code = models.CharField(max_length=20, blank=True, null=True)
-    gp_practice_code = models.CharField(
-        max_length=20, blank=True, null=True,
-        verbose_name="GP Practice Code"
-    )
-    birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country of Birth")
-    ethnicity = ForeignKeyOrFreeText(Ethnicity)
-    death_indicator = models.BooleanField(
-        default=False,
-        help_text="This field will be True if the patient is deceased."
-    )
-
-    sex = ForeignKeyOrFreeText(Gender)
-
-    @property
-    def name(self):
-        return '{0} {1}'.format(self.first_name, self.surname)
-
-    def as_banner(self):
-        return f'{self.name} {self.hospital_number} {self.date_of_birth} {self.sex}'
-
-    class Meta:
-        abstract = True
-        verbose_name_plural = "Demographics"
-
-
-class Location(EpisodeSubrecord):
-    _is_singleton = True
-    _icon = 'fa fa-map-marker'
-
-    category = models.CharField(
-        max_length=255, blank=True
-    )
-    hospital = models.CharField(max_length=255, blank=True)
-    ward = models.CharField(max_length=255, blank=True)
-    bed = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        abstract = True
-
-
-class Treatment(EpisodeSubrecord):
-    _sort = 'start_date'
-    _icon = 'fa fa-flask'
-
-    HELP_START = "The date on which the patient began receiving this \
-treatment."
-
-    drug          = ForeignKeyOrFreeText(Drug)
-    dose          = models.CharField(max_length=255, blank=True)
-    route         = ForeignKeyOrFreeText(Drugroute)
-    start_date    = models.DateField(
-        null=True, blank=True,
-        help_text=HELP_START
-    )
-    end_date      = models.DateField(null=True, blank=True)
-    frequency     = ForeignKeyOrFreeText(Drugfreq)
-
-    class Meta:
-        abstract = True
-
-
-class Allergies(PatientSubrecord):
-    _icon = 'fa fa-warning'
-    HELP_PROVISIONAL = "True if the allergy is only suspected. \
-Defaults to False."
-
-    drug        = ForeignKeyOrFreeText(Drug)
-    provisional = models.BooleanField(
-        default=False, verbose_name="Suspected?",
-        help_text=HELP_PROVISIONAL
-    )
-    details     = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        abstract = True
-        verbose_name_plural = "Allergies"
-
-
-class Diagnosis(EpisodeSubrecord):
-    """
-    This is a working-diagnosis list, will often contain things that are
-    not technically diagnoses, but is for historical reasons, called diagnosis.
-    """
-    _sort = 'date_of_diagnosis'
-    _icon = 'fa fa-stethoscope'
-
-    condition         = ForeignKeyOrFreeText(Condition)
-    provisional       = models.BooleanField(
-        default=False,
-        verbose_name="Provisional?",
-        help_text="True if the diagnosis is provisional. Defaults to False"
-    )
-    details           = models.TextField(blank=True)
-    date_of_diagnosis = models.DateField(blank=True, null=True)
-
-    class Meta:
-        abstract = True
-        verbose_name = 'Diagnosis / Issues'
-        verbose_name_plural = "Diagnoses"
-
-
-class PastMedicalHistory(EpisodeSubrecord):
-    _sort = 'year'
-    _icon = 'fa fa-history'
-
-    condition = ForeignKeyOrFreeText(Condition)
-    year      = models.CharField(max_length=4, blank=True)
-    details   = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        abstract = True
-        verbose_name = "PMH"
-        verbose_name_plural = "Past medical histories"
 
 
 class Role(models.Model):
@@ -1402,121 +1258,3 @@ def save_profile(sender, instance, **kwargs):
 
 
 post_save.connect(save_profile, sender=User)
-
-
-class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
-    _icon = 'fa fa-map-marker'
-    _sort = "-admitted"
-    _advanced_searchable = False
-
-    datetime_of_admission = models.DateTimeField(blank=True, null=True)
-    datetime_of_discharge = models.DateTimeField(blank=True, null=True)
-    hospital = models.CharField(max_length=255, blank=True)
-    ward_code = models.CharField(max_length=255, blank=True)
-    room_code = models.CharField(max_length=255, blank=True)
-    bed_code = models.CharField(max_length=255, blank=True)
-    admission_diagnosis = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        verbose_name = 'Inpatient Admissions'
-
-    def update_from_dict(self, data, *args, **kwargs):
-        if "id" not in data:
-            if "patient_id" not in data:
-                raise ValueError("no patient id found for result in %s" % data)
-            if "external_identifier" in data and data["external_identifier"]:
-                existing = InpatientAdmission.objects.filter(
-                    external_identifier=data["external_identifier"],
-                    patient_id=data["patient_id"]
-                ).first()
-
-                if existing:
-                    data["id"] = existing.id
-
-        super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)
-
-
-class ReferralRoute(EpisodeSubrecord):
-    _icon = 'fa fa-level-up'
-    _is_singleton = True
-
-    class Meta:
-        abstract = True
-        verbose_name = 'Referral Route'
-
-    internal = models.NullBooleanField()
-
-    # e.g. GP, the title or institution of the person who referred the patient
-    referral_organisation = ForeignKeyOrFreeText(ReferralOrganisation)
-
-    # the name of the person who referred the patient, e.g. the GPs name
-    referral_name = models.CharField(max_length=255, blank=True)
-
-    # date_of_referral
-    date_of_referral = models.DateField(null=True, blank=True)
-
-    # an individual can be from multiple teams
-    referral_team = ForeignKeyOrFreeText(Speciality)
-
-    referral_type = ForeignKeyOrFreeText(ReferralType)
-
-
-class PatientConsultation(EpisodeSubrecord):
-    _sort = 'when'
-    _icon = 'fa fa-comments'
-    _list_limit = 3
-    _angular_service = 'PatientConsultationRecord'
-
-    class Meta:
-        abstract = True
-        verbose_name = "Patient Consultation"
-
-    when = models.DateField(null=True, blank=True)
-    initials = models.CharField(
-        max_length=255, blank=True,
-        help_text="The initials of the user who gave the consult."
-    )
-    reason_for_interaction = ForeignKeyOrFreeText(
-        PatientConsultationReasonForInteraction
-
-    )
-    discussion = models.TextField(blank=True)
-
-
-class SymptomComplex(EpisodeSubrecord):
-    _icon = 'fa fa-stethoscope'
-
-    class Meta:
-        abstract = True
-        verbose_name = "Symptom"
-        verbose_name_plural = "Symptom complexes"
-
-    symptoms = models.ManyToManyField(
-        Symptom, related_name="symptoms", blank=True
-    )
-    DURATION_CHOICES = (
-        ('3 days or less', '3 days or less'),
-        ('4-10 days', '4-10 days'),
-        ('11-21 days', '11-21 days'),
-        ('22 days to 3 months', '22 days to 3 months'),
-        ('over 3 months', 'over 3 months')
-    )
-    HELP_DURATION = "The duration for which the patient had been experiencing \
-these symptoms when recorded."
-
-    duration = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        choices=DURATION_CHOICES,
-        help_text=HELP_DURATION
-    )
-    details = models.TextField(blank=True, null=True)
-
-    def to_dict(self, user):
-        field_names = self.__class__._get_fieldnames_to_serialize()
-        result = {
-            i: getattr(self, i) for i in field_names if not i == "symptoms"
-        }
-        result["symptoms"] = list(self.symptoms.values_list("name", flat=True))
-        return result
