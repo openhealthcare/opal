@@ -426,14 +426,6 @@ class ToDictMixin(SerialisableFields):
         return d
 
 
-class ContactNumber(models.Model):
-    name = models.CharField(max_length=255)
-    number = models.CharField(max_length=255)
-
-    def __str__(self):
-        return '{0}: {1}'.format(self.name, self.number)
-
-
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

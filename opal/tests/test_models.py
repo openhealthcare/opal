@@ -828,13 +828,6 @@ class ExternalSystemTestCase(OpalTestCase):
         )
 
 
-class ContactNumberTestCase(OpalTestCase):
-
-    def test_str(self):
-        c = models.ContactNumber(name='Jane Doe', number='0777383828')
-        self.assertEqual('Jane Doe: 0777383828', c.__str__())
-
-
 class SynonymTestCase(OpalTestCase):
 
     def test_str(self):

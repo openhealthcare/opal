@@ -202,5 +202,4 @@ for subclass in episode_subrecords():
             subclass, "_no_admin", False):
         admin.site.register(subclass, EpisodeSubrecordAdmin)
 
-admin.site.register(models.ContactNumber, MyAdmin)
 admin.site.register(models.Role, MyAdmin)
