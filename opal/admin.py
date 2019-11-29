@@ -83,11 +83,13 @@ class MyAdmin(VersionAdmin):
 
 class EpisodeAdmin(VersionAdmin):
     list_display = [
-        'patient',
-        'active',
+        'id',
+        'name',
+        'identifier',
+        'category_name',
         'start',
         'end',
-        'episode_detail_link'
+        'episode_detail_link',
     ]
     list_filter = ['active', ]
     search_fields = [
@@ -95,6 +97,12 @@ class EpisodeAdmin(VersionAdmin):
         'patient__demographics__surname',
         'patient__demographics__hospital_number'
     ]
+
+    def name(self, obj):
+        return obj.patient.demographics().name
+
+    def identifier(self, obj):
+        return obj.patient.demographics().hospital_number
 
     def episode_detail_url(self, obj):
         return obj.patient.get_absolute_url()
@@ -111,13 +119,19 @@ class EpisodeAdmin(VersionAdmin):
 
 
 class PatientAdmin(VersionAdmin):
-    list_display = ('__str__', 'patient_detail_link')
+    list_display = ('__str__', 'name', 'identifier', 'patient_detail_link')
 
     search_fields = [
         'demographics__first_name',
         'demographics__surname',
         'demographics__hospital_number'
     ]
+
+    def name(self, obj):
+        return obj.demographics().name
+
+    def identifier(self, obj):
+        return obj.demographics().hospital_number
 
     def patient_detail_url(self, obj):
         return "/#/patient/{0}".format(obj.id)
