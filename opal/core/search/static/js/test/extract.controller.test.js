@@ -164,9 +164,22 @@ describe('ExtractCtrl', function(){
         it('should be true if we have a query', function(){
             $scope.criteria[0].column = 'demographics';
             $scope.criteria[0].field = 'surname';
-            $scope.criteria[0].queryType = 'contains';
             $scope.criteria[0].query = 'jane';
             expect($scope.completeCriteria().length).toBe(1);
+        });
+
+        it('should allow queries for False', function(){
+          $scope.criteria[0].column = 'demographics';
+          $scope.criteria[0].field = 'dead';
+          $scope.criteria[0].query = false;
+          expect($scope.completeCriteria().length).toBe(1);
+        });
+
+        it('should allow queries for 0', function(){
+          $scope.criteria[0].column = 'demographics';
+          $scope.criteria[0].field = 'age';
+          $scope.criteria[0].query = 0;
+          expect($scope.completeCriteria().length).toBe(1);
         });
 
         it('should be false if we have no query', function(){
