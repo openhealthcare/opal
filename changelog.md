@@ -5,6 +5,10 @@
 Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
 from the value of `.get_api_name()`.
 
+#### Allow extract queries for 'falsy' values
+
+Fixes a bug in extract. When querying against 0 or false the ui stated that no query had been entered. Also queries on multiple fields that included a filter against a field with 0 or false would have that portion of the query ignored.
+
 #### Ment.io and Macro removal
 
 The Macro feature and related Ment.io library have been removed. (No known applications used these features.)
