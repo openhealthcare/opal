@@ -67,7 +67,11 @@ angular.module('opal.controllers').controller(
               return true;
           }
           // Ensure we have a query otherwise
-          if(c.column &&  c.field &&  c.query){
+          var queryPopulated = true;
+          if(_.isUndefined(c.query) || _.isNull(c.query)){
+            queryPopulated = false;
+          }
+          if(c.column &&  c.field && queryPopulated){
               return true;
           }
           c.combine = combine;
@@ -86,21 +90,6 @@ angular.module('opal.controllers').controller(
         var column = $scope.findColumn(columnName);
         // TODO - don't hard-code this
         if(column){
-          if(column.name == 'microbiology_test' || column.name == 'investigation'){
-            var micro_fields = [
-              "test",
-              "date_ordered",
-              "details",
-              "microscopy",
-              "organism",
-              "sensitive_antibiotics",
-              "resistant_antibiotics"
-            ];
-
-            return _.filter($scope.findColumn("microbiology_test").fields, function(field){
-                return _.contains(micro_fields, field.name)
-            })
-          }
           return _.map(
               _.reject(
                   column.fields,

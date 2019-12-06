@@ -118,12 +118,6 @@ As arguments these takes either `help_text` or `help_text_template`.
 
 `help_text_template` will completely replace the normal side bar template with the template that you pass in.
 
-## FindPatientStep
-
-A frequent pattern is a form that allows the user to search for a patient at the start. This step
-includes a widget for searching for patients, then selecting that patient for use in the rest of the
-form.
-
 ## RedirectsToPatientMixin
 
 After saving, redirect the browser to the patient detail page for the relevant patient.

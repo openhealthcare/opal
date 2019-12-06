@@ -119,12 +119,6 @@ Opal provides some built-in Angular filters for your project to use.
 
 Calculates a persons current age from their date of birth
 
-#### boxed
-
-Displays Boolean fields as a checkbox (e.g. either [ ] or [X])
-
-    [[ item.boolean_field | boxed]]
-
 #### hhmm
 
 Displays the hours & minutes portion of a javascript Date object as HH:MM
@@ -132,14 +126,6 @@ Displays the hours & minutes portion of a javascript Date object as HH:MM
 #### moment-date-filter
 
 Allows a us to use moment.js formatters in the template exactly like you would use moment.format
-
-#### plural
-
-Takes a word, a count, and an optional plural term.
-
-If count != 1 and there is a plural term it will return the plural term otherwise it will just suffix an 's'
-
-if count == 1 then it will return the word
 
 #### short-date
 

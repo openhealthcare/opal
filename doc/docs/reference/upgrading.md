@@ -3,6 +3,15 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+
+#### v0.17.1 -> v0.18.0
+
+Style sheets loaded via Opal Applicatin or Plugin objects are now included with the attribute `media="all"`
+rather than `media="screen".
+
+This may affect how pages in your application print and require additional print styles.
+
+
 #### v0.15.0 -> v0.16.0
 Diagnosis.details is now a text field. Please make and run migrations if you are
 using it in your app.

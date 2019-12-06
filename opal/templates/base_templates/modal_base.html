@@ -4,7 +4,7 @@
     {% block icon %}<i class="{% block icon_name %}{{ column.get_icon }}{% endblock %}"></i>{% endblock %}
     {% block title %}
     {{ column.get_display_name }}
-    <span ng-show="profile.can_see_pid() && editingName">
+    <span ng-show="editingName">
       ([[ editingName]])
     </span>
     {% endblock %}

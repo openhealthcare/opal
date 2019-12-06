@@ -1,11 +1,9 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary, $controller, Schema, controller, $rootScope;
     var ExtractSchema;
-
 
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
@@ -112,184 +110,6 @@ describe('ExtractCtrl', function(){
                 }
             ]
         },
-        {
-            "single": false,
-            "name": "microbiology_test",
-            "display_name": "Microbiology Test",
-            "readOnly": false,
-            "advanced_searchable": true,
-            "fields": [
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "test",
-                title: "Test",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "date_ordered",
-                title: "Date Ordered",
-                type: "date"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "details",
-                title: "Details",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "microscopy",
-                title: "Microscopy",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "organism",
-                title: "Organism",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "sensitive_antibiotics",
-                title: "Sensitive Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "resistant_antibiotics",
-                title: "Resistant Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "igm",
-                title: "IGM",
-                type: "string"
-              },
-            ],
-        },
-        {
-            "single": false,
-            "name": "investigation",
-            "display_name": "Investigation",
-            "readOnly": false,
-            "advanced_searchable": true,
-            "fields": [
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "test",
-                title: "Test",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "date_ordered",
-                title: "Date Ordered",
-                type: "date"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "details",
-                title: "Details",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "microscopy",
-                title: "Microscopy",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "organism",
-                title: "Organism",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "sensitive_antibiotics",
-                title: "Sensitive Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "resistant_antibiotics",
-                title: "Resistant Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "igm",
-                title: "IGM",
-                type: "string"
-              },
-            ],
-        }
     ];
 
     beforeEach(function(){
@@ -344,9 +164,22 @@ describe('ExtractCtrl', function(){
         it('should be true if we have a query', function(){
             $scope.criteria[0].column = 'demographics';
             $scope.criteria[0].field = 'surname';
-            $scope.criteria[0].queryType = 'contains';
             $scope.criteria[0].query = 'jane';
             expect($scope.completeCriteria().length).toBe(1);
+        });
+
+        it('should allow queries for False', function(){
+          $scope.criteria[0].column = 'demographics';
+          $scope.criteria[0].field = 'dead';
+          $scope.criteria[0].query = false;
+          expect($scope.completeCriteria().length).toBe(1);
+        });
+
+        it('should allow queries for 0', function(){
+          $scope.criteria[0].column = 'demographics';
+          $scope.criteria[0].field = 'age';
+          $scope.criteria[0].query = 0;
+          expect($scope.completeCriteria().length).toBe(1);
         });
 
         it('should be false if we have no query', function(){
@@ -387,38 +220,6 @@ describe('ExtractCtrl', function(){
           };
 
           expect($scope.searchableFields('symptoms')).toEqual([symptomsExpected]);
-        });
-
-        it('should special case Micro Test fields', function(){
-            var expected = [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ];
-            var result  = _.map(
-              $scope.searchableFields('microbiology_test'), "title"
-            );
-            expect(result).toEqual(expected);
-        });
-
-        it('should special case investigations fields', function(){
-            var expected = [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ];
-            var result  = _.map(
-              $scope.searchableFields('investigation'), "title"
-            );
-            expect(result).toEqual(expected);
         });
     });
 
@@ -771,7 +572,7 @@ describe('ExtractCtrl', function(){
     describe('Getting searchable columns', function(){
         it('should only get the columns that are advanced searchable', function(){
             expect($scope.columns).toEqual([
-              columnsData[1], columnsData[2], columnsData[3], columnsData[4]
+              columnsData[1], columnsData[2]
             ]);
         });
     });

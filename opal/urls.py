@@ -5,7 +5,6 @@ from django.conf.urls import include, url
 from django.contrib.auth.views import logout, password_change
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
-from django.views.generic import TemplateView
 
 from opal import views
 from opal.core import api, subrecords, plugins
@@ -51,10 +50,6 @@ urlpatterns = [
 
     url(r'^templates/forms/(?P<model>[0-9a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),
-
-    url(r'^design-patterns/$',
-        TemplateView.as_view(template_name='design_patterns.html'),
-        name='design_patterns'),
 
 ]
 

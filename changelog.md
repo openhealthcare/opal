@@ -1,6 +1,103 @@
+### 0.18.0 (Major Release)
+
+#### Load lookuplist data format
+
+Fixes a bug (1695) to ensure that the data keys inside a lookuplist data file are taken
+from the value of `.get_api_name()`.
+
+#### Allow extract queries for 'falsy' values
+
+Fixes a bug in extract. When querying against 0 or false the ui stated that no query had been entered. Also queries on multiple fields that included a filter against a field with 0 or false would have that portion of the query ignored.
+
+#### Ment.io and Macro removal
+
+The Macro feature and related Ment.io library have been removed. (No known applications used these features.)
+
+#### Remove additional EpisodeCategories
+
+The Outpatient and Liaison episode categories have been removed from `opal.core.episodes`. Defining
+these here rather than expecting applications to define them in application land means that overriding
+templates can only be done via monkeypatching.
+
+#### FindPatientStep removal
+
+Removes the `FindPatientStep`. Every known application with this functionality has required custom logic
+and re-written this step. (If there is a common case, we don't know what it is yet.)
+
+#### Profile can_see_pid removal
+
+The `can_see_pid` method of profiles on both the front and back end was tied to hard-coded roles which
+were impossible to override.
+
+#### Micro test removals
+
+A large number of microbiology specific models and lookuplists have been removed from this version of
+Opal along with the Investigation model. This code was rarely used and turned out to be incompatible
+wiht subsequent LIMS system integration. We would advise anyone using it to incorporate these models
+into their own applications, but consider moving away.
+
+#### Line Lookuplist removals
+
+Removes line removal reason, complication, site and type lookuplists. These are rarely if used and
+would be better placed at present in an application rather than the core framework.
+
+#### Javascript API removals
+
+Removes the undocumented `EditItemCtrl.prepopulate` method. Custom Pathway controllers are recommended
+for complex form interactions.
+
+Also removes a series of Angular filters which were deemed of limited re-use potential. Applications may
+add such filters themselves trivially.
+
+* microresult
+* boxed
+* plural
+
+Removes the undocumented `UserProfile.can_edit` method. This made assumptions about specific named roles
+which were unconfigurable and was thus unlikely to be useful.
+
+#### Flow based controllers removed
+
+Removes the HospitalNumberCtrl and AddEpisodeCtrl along with related tests and templates. Pathways
+can perform thse operations significantly more flexibly.
+
+This has also resulted in removing the undocumented Episode method `findByHospitalNumber` which was
+used by the flow controllers.
+
+#### Allergies sidebar
+
+Removed an undocumented template `modals/_allergies_sidebar.html` which was rarely used and more suited
+to being included in individual applications than the framework itself.
+
+#### Stories
+
+The Stories functionality is not clearly more useful than simply having an html template file in an
+individual application. The pattern of having them as individual feature files which are not executalbe
+by e.g. Cucumber adds complexity but no value. Explicit acceptance tests are encouraged for applications,
+but no longer live as part of Opal core.
+
+#### Design Patterns
+
+Removes the design patterns library as this is incompatible with the new 'skinability' approach. Such
+patterns pages are encouraged for large applications or standalone themes.
+
+#### Plugin/Application stylesheet media atribute
+
+Style sheets loaded via Opal Applicatin or Plugin objects are now included with the attribute `media="all"`
+rather than `media="screen".
+
+#### Minor Bugfixes
+
+* For some types, e.g. decimal the core serilizer would return `None`. This is now resolved.
+* Deletes a directory previously left as an artifact of scaffolding at ../../js/app/ (1554)
+
+#### Updates to the Dependency Graph
+
+* DjangoRESTFramework 3.7.4 -> 3.10.2
+* python-dateutil 2.7.5 -> 2.8.0
+
 ### 0.17.1 (Minor Release)
 Removes a now deleted file from the default application javascripts list
-
 
 ### 0.17.0 (Major Release)
 
@@ -18,6 +115,7 @@ Removes PatientList.removeFromMine()
 (The special casing of the 'Mine' list is strongly unadvised and set for complete removal.)
 
 Removes the front end Flow service
+
 
 #### Miscelanious changes
 

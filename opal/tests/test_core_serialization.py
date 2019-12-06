@@ -2,8 +2,8 @@
 Unittests for opal.core.serialization
 """
 import datetime
-
 import six
+import decimal
 from django.test import override_settings
 from django.utils import timezone
 
@@ -144,3 +144,9 @@ class SerializerTestCase(test.OpalTestCase):
             ),
             '01/04/2019 10:30:00'
         )
+
+    def test_decimal_serialization(self):
+        data = decimal.Decimal("12.00")
+        serializer = serialization.OpalSerializer()
+        serialised = serializer.default(data)
+        self.assertEqual("12.00", serialised)

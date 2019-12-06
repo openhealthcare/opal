@@ -121,4 +121,4 @@ class OpalSerializer(DjangoJSONEncoder):
 
         # o is not a type we know how to handle so we
         # fall back to DjangoJSONEncoder
-        super(OpalSerializer, self).default(o)
+        return super(OpalSerializer, self).default(o)

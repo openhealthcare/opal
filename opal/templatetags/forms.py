@@ -292,10 +292,6 @@ def select(*args, **kwargs):
 def textarea(*args, **kwargs):
     ctx = extract_common_args(kwargs)
     ctx["rows"] = kwargs.pop("rows", 5)
-    ctx.update({
-        'macros': kwargs.pop('macros', False),
-    })
-
     return ctx
 
 

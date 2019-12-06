@@ -152,6 +152,7 @@ class ReferenceDataViewSetTestCase(OpalTestCase):
 
 
 class MetadataViewSetTestCase(OpalTestCase):
+
     def test_list(self):
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
@@ -162,11 +163,15 @@ class MetadataViewSetTestCase(OpalTestCase):
                 self.assertEqual(response.data[key], value)
 
     def test_retrieve(self):
-        mock_request = MagicMock(name='mock request')
+        mock_request = MagicMock(name='Mock Request')
         mock_request.user = self.user
-        response = api.MetadataViewSet().retrieve(mock_request, pk='macros')
-        self.assertEqual(200, response.status_code)
-        self.assertIn('macros', response.data)
+        mock_metadata = MagicMock(name='Mock Metadata')
+        mock_metadata.to_dict.return_value = {'settings': True}
+        with patch.object(api.metadata.Metadata, 'get') as mock_get:
+            mock_get.return_value = mock_metadata
+            response = api.MetadataViewSet().retrieve(mock_request, pk='mymetadata')
+            self.assertEqual({'settings': True}, response.data)
+
 
     def test_retrieve_nonexistent_metadata(self):
         mock_request = MagicMock(name='mock request')
