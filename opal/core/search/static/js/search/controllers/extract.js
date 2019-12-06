@@ -67,7 +67,11 @@ angular.module('opal.controllers').controller(
               return true;
           }
           // Ensure we have a query otherwise
-          if(c.column &&  c.field &&  c.query){
+          var queryPopulated = true;
+          if(_.isUndefined(c.query) || _.isNull(c.query)){
+            queryPopulated = false;
+          }
+          if(c.column &&  c.field && queryPopulated){
               return true;
           }
           c.combine = combine;
