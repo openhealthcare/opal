@@ -50,7 +50,7 @@ setup(
         'Jinja2==2.10.1',
         'django==2.0.13',
         'requests==2.22.0',
-        'django-axes==1.7.0',
+        'django-axes==5.2.2',
         'djangorestframework==3.10.2',
         'django-reversion==3.0.1',
         'django-compressor==2.2',
