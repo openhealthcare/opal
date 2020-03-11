@@ -1,3 +1,7 @@
+### 0.18.2 (Minor Release)
+
+### 0.18.1 (Minor Release)
+
 ### 0.18.0 (Major Release)
 
 #### Load lookuplist data format
