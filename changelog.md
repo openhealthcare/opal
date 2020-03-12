@@ -5,6 +5,9 @@ Previously inpatient.html (the template for the default episode category) was in
 
 Inpatient.html also has had a banner stating the episode category removed.
 
+### 0.18.1 (Minor Release)
+Bug fix removing js files from the core app that have now been removed.
+
 ### 0.18.0 (Major Release)
 
 #### Load lookuplist data format
