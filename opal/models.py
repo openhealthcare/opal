@@ -12,7 +12,7 @@ import os
 
 from django.utils import timezone
 from django.db import models, transaction
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -579,6 +579,31 @@ class Patient(models.Model):
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
 
+    def get_latest_created_or_updated(self, include_episodes=True):
+        min_dt = timezone.make_aware(datetime.datetime.min)
+        latest = min_dt
+        for subrecord in patient_subrecords():
+            maxes = subrecord.objects.filter(
+                patient=self
+            ).aggregate(
+                latest_created=Max("created"),
+                latest_updated=Max("updated")
+            )
+            latest_created = maxes["latest_created"] or min_dt
+            latest_updated = maxes["latest_updated"] or min_dt
+            latest = max(latest, latest_created, latest_updated)
+
+        if not include_episodes:
+            if not latest ==  min_dt:
+                return latest
+
+        for episode in self.episode_set.all():
+            episode_latest = episode.get_latest_created_or_updated()
+            if episode_latest:
+                latest = max(episode_latest, latest)
+        if not latest ==  min_dt:
+            return latest
+
 
 class PatientRecordAccess(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -864,6 +889,26 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         d['tagging'] = self.tagging_dict(user)
         return d
+
+    def get_latest_created_or_updated(self):
+        min_dt = timezone.make_aware(datetime.datetime.min)
+        if self.updated and self.created:
+            latest = max(self.updated, self.created)
+        else:
+            latest = self.updated or self.created or min_dt
+
+        for subrecord in episode_subrecords():
+            maxes = subrecord.objects.filter(
+                episode=self
+            ).aggregate(
+                latest_created=Max("created"),
+                latest_updated=Max("updated")
+            )
+            latest_created = maxes["latest_created"] or min_dt
+            latest_updated = maxes["latest_updated"] or min_dt
+            latest = max(latest, latest_created, latest_updated)
+        if not latest ==  min_dt:
+            return latest
 
 
 class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):

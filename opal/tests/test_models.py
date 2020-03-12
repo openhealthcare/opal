@@ -262,6 +262,194 @@ class PatientTestCase(OpalTestCase):
         location = original_patient.episode_set.last().location_set.first()
         self.assertEqual(location.ward, "a ward")
 
+    @patch('opal.models.patient_subrecords')
+    def test_latest_subrecord_by_field(self, patient_subrecords):
+        patient, _ = self.new_patient_and_episode_please()
+        patient_subrecords.return_value = [FavouriteColour]
+        an_hour_ago = timezone.now() - datetime.timedelta(hours=1)
+        two_hours_ago = timezone.now() - datetime.timedelta(hours=2)
+        patient.favouritecolour_set.create(
+            updated=an_hour_ago
+        )
+        patient.favouritecolour_set.create(
+            updated=two_hours_ago
+        )
+        self.assertEqual(
+            patient.get_latest_created_or_updated(),
+            an_hour_ago
+        )
+
+    @patch('opal.models.patient_subrecords')
+    def test_latest_subrecord_by_field_none(self, patient_subrecords):
+        patient_subrecords.return_value = [FavouriteColour]
+        patient, _ = self.new_patient_and_episode_please()
+        patient.favouritecolour_set.create()
+        self.assertIsNone(patient.get_latest_created_or_updated())
+
+    @patch('opal.models.patient_subrecords')
+    def test_latest_subrecord_by_field_no_records(self, patient_subrecords):
+        patient_subrecords.return_value = [FavouriteColour]
+        patient, _ = self.new_patient_and_episode_please()
+        self.assertIsNone(patient.get_latest_created_or_updated())
+
+    @patch('opal.models.patient_subrecords')
+    def test_latest_updated_multiple(self, patient_subrecords):
+        patient_subrecords.return_value = [Birthday, FavouriteColour]
+        patient, _ = self.new_patient_and_episode_please()
+        an_hour_ago = timezone.now() - datetime.timedelta(hours=1)
+        two_hours_ago = timezone.now() - datetime.timedelta(hours=2)
+        patient.birthday_set.create(
+            updated=two_hours_ago,
+            birth_date=datetime.date.today()
+        )
+        patient.favouritecolour_set.create(
+            updated=an_hour_ago
+        )
+        self.assertEqual(
+            patient.get_latest_created_or_updated(),
+            an_hour_ago
+        )
+
+    @patch('opal.models.patient_subrecords')
+    def test_latest_created_and_updated(self, patient_subrecords):
+        patient_subrecords.return_value = [Birthday, FavouriteColour]
+        patient, _ = self.new_patient_and_episode_please()
+        an_hour_ago = timezone.now() - datetime.timedelta(hours=1)
+        two_hours_ago = timezone.now() - datetime.timedelta(hours=2)
+        patient.birthday_set.create(
+            updated=two_hours_ago,
+            birth_date=datetime.date.today()
+        )
+        patient.favouritecolour_set.create(
+            created=an_hour_ago
+        )
+        self.assertEqual(
+            patient.get_latest_created_or_updated(),
+            an_hour_ago
+        )
+
+    @patch('opal.models.patient_subrecords')
+    @patch('opal.models.episode_subrecords')
+    def test_latest_more_recent_episode(
+        self, episode_subrecords, patient_subrecords
+    ):
+        episode_subrecords.return_value = [Dinner]
+        patient_subrecords.return_value = [FavouriteColour]
+        an_hour_ago = timezone.now() - datetime.timedelta(hours=1)
+        two_hour_ago = timezone.now() - datetime.timedelta(hours=2)
+        patient, episode = self.new_patient_and_episode_please()
+        episode.dinner_set.create(
+            updated=an_hour_ago
+        )
+        patient.favouritecolour_set.create(
+            created=two_hour_ago
+        )
+        self.assertEqual(
+            patient.get_latest_created_or_updated(),
+            an_hour_ago
+        )
+
+    @patch('opal.models.patient_subrecords')
+    @patch('opal.models.episode_subrecords')
+    def test_latest_more_recent_episode_excluding_episodes(
+        self, episode_subrecords, patient_subrecords
+    ):
+        episode_subrecords.return_value = [Dinner]
+        patient_subrecords.return_value = [FavouriteColour]
+        an_hour_ago = timezone.now() - datetime.timedelta(hours=1)
+        two_hour_ago = timezone.now() - datetime.timedelta(hours=2)
+        patient, episode = self.new_patient_and_episode_please()
+        episode.dinner_set.create(
+            updated=an_hour_ago
+        )
+        patient.favouritecolour_set.create(
+            created=two_hour_ago
+        )
+        self.assertEqual(
+            patient.get_latest_created_or_updated(include_episodes=False),
+            two_hour_ago
+        )
+
+
+
+@patch('opal.models.episode_subrecords')
+class EpisodeTestCase(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.an_hour_ago = timezone.now() - datetime.timedelta(hours=1)
+        self.two_hours_ago = timezone.now() - datetime.timedelta(hours=2)
+
+    def test_latest_subrecord_by_field(self, episode_subrecords):
+        episode_subrecords.return_value = [Dinner]
+        self.episode.dinner_set.create(
+            updated=self.an_hour_ago
+        )
+        self.episode.dinner_set.create(
+            updated=self.two_hours_ago
+        )
+        self.assertEqual(
+            self.episode.get_latest_created_or_updated(),
+            self.an_hour_ago
+        )
+
+    def test_latest_subrecord_by_field_none(self, episode_subrecords):
+        episode_subrecords.return_value = [Dinner]
+        self.episode.dinner_set.create()
+        self.assertIsNone(self.episode.get_latest_created_or_updated())
+
+    def test_latest_subrecord_by_field_no_records(self, episode_subrecords):
+        episode_subrecords.return_value = [Dinner]
+        self.assertIsNone(self.episode.get_latest_created_or_updated())
+
+    def test_latest_updated_multiple(self, episode_subrecords):
+        episode_subrecords.return_value = [Dinner, HatWearer]
+        self.episode.dinner_set.create(
+            updated=self.two_hours_ago
+        )
+        self.episode.hatwearer_set.create(
+            updated=self.an_hour_ago
+        )
+        self.assertEqual(
+            self.episode.get_latest_created_or_updated(),
+            self.an_hour_ago
+        )
+
+    def test_latest_created_and_updated(self, episode_subrecords):
+        episode_subrecords.return_value = [Dinner, HatWearer]
+        self.episode.dinner_set.create(
+            updated=self.two_hours_ago
+        )
+        self.episode.hatwearer_set.create(
+            created=self.an_hour_ago
+        )
+        self.assertEqual(
+            self.episode.get_latest_created_or_updated(),
+            self.an_hour_ago
+        )
+
+    def test_latest_by_episode_updated_no_created(self, episode_subrecords):
+        self.episode.updated = self.an_hour_ago
+        self.assertEqual(
+            self.episode.get_latest_created_or_updated(),
+            self.an_hour_ago
+        )
+
+    def test_latest_by_epiosde_created_no_updated(self, episode_subrecords):
+        self.episode.created = self.an_hour_ago
+        self.assertEqual(
+            self.episode.get_latest_created_or_updated(),
+            self.an_hour_ago
+        )
+
+    def test_latest_by_episode_created_and_updated(self, episode_subrecords):
+        self.episode.created = self.two_hours_ago
+        self.episode.updated = self.an_hour_ago
+
+        self.assertEqual(
+            self.episode.get_latest_created_or_updated(),
+            self.an_hour_ago
+        )
+
 
 class SubrecordTestCase(OpalTestCase):
 
