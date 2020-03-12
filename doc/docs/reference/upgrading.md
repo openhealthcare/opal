@@ -4,6 +4,11 @@ This document provides instructions for specific steps required to upgrading you
 application to a later version where there are extra steps required.
 
 
+#### v0.17.1 -> v0.18.2
+
+`inpatient.html` is no longer in opal but created with startproject. If you are using the default episode category please create a template called  `{{ appname }}/templates/detail/inpatient.html` and add in the record panels that you need.
+
+
 #### v0.17.1 -> v0.18.0
 
 Style sheets loaded via Opal Applicatin or Plugin objects are now included with the attribute `media="all"`
