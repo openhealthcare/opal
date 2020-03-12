@@ -14,14 +14,16 @@ Returns a new `Episode` for this patient.
 
 Return the URL for this patient
 
-#### to_dict
+#### `Patient.to_dict`
 
 Return the dictionary representation of this patient - suitable for serialization.
 
     patient.to_dict(user)
 
+### `Patient.get_latest_created_or_updated`
+Returns when the patient last had a child episode, episode subrecord or patient subrecord updated/created (based on the created/updated timestamp). Can take the argument `include_episodes=False` for the latest time only patient subrecords were created/updated.
 
-#### bulk_update
+#### `Patient.bulk_update`
 
 Create or update many subrecords in one go, from a serialised dictionary of data.
 

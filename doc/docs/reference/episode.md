@@ -107,6 +107,10 @@ episode.stage
 # -> 'Discharged'
 ```
 
+### Episode.get_latest_created_or_updated
+Returns when the episode last had itself or a child subrecord updated/created
+(based on the created/updated timestamp)
+
 ## Manager
 
 The custom manager for Episodes has the following methods:
