@@ -6,8 +6,7 @@ application to a later version where there are extra steps required.
 
 #### v0.17.1 -> v0.18.2
 
-inpatient.html is no longer in opal core. If you are using the default episode category please create a 
-template called  {{ appname }}/templates/detail/inpatient.html and add in the record panels that you need.
+`inpatient.html` is no longer in opal but created with startproject. If you are using the default episode category please create a template called  `{{ appname }}/templates/detail/inpatient.html` and add in the record panels that you need.
 
 
 #### v0.17.1 -> v0.18.0
