@@ -36,7 +36,7 @@ If you're just getting started we suggest:
 * Reading through some [High level topic guides](http://opal.openhealthcare.org.uk/docs/guides/topic-guides/)
 
 The documentation is updated frequently, and we welcome any feedback or contributions to it. If you find any problems,
-or feel that anything needs clarifying in any way, please take 30 seconds to fill out a new isue [here](https://github.com/openhealthcare/opal/issues/new).
+or feel that anything needs clarifying in any way, please take 30 seconds to fill out a new issue [here](https://github.com/openhealthcare/opal/issues/new).
 
 Documentation for old and development branches are available at e.g. [http://opal.openhealthcare.org.uk/docs/v0.7.1/](http://opal.openhealthcare.org.uk/docs/v0.7.1/)
 
