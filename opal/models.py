@@ -594,14 +594,14 @@ class Patient(models.Model):
             latest = max(latest, latest_created, latest_updated)
 
         if not include_episodes:
-            if not latest ==  min_dt:
+            if not latest == min_dt:
                 return latest
 
         for episode in self.episode_set.all():
             episode_latest = episode.get_latest_created_or_updated()
             if episode_latest:
                 latest = max(episode_latest, latest)
-        if not latest ==  min_dt:
+        if not latest == min_dt:
             return latest
 
 
@@ -907,7 +907,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             latest_created = maxes["latest_created"] or min_dt
             latest_updated = maxes["latest_updated"] or min_dt
             latest = max(latest, latest_created, latest_updated)
-        if not latest ==  min_dt:
+        if not latest == min_dt:
             return latest
 
 
