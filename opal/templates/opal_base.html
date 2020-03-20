@@ -1,5 +1,5 @@
-{% load staticfiles %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
+{% load static %}
 {% load application %}
 {% load plugins %}
 
@@ -9,38 +9,21 @@
   <head>
     <!-- Sometimes your system administrater will helpfully configure IE to use old document modes by default. You don't want that here. -->
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <!--[if lte IE 8]>
-	    <script type="text/javascript" src="{% static "js/lib/utils/json3.min.js" %}"></script>
-        <![endif]-->
          <meta charset="utf-8">
          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
          <title>{{ OPAL_BRAND_NAME }}</title>
-         {% compress js %}
-         <!-- Add javascript here later -->
-         {% block application_javascript %}{% endblock %}
-         {% endcompress %}
+         <!-- start -->
+         {% render_bundle 'app' 'css' %}
+         <!-- middle -->
+         {% render_bundle 'app' 'js' %}
+         <!-- end -->
 
-         <!-- Bootstrap -->
-         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-                 integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-                 integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-                 integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-
-         {% compress css %}
-         <link href="{% static "css/opal.1.0.css" %}" rel="stylesheet" media="all">
-         {% block application_styles %}{% endblock %}
-         {% endcompress %}
-
-         <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
+         <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}`{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
 
   </head>
   <body {% block body_attrs %}{% endblock %}>
     {% block application %}{% endblock %}
     {% block end_body %}{% endblock %}
+    <div id="app"></div>
   </body>
 </html>
