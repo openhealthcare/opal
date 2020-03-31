@@ -5,6 +5,10 @@ Previously `inpatient.html` (the template for the default episode category) was 
 
 `inpatient.html` also has had a banner stating the episode category removed.
 
+#### get_latest_created_or_updated added to Episode and Patient
+`get_latest_created_or_updated` returns when the episode/patient last had itself or a
+child subrecord was created/updated
+
 ### 0.18.1 (Minor Release)
 Bug fix removing js files from the core app that have now been removed.
 
