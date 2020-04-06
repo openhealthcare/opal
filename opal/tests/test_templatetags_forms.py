@@ -340,6 +340,11 @@ class DatepickerTestCase(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('ng-change="doStuff"', rendered)
 
+    def test_required_error(self):
+        tpl = Template('{% load forms %}{% datepicker label="hai" model="bai" element_name="onions" required=True %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('(form[onions].$dirty || form.$submitted) && form[onions].$error.required', rendered)
+
 
 class DateTimePickerTestCase(TestCase):
     def test_generic(self):
