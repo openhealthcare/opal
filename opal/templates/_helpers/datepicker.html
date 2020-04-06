@@ -28,7 +28,15 @@
                {% if change %}
                ng-change="{{ change }}"
                {% endif %}
+               {% if required %}
+               required
+               {% endif %}
                />
+     {% if required %}
+     <span class="help-block" ng-show="({{ formname }}[{{ element_name }}].$dirty || {{ formname }}.$submitted) && {{ formname }}[{{ element_name }}].$error.required">
+        {{ label }} is required
+     </span>
+     {% endif %}
      {% if user_options %}
          <span class="input-group-btn">
            <button type="button" class="btn btn-default" ng-click="{{ model }} = dateHelper.now()" href="">Today</a>
