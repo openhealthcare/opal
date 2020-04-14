@@ -5,6 +5,10 @@ angular.module('opal.services')
       	    var deferred = $q.defer();
             url = '/pathway/detail/' + pathwayName;
 
+            if(patientId && !episodeId){
+              url = url + "/" + patientId;
+            }
+
             if(episodeId){
               url = url + "/" + patientId + "/" + episodeId;
             }
