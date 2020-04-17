@@ -5,7 +5,7 @@ import datetime
 import pytz
 
 from django.db import models
-from mock import patch
+from unittest.mock import patch
 
 from opal.core import exceptions
 from opal.core.fields import ForeignKeyOrFreeText

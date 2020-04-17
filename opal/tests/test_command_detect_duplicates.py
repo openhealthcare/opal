@@ -3,7 +3,7 @@ Unittests for opal.management.commands.detect_duplicates
 """
 import datetime
 
-from mock import patch
+from unittest.mock import patch
 
 from opal.core.test import OpalTestCase
 from opal import models

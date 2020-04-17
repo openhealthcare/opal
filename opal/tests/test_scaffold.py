@@ -5,7 +5,7 @@ import os
 import subprocess
 import tempfile
 
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 import ffs
 import opal
 from opal.tests import models

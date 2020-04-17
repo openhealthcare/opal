@@ -4,7 +4,7 @@ Unittests fror opal.core.test_runner
 import subprocess
 
 import ffs
-from mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch, call
 
 from opal.core.test import OpalTestCase
 

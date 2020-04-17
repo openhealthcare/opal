@@ -6,7 +6,7 @@ from datetime import date
 from django.db import transaction
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 from reversion import revisions as reversion
 from opal.tests.episodes import RestrictedEpisodeCategory
 

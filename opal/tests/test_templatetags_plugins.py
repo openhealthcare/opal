@@ -1,7 +1,7 @@
 """
 Unittests for the opal.templatetags.plugins module
 """
-from mock import patch
+from unittest.mock import patch
 
 from opal.core import plugins
 from opal.core import menus

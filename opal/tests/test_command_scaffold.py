@@ -1,6 +1,6 @@
 from opal.management.commands import scaffold
 from opal.core.test import OpalTestCase
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 
 @patch("opal.management.commands.scaffold.core_scaffold")

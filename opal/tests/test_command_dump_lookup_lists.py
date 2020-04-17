@@ -4,7 +4,7 @@ Unittests for opal.management.commands.dump_lookup_lists
 import os
 
 from django.contrib.contenttypes.models import ContentType
-from mock import patch, call, mock_open, MagicMock
+from unittest.mock import patch, call, mock_open, MagicMock
 
 from opal.core.test import OpalTestCase
 from opal.models import Symptom, Synonym

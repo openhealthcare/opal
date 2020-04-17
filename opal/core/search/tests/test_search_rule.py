@@ -1,4 +1,4 @@
-from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 import datetime
 
 from opal.core.test import OpalTestCase

@@ -2,7 +2,7 @@
 Tests for our modal/form helpers
 """
 import json
-from mock import patch
+from unittest.mock import patch
 
 from django.template import Template, Context
 from django.test import TestCase

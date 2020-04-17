@@ -2,7 +2,7 @@
 unittests for opal.core.pathway.steps
 """
 from django.urls import reverse
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 from opal.core import exceptions
 from opal.core.test import OpalTestCase

@@ -1,7 +1,7 @@
 """
 Test the opal.context_processors module
 """
-from mock import patch
+from unittest.mock import patch
 from django.test import TestCase
 from opal import context_processors
 from opal.core.subrecords import subrecords

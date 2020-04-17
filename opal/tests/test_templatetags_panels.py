@@ -3,7 +3,7 @@ Tests create_singletons command
 """
 import os
 
-from mock import patch
+from unittest.mock import patch
 
 from django.template import Template, Context
 from opal.core.test import OpalTestCase

@@ -3,7 +3,7 @@ Unittests for Patients
 """
 import datetime
 
-from mock import patch
+from unittest.mock import patch
 from opal.core.test import OpalTestCase
 
 from opal.models import Patient, Episode
