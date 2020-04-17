@@ -28,7 +28,6 @@ settings.configure(DEBUG=True,
                        'django.contrib.messages.middleware.MessageMiddleware',
                        'opal.middleware.DjangoReversionWorkaround',
                        'reversion.middleware.RevisionMiddleware',
-                       'axes.middleware.FailedLoginMiddleware',
                    ),
                    TEMPLATES=[
                         {
