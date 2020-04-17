@@ -19,7 +19,7 @@ settings.configure(DEBUG=True,
                    DATETIME_FORMAT = 'd/m/Y H:i:s',
                    DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S'],
                    TIME_FORMAT = "H:i:s",
-                   MIDDLEWARE_CLASSES = (
+                   MIDDLEWARE=(
                        'django.middleware.common.CommonMiddleware',
                        'django.contrib.sessions.middleware.SessionMiddleware',
                        'opal.middleware.AngularCSRFRename',
@@ -30,6 +30,26 @@ settings.configure(DEBUG=True,
                        'reversion.middleware.RevisionMiddleware',
                        'axes.middleware.FailedLoginMiddleware',
                    ),
+                   TEMPLATES=[
+                        {
+                            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                            'DIRS': [
+                                os.path.join(".", 'templates'),
+                            ],
+                            'APP_DIRS': True,
+                            'OPTIONS': {
+                                'context_processors': [
+                                    'django.contrib.auth.context_processors.auth',
+                                    'django.template.context_processors.debug',
+                                    'django.template.context_processors.i18n',
+                                    'django.template.context_processors.media',
+                                    'django.template.context_processors.static',
+                                    'django.template.context_processors.tz',
+                                    'django.template.context_processors.request',
+                                ],
+                            },
+                        },
+                   ],
                    INSTALLED_APPS=('django.contrib.auth',
                                    'django.contrib.contenttypes',
                                    'django.contrib.sessions',
