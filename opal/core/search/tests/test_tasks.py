@@ -1,7 +1,7 @@
 """
 Unittests for the opal.core.search.tasks module
 """
-from mock import patch
+from unittest.mock import patch
 from opal.core.test import OpalTestCase
 
 from opal.core.search import tasks

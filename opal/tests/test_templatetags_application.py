@@ -1,7 +1,7 @@
 """
 Unittests for the opal.templatetags.application module
 """
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from django.template import Template, Context
 

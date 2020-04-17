@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.http import QueryDict
 from django.test import TestCase
 from django.test.client import RequestFactory
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from opal import models, views
 from opal.core import detail, patient_lists

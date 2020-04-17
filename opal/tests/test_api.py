@@ -12,7 +12,7 @@ from django.test import TestCase
 from django.db import DataError
 from django.http import Http404
 from django.contrib.contenttypes.models import ContentType
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse

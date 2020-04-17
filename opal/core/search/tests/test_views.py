@@ -7,7 +7,7 @@ from datetime import date
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from mock import patch, mock_open
+from unittest.mock import patch, mock_open
 
 from opal import models
 from opal.tests import models as tmodels

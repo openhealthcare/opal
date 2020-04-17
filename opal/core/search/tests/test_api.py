@@ -1,5 +1,5 @@
 from opal.core.test import OpalTestCase
-from mock import patch
+from unittest.mock import patch
 from opal.core.search import api
 from rest_framework.reverse import reverse
 from rest_framework import status

@@ -1,7 +1,7 @@
 """
 Unittests for opal.templatetags.patient_lists
 """
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 from opal.core.test import OpalTestCase
 
