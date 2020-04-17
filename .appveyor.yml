@@ -1,10 +1,12 @@
 environment:
   matrix:
-    - PYTHON: "C:\\Python36"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PYTHON: "C:\\Python36-x64"
+      PYTHON_ARCH: "64"
 
 install:
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - "C:\\Python36\\python.exe -m pip install --disable-pip-version-check --user --upgrade pip"
+  # - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  # - "python -m pip install --disable-pip-version-check --user --upgrade pip"
   - "%CMD_IN_ENV% python setup.py develop"
   - "pip install -r test-requirements.txt"
 
