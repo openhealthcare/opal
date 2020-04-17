@@ -4,7 +4,7 @@ environment:
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - "c:\\python27\\python.exe -m pip install --disable-pip-version-check --user --upgrade pip"
+  - "C:\\Python36\\python.exe -m pip install --disable-pip-version-check --user --upgrade pip"
   - "%CMD_IN_ENV% python setup.py develop"
   - "pip install -r test-requirements.txt"
 
