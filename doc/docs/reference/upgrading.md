@@ -3,6 +3,22 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.18.2 -> v0.18.3
+`Inpatient` is not longer provided in `opal.core.episodes`. If you are using the Inpatient episode category please add the below to your `{{ appname }}/episode_categories.py
+
+```
+from opal.core.episodes import EpisodeCategory
+
+
+class InpatientEpisode(EpisodeCategory):
+    display_name    = 'Inpatient'
+    detail_template = 'detail/inpatient.html'
+    stages          = [
+        'Inpatient',
+        'Followup',
+        'Discharged'
+    ]
+```
 
 #### v0.17.1 -> v0.18.2
 

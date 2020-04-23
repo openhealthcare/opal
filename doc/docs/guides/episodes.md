@@ -19,7 +19,7 @@ the `display_name` attribute of the relevant category.
 ```python
 episode = patient.episode_set.first()
 print episode.category
-# <opal.core.episode.InpatientEpisode object>
+# <{{ your app name }}.episode_categories.InpatientEpisode object>
 
 print episode.category.display_name
 # "Inpatient"
@@ -35,10 +35,6 @@ on the detail page for the patient. This template is determined by looking up
 the `detail_template` attribute of the `EpisodeCategory`.
 
 ```python
-episode.category
-print episode.category
-# <opal.core.episode.InpatientEpisode object>
-
 print episode.category.detail_template
 # detail/inpatient.html
 ```

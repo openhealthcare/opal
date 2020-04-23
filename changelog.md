@@ -1,3 +1,6 @@
+### 0.18.3 (Minor Release)
+The episode category Inpatient is now scaffolded out into new applications (previously it was provided by default).
+
 ### 0.18.2 (Minor Release)
 
 #### inpatient.html is now in the scaffold
