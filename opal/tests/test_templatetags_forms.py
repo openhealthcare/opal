@@ -2,7 +2,7 @@
 Tests for our modal/form helpers
 """
 import json
-from mock import patch
+from unittest.mock import patch
 
 from django.template import Template, Context
 from django.test import TestCase
@@ -339,6 +339,11 @@ class DatepickerTestCase(TestCase):
         tpl = Template('{% load forms %}{% datepicker label="hai" change="doStuff" model="bai" element_name="onions"%}')
         rendered = tpl.render(Context({}))
         self.assertIn('ng-change="doStuff"', rendered)
+
+    def test_required_error(self):
+        tpl = Template('{% load forms %}{% datepicker label="hai" model="bai" element_name="onions" required=True %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('(form[onions].$dirty || form.$submitted) && form[onions].$error.required', rendered)
 
 
 class DateTimePickerTestCase(TestCase):

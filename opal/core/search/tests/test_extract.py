@@ -7,7 +7,7 @@ import os
 
 from django.urls import reverse
 from django.test import override_settings
-from mock import mock_open, patch, Mock, MagicMock
+from unittest.mock import mock_open, patch, Mock, MagicMock
 
 from opal.core.test import OpalTestCase
 from opal import models

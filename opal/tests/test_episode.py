@@ -2,7 +2,7 @@
 Unittests for opal.models.Episode
 """
 import datetime
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 import six
 
 from django.contrib.auth.models import User

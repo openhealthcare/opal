@@ -2,7 +2,7 @@
 Unittests for opal.management.commands.create_random_data
 """
 import datetime
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
 from opal.models import Patient

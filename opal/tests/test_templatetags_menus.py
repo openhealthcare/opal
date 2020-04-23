@@ -2,7 +2,7 @@
 Unittests for opal.templatetags.menus
 """
 from django.template import Context
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 from opal.core import test
 

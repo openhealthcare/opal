@@ -1,3 +1,15 @@
+### 0.18.2 (Minor Release)
+
+#### inpatient.html is now in the scaffold
+Previously `inpatient.html` (the template for the default episode category) was in opal. Now it is put directly into new apps with `opal startproject`.
+
+`inpatient.html` also has had a banner stating the episode category removed.
+
+Bug fix for the date field template so that it can be a required field (either through the template or inferred from the db field).
+
+### 0.18.1 (Minor Release)
+Bug fix removing js files from the core app that have now been removed.
+
 ### 0.18.0 (Major Release)
 
 #### Load lookuplist data format

@@ -6,7 +6,7 @@ import os
 
 from django.urls import reverse
 from django.contrib.auth.models import User
-from mock import MagicMock, PropertyMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from opal.core import exceptions
 from opal.tests import models

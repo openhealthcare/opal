@@ -1,7 +1,7 @@
 """
 Test the opal.core.pathways.context_processors module
 """
-from mock import patch
+from unittest.mock import patch
 from django.test import TestCase
 from opal.core.pathway import context_processors
 from opal.core.pathway import Pathway

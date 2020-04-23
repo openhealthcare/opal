@@ -2,7 +2,7 @@
 Tests for OpalTestCase helpers that might not be explicitly used in OPAL itself
 but are useful for applications.
 """
-from mock import patch
+from unittest.mock import patch
 
 from opal.core.test import OpalTestCase
 

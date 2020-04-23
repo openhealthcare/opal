@@ -4,7 +4,7 @@ Unittests for opal.core.menus
 import operator
 import warnings
 
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
 

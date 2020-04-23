@@ -4,7 +4,7 @@ Unittests for opal.core.commandline
 import os
 import sys
 
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
 

@@ -1,14 +1,4 @@
 {% load panels %}
-<div class="col-md-12">
-  <div class="panel panel-active">
-    <div class="panel-heading text-center">
-      <h3>
-        Inpatient admission
-        [[ episode.start | displayDate ]]<span ng-show="episode.end"> - [[ episode.end | displayDate ]]</span>
-      </h3>
-    </div>
-  </div>
-</div>
 <div class="col-md-6"> <!-- Detail panels col 1 -->
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -19,30 +9,6 @@
       </h3>
     </div>
     <div class="panel-body">
-      <div class="row">
-        <div class="col-md-4">
-          <b>Category</b>
-        </div>
-        <div class="col-md-8">
-          [[ episode.category_name ]]
-        </div>
-      </div>
-      <div class="row" ng-show="episode.start">
-        <div class="col-md-4">
-          <b>Admitted</b>
-        </div>
-        <div class="col-md-8">
-          [[ episode.start | displayDate ]]
-        </div>
-      </div>
-      <div class="row" ng-show="episode.end">
-        <div class="col-md-4">
-          <b>Discharged</b>
-        </div>
-        <div class="col-md-8">
-          [[ episode.end | displayDate ]]
-        </div>
-      </div>
       <div class="row">
         <div class="col-md-4">
           <b>Hospital</b>

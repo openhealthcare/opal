@@ -1,7 +1,7 @@
 """
 Unittests for opal.core.celery
 """
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
 

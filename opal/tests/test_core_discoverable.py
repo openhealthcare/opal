@@ -1,7 +1,7 @@
 """
 Unittests for the opal.core.discoverable module
 """
-from mock import patch
+from unittest.mock import patch
 from django.test import override_settings
 
 from opal.core import exceptions

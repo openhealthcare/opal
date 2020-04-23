@@ -3,7 +3,7 @@ Unittests for opal.models
 """
 import os
 import datetime
-from mock import patch
+from unittest.mock import patch
 
 from django.conf import settings
 from django.utils import timezone

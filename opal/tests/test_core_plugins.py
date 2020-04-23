@@ -4,7 +4,7 @@ Unittests for opal.core.plugins
 import os
 import copy
 
-from mock import patch
+from unittest.mock import patch
 
 from opal.core.test import OpalTestCase
 from opal.core import menus

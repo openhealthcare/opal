@@ -2,7 +2,7 @@
 unittests for the opal.core.pathways.templatetags package
 """
 from django.template import Template, Context
-from mock import patch
+from unittest.mock import patch
 
 from opal.core.test import OpalTestCase
 from opal.tests.models import Colour

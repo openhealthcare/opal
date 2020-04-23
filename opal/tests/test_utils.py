@@ -5,7 +5,7 @@ import sys
 
 from django.test import TestCase
 from django.db.models import ForeignKey, CharField
-from mock import patch
+from unittest.mock import patch
 
 from opal.core import exceptions
 from opal.core.test import OpalTestCase

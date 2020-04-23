@@ -1,6 +1,6 @@
 from opal.core.test import OpalTestCase
 from django.template import Template, Context
-import mock
+from unittest import mock
 
 
 @mock.patch("opal.templatetags.template_warnings.warnings.warn")

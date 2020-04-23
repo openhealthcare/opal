@@ -2,7 +2,7 @@
 Unittests for opal.management.commands.load_lookup_lists
 """
 import os
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from opal.core import application
 from opal.core.test import OpalTestCase

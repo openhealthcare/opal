@@ -2,7 +2,7 @@
 Tests for schema utilities
 """
 from django.test import TestCase
-from mock import patch
+from unittest.mock import patch
 
 from opal.core import schemas
 from opal.tests.models import Colour, HatWearer, FamousLastWords

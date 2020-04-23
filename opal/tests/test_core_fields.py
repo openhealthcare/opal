@@ -1,7 +1,7 @@
 """
 Unittests for the opal.core.fields module
 """
-import mock
+from unittest import mock
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
