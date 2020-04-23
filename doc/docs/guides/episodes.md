@@ -64,6 +64,10 @@ meet custom requirements.
 Episode categories should be defined in a file named `episode_categories` of
 your application or plugin.
 
+From the `opal start_project` command an `episode_categories.py` is created
+with an `Inpatient` episode category to help you get started. However
+you can create your own, for example.
+
 ```python
 # yourapp/episode_categories.py
 
