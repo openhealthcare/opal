@@ -13,19 +13,28 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logging.info("Creating Singletons")
 
-        for patient in Patient.objects.all():
-            logging.info('Examining {0}'.format(patient))
-            for subclass in patient_subrecords():
-                if subclass._is_singleton:
-                    if subclass.objects.filter(patient=patient).count() == 0:
-                        logging.info('Creating {0}'.format(subclass))
-                        subclass.objects.create(patient=patient)
+        for subclass in patient_subrecords():
+            if subclass._is_singleton:
+                to_create = []
+                related_name = subclass.__name__.lower()
+                patients_to_be_updated = Patient.objects.filter(
+                    **{related_name: None}
+                )
+                for patient in patients_to_be_updated:
+                    logging.info('Creating {0}'.format(subclass))
+                    to_create.append(subclass(patient=patient))
+                subclass.objects.bulk_create(to_create)
 
-        for episode in Episode.objects.all():
-            logging.info('Examining {0}'.format(episode))
-            for subclass in episode_subrecords():
-                if subclass._is_singleton:
-                    if subclass.objects.filter(episode=episode).count() == 0:
-                        logging.info('Creating {0}'.format(subclass))
-                        subclass.objects.create(episode=episode)
+        for subclass in episode_subrecords():
+            if subclass._is_singleton:
+                to_create = []
+                related_name = subclass.__name__.lower()
+                episodes_to_be_updated = Episode.objects.filter(
+                    **{related_name: None}
+                )
+                for episode in episodes_to_be_updated:
+                    logging.info('Creating {0}'.format(subclass))
+                    to_create.append(subclass(episode=episode))
+                subclass.objects.bulk_create(to_create)
+
         return
