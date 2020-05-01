@@ -1,7 +1,6 @@
 """
 Create singletons that may have been dropped
 """
-import logging
 from django.core.management.base import BaseCommand
 
 from opal.models import Patient, Episode
@@ -11,7 +10,7 @@ from opal.core.subrecords import patient_subrecords, episode_subrecords
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        logging.info("Creating Singletons")
+        created = False
 
         for subclass in patient_subrecords():
             if subclass._is_singleton:
@@ -21,9 +20,15 @@ class Command(BaseCommand):
                     **{related_name: None}
                 )
                 for patient in patients_to_be_updated:
-                    logging.info('Creating {0}'.format(subclass))
                     to_create.append(subclass(patient=patient))
-                subclass.objects.bulk_create(to_create)
+
+                if to_create:
+                    created = True
+                    msg = "Created singletons: {} {}".format(
+                        len(to_create), subclass.__name__
+                    )
+                    self.stdout.write(self.style.SUCCESS(msg))
+                    subclass.objects.bulk_create(to_create)
 
         for subclass in episode_subrecords():
             if subclass._is_singleton:
@@ -33,8 +38,16 @@ class Command(BaseCommand):
                     **{related_name: None}
                 )
                 for episode in episodes_to_be_updated:
-                    logging.info('Creating {0}'.format(subclass))
                     to_create.append(subclass(episode=episode))
-                subclass.objects.bulk_create(to_create)
 
+                if to_create:
+                    created = True
+                    msg = "Created singletons: {} {}".format(
+                        len(to_create), subclass.__name__
+                    )
+                    self.stdout.write(self.style.SUCCESS(msg))
+                    subclass.objects.bulk_create(to_create)
+
+        if not created:
+            self.stdout.write("No singletons needed to be created")
         return
