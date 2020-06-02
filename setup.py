@@ -56,7 +56,7 @@ setup(
         'django-compressor==2.2',
         'python-dateutil==2.8.0',
         'django-celery==3.2.2',
-        'celery==3.1.25',
+        'celery==4.4.3',
         'MarkupSafe==1.1.1' # required for python 3.5
         ],
     classifiers = [
