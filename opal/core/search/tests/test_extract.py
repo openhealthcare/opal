@@ -7,6 +7,7 @@ import os
 
 from django.urls import reverse
 from django.test import override_settings
+from django.utils import timezone
 from unittest.mock import mock_open, patch, Mock, MagicMock
 
 from opal.core.test import OpalTestCase
@@ -239,13 +240,62 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
             )
 
     def test_get_headers_uses_fields_arg(self):
-            renderer = extract.CsvRenderer(
-                Colour,  Colour.objects.all(), self.user, fields=["name"]
-            )
-            self.assertEqual(
-                renderer.get_headers(),
-                ["Name"]
-            )
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+        self.assertEqual(
+            renderer.get_headers(),
+            ["Name"]
+        )
+
+    def test_serialize_list_simple(self):
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+        result = renderer.serialize_value(["hello", "there"])
+        self.assertEqual(
+            result,
+            "hello; there"
+        )
+
+    def test_serialize_list_complex(self):
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+
+        dt = timezone.make_aware(datetime.datetime(2017, 2, 9, 10, 00, 16))
+        result = renderer.serialize_value([{"hello": dt}])
+        self.assertEqual(
+            result,
+            '[{"hello": "2017-02-09T10:00:16Z"}]'
+        )
+
+    def test_serialize_dict(self):
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+
+        dt = timezone.make_aware(datetime.datetime(2017, 2, 9, 10, 00, 16))
+        result = renderer.serialize_value({"hello": dt})
+        self.assertEqual(
+            result,
+            '{"hello": "2017-02-09T10:00:16Z"}'
+        )
+
+    def test_serialize_number(self):
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+
+        result = renderer.serialize_value(1)
+        self.assertEqual(result, "1")
+
+    def test_serialize_string(self):
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+        result = renderer.serialize_value("hello")
+        self.assertEqual(result, "hello")
 
     def test_list_render(self):
         _, episode = self.new_patient_and_episode_please()
@@ -259,6 +309,19 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
             )
             result = renderer.get_row(colour)
             self.assertIn("onions; kettles", result)
+
+    def test_to_dict_render(self):
+        _, episode = self.new_patient_and_episode_please()
+        colour = Colour.objects.create(name="Blue", episode=episode)
+        normal_to_dict = colour.to_dict(self.user)
+        normal_to_dict["name"] = {"RGB": "50, 168, 82", "Hex": "#32a852"}
+        with patch.object(colour, "to_dict") as to_dicted:
+            to_dicted.return_value = normal_to_dict
+            renderer = extract.CsvRenderer(
+                Colour, Colour.objects.all(), self.user
+            )
+            result = renderer.get_row(colour)
+            self.assertIn(json.dumps(normal_to_dict["name"]), result)
 
     def test_get_row(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
