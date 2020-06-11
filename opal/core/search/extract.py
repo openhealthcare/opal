@@ -5,12 +5,14 @@ from collections import OrderedDict
 import csv
 import datetime
 import functools
+import json
 import logging
 import os
 import tempfile
 import zipfile
 
 from django.template import loader
+from django.core.serializers.json import DjangoJSONEncoder
 from six import text_type
 
 from collections import defaultdict
@@ -95,12 +97,29 @@ class CsvRenderer(object):
                 result.append(self.get_field_title(field))
         return result
 
-    def get_field_value(self, field_name, data):
-        col_value = data[field_name]
-        if isinstance(col_value, list):
-            return "; ".join(text_type(i) for i in col_value)
+    def serialize_dict(self, some_dict):
+        return json.dumps(some_dict,  cls=DjangoJSONEncoder)
+
+    def serialize_list(self, some_list):
+        """
+        Complex datatypes (ie anything that involves a dict)
+        should be json serialized, otherwise, return a
+        semicolon seperated list
+        """
+        if len(some_list) and isinstance(some_list[0], dict):
+            return json.dumps(some_list,  cls=DjangoJSONEncoder)
         else:
-            return text_type(col_value)
+            return "; ".join(text_type(i) for i in some_list)
+
+    def serialize_value(self, some_value):
+        if isinstance(some_value, list):
+            return self.serialize_list(some_value)
+        if isinstance(some_value, dict):
+            return self.serialize_dict(some_value)
+        return text_type(some_value)
+
+    def get_field_value(self, field_name, data):
+        return self.serialize_value(data[field_name])
 
     def get_row(self, instance, *args, **kwargs):
         as_dict = instance.to_dict(user=self.user)
