@@ -98,7 +98,7 @@ class CsvRenderer(object):
         return result
 
     def serialize_dict(self, some_dict):
-        return json.dumps(some_dict,  cls=DjangoJSONEncoder)
+        return json.dumps(some_dict, cls=DjangoJSONEncoder)
 
     def serialize_list(self, some_list):
         """
@@ -107,7 +107,7 @@ class CsvRenderer(object):
         semicolon seperated list
         """
         if len(some_list) and isinstance(some_list[0], dict):
-            return json.dumps(some_list,  cls=DjangoJSONEncoder)
+            return json.dumps(some_list, cls=DjangoJSONEncoder)
         else:
             return "; ".join(text_type(i) for i in some_list)
 
