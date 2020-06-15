@@ -26,6 +26,14 @@ describe('pathwayLoader', function() {
     expect(!!result.then).toBe(true);
   });
 
+  it('should add the patient id if the episode id is not provided', function(){
+    $httpBackend.expectGET("/pathway/detail/somePathway/12").respond({});
+    pathwayLoader.load("somePathway", 12);
+    $httpBackend.flush();
+    $httpBackend.verifyNoOutstandingRequest();
+    $httpBackend.verifyNoOutstandingExpectation();
+  });
+
   it('should add the episode id/patient id if provided', function(){
     $httpBackend.expectGET("/pathway/detail/somePathway/12/10").respond({});
     pathwayLoader.load("somePathway", 12, 10);

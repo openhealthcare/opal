@@ -1,3 +1,9 @@
+### 0.18.3 (Minor Release)
+
+#### Complex objects are now serialized in the extract as json
+If you have a dictionary, or a list of dictionaries returned by Subrecord.to_dict, these will now be serialized into
+the dictionary as json, rather than str(dict)
+
 ### 0.18.2 (Minor Release)
 
 #### inpatient.html is now in the scaffold
