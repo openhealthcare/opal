@@ -84,45 +84,6 @@ describe('filters', function() {
 
   });
 
-  describe('shortDate', function() {
-    var log;
-
-    beforeEach(function(){
-      inject(function($injector){
-        log  = $injector.get('$log');
-      });
-
-      spyOn(log, 'warn');
-    });
-
-    it('should log a warning message', function() {
-       inject(function(shortDateFilter) {
-         shortDateFilter();
-         expect(log.warn).toHaveBeenCalledWith('shortDate will be removed in Opal 0.14.0');
-       });
-    });
-
-    it('should return undefined for no input',
-       inject(function(shortDateFilter) {
-         expect(shortDateFilter(null)).toBe(undefined);
-       }));
-
-    it('should output a date before 1/1/2001 as DD/MM/YYYY',
-       inject(function(shortDateFilter) {
-         expect(shortDateFilter(new Date(2000, 1, 1))).toBe('01/02/2000');
-       }));
-
-    it('should output a date before this year as DD/MM/YY',
-       inject(function(shortDateFilter) {
-         expect(shortDateFilter(new Date(2001, 1, 1))).toBe('01/02/01');
-       }));
-
-    it('should output a date this year as DD/MM',
-       inject(function(shortDateFilter) {
-         expect(shortDateFilter(new Date(new Date().getFullYear(), 1, 1))).toBe('01/02');
-       }));
-  });
-
   describe('shortTime', function(){
     var shortTime;
 
@@ -240,32 +201,6 @@ describe('filters', function() {
       expect(hhmm(new Date(201, 3, 12, 8, 45))).toEqual('8:45');
     });
 
-  });
-
-  describe('shortDateTime', function(){
-    var shortDateTime, log;
-
-    beforeEach(function(){
-      inject(function($injector){
-        shortDateTime = $injector.get('shortDateTimeFilter');
-        log  = $injector.get('$log');
-      });
-      spyOn(log, 'warn');
-    });
-
-    it('should log a warning message', function() {
-      shortDateTime()
-      expect(log.warn).toHaveBeenCalledWith('shortDateTime will be removed in Opal 0.14.0')
-    });
-
-
-    it('should return undefined if no input', function(){
-      expect(shortDateTime(null)).toBe(undefined);
-    });
-    it('correct represent a string in date time format', function(){
-      var expected = shortDateTime(new Date(2000, 1, 1, 20, 45));
-      expect(expected).toBe('01/02/2000 20:45');
-    });
   });
 
   describe('daysTo', function() {
