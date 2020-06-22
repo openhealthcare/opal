@@ -1,3 +1,13 @@
+### 0.18.4 (Minor Release)
+
+#### Remove shortDate and shortDateTime
+The angular filters shortDate and shortDateTime have been deprecated for some time.
+
+#### Stop an index being passed to recordEditor.editItem
+recordEditor.editItem used to take either a number or an item (subrecord) as its second argument.
+Now it will only take an item.
+
+
 ### 0.18.3 (Minor Release)
 
 #### Complex objects are now serialized in the extract as json

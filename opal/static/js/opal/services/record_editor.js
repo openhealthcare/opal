@@ -57,15 +57,7 @@ angular.module('opal.services').factory('RecordEditor', function(
       return deferred.promise;
     };
 
-    self.editItem = function(name, iix, url){
-      var item;
-      if(_.isNumber(iix)){
-        $log.warn("The ability to pass in an index to recordEditor.editItem will be removed in Opal v0.15.0, please pass in an item");
-        item = self.getItem(name, iix);
-      }
-      else{
-        item = iix;
-      }
+    self.editItem = function(name, item, url){
       return self.openEditItemModal(item, name, url);
     };
 
