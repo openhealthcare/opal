@@ -3,8 +3,8 @@
 //
 angular.module('opal.services')
     .factory('Episode', function(
-        $http, $q, $rootScope, $routeParams, $window,
-        Item, RecordEditor, FieldTranslator) {
+        $http, $q, $rootScope, $window,
+        Item, RecordEditor) {
         "use strict";
 
         // TODO: Set this with a more idiomatic Angular way, and set it once.

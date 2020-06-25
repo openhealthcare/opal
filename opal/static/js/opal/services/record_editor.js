@@ -1,6 +1,6 @@
 angular.module('opal.services').factory('RecordEditor', function(
-    $http, $q, Item, $modal, $rootScope, $routeParams, $log,
-    UserProfile){
+    $q, $modal, $rootScope, $routeParams, UserProfile
+){
   "use strict";
   var RecordEditor = function(episode){
     var self = this;

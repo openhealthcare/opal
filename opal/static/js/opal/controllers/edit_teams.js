@@ -1,6 +1,6 @@
 angular.module('opal.controllers').controller(
     'EditTeamsCtrl', function(
-        $scope, $modalInstance, $modal, $q, ngProgressLite, episode, UserProfile) {
+        $scope, $modalInstance, ngProgressLite, episode, UserProfile) {
 
         UserProfile.load().then(function(profile){
             $scope.editingName = episode.getFullName();

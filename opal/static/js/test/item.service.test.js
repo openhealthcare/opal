@@ -1,7 +1,7 @@
 describe('Item', function() {
     "use strict";
 
-    var columns, episodeData, recordSchema, list_schema, mockWindow;
+    var episodeData, recordSchema, mockWindow;
     var opalTestHelper, $rootScope, Item, $httpBackend, item, episode;
     var angularServiceMock;
 

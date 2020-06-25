@@ -1,13 +1,11 @@
 angular.module('opal.controllers').controller(
-  'PatientListCtrl', function($scope, $q, $http, $cookies,
+  'PatientListCtrl', function($scope, $cookies,
                               $location, $routeParams,
                               $modal, $rootScope, $window, $injector,
-                              growl, Item, Episode,
                               episodedata, metadata, profile, episodeLoader,
                               episodeVisibility){
 
     $scope.ready = false;
-    var version = window.version;
     if(episodedata.status == 'error'){
       if($cookies.get('opal.previousPatientList')){
         $cookies.remove('opal.previousPatientList');

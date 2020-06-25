@@ -1,6 +1,6 @@
 angular.module('opal.services').factory('patientLoader', function(
     $q, $window, $http, $route,
-    recordLoader, FieldTranslator, Patient
+    recordLoader, Patient
 ){
   return function(patientId) {
     "use strict";

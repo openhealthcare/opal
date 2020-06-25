@@ -1,7 +1,7 @@
 describe('episodeVisibility', function(){
     "use strict";
 
-    var $scope, episode, episodeVisibility, episodeData, opalTestHelper;
+    var $scope, episode, episodeVisibility, opalTestHelper;
     var $rootScope;
 
 

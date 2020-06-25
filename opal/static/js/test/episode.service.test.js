@@ -1,8 +1,8 @@
 describe('Episode', function() {
     "use strict";
 
-    var Episode, EpisodeResource, Item, $scope, $rootScope, columns, $window;
-    var episode, episodeData, resource, tag_hierarchy, fields;
+    var Episode, Item, $scope, $rootScope, $window;
+    var episode, episodeData;
     var $routeParams, opalTestHelper;
 
     beforeEach(function() {
