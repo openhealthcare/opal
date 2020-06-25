@@ -37,12 +37,8 @@
                      profile: function(UserProfile){ return UserProfile.load(); },
                      metadata: function(Metadata){ return Metadata.load(); }
                  },
-  		     templateUrl: function(params){ return '/templates/patient_detail.html' }
+  		           templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
-             .when('/account', {
-                 controller: 'AccountCtrl',
-                 templateUrl: '/accounts/account_detail.html'
-  	     })
              .otherwise({redirectTo: '/'});
 
      }]
