@@ -7,6 +7,8 @@ The angular filters shortDate and shortDateTime have been deprecated for some ti
 recordEditor.editItem used to take either a number or an item (subrecord) as its second argument.
 Now it will only take an item.
 
+#### Removes the account page
+Removes the user account detail page as this is not tested/used and can be easily created within an app.
 
 ### 0.18.3 (Minor Release)
 
