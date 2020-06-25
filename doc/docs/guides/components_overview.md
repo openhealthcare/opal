@@ -29,17 +29,6 @@ For example:
 * [JSON based REST APIs](json_api.md) for all of your models
 * ... and [many more](topic-guides.md)...
 
-### Plugins
-
-Opal plugins are intended to provide high quality generic, composable, re-usable chunks of
-functionality that can be "dropped in" to an application. For example, installing the
-[Dashboards](https://github.com/openhealthcare/opal-dashboards) plugin allows you to easily
-create clinical dashboards within your application. The
-[Referral](https://github.com/openhealthcare/opal-referral) plugin provides the plumbing for
-building complex inter-team referrals within an institution.
-
-Plugins have a [rich plugin API](plugins.md) they can hook into to, and
-many examples can be found by inspecting the source of [existing plugins](plugins_list.md).
 
 ### Applications
 
