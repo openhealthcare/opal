@@ -18,7 +18,6 @@ pages:
       - Command Line tool: guides/command_line_tool.md
       - Discoverable Features: guides/discoverable.md
       - Plugins: guides/plugins.md
-      - Plugin List: guides/plugins_list.md
 
       # Data and business logic
       - Data Model: guides/datamodel.md
