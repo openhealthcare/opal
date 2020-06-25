@@ -1,3 +1,8 @@
+### 0.18.4 (Minor Release)
+
+#### Removes the account page
+Removes the user account detail page as this is not tested/used and can be easily created within an app.
+
 ### 0.18.3 (Minor Release)
 
 #### Complex objects are now serialized in the extract as json
