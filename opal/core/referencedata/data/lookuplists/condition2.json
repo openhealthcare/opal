@@ -6,7 +6,7 @@
       ],
       "name": "AF",
       "coding": {
-        "code": "0000000",
+        "code": "49436004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -16,7 +16,7 @@
       ],
       "name": "AKA",
       "coding": {
-        "code": "0000000",
+        "code": "79733001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -26,7 +26,7 @@
       ],
       "name": "AKI",
       "coding": {
-        "code": "0000000",
+        "code": "14669001 ",
         "system": "http://snomed.info/sct"
       }
     },
@@ -36,7 +36,7 @@
       ],
       "name": "ALL",
       "coding": {
-        "code": "0000000",
+        "code": "128822004 ",
         "system": "http://snomed.info/sct"
       }
     },
@@ -46,7 +46,7 @@
       ],
       "name": "AML",
       "coding": {
-        "code": "0000000",
+        "code": "91861009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -56,7 +56,7 @@
       ],
       "name": "ARDS",
       "coding": {
-        "code": "0000000",
+        "code": "67782005 ",
         "system": "http://snomed.info/sct"
       }
     },
@@ -64,7 +64,7 @@
       "synonyms": [],
       "name": "Abscess",
       "coding": {
-        "code": "0000000",
+        "code": "128477000 ",
         "system": "http://snomed.info/sct"
       }
     },
@@ -72,7 +72,7 @@
       "synonyms": [],
       "name": "Achalasia",
       "coding": {
-        "code": "0000000",
+        "code": "48531003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -80,7 +80,7 @@
       "synonyms": [],
       "name": "Acne vulgaris",
       "coding": {
-        "code": "0000000",
+        "code": "88616000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -88,7 +88,7 @@
       "synonyms": [],
       "name": "Acromegaly",
       "coding": {
-        "code": "0000000",
+        "code": "74107003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -96,7 +96,7 @@
       "synonyms": [],
       "name": "Actinomycosis",
       "coding": {
-        "code": "0000000",
+        "code": "11817007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -104,15 +104,17 @@
       "synonyms": [],
       "name": "Acute CMV",
       "coding": {
-        "code": "0000000",
+        "code": "28944009",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Delirium"
+      ],
       "name": "Acute Confusional State",
       "coding": {
-        "code": "0000000",
+        "code": "2776000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -120,7 +122,7 @@
       "synonyms": [],
       "name": "Acute Coronary Syndrome",
       "coding": {
-        "code": "0000000",
+        "code": "394659003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -128,15 +130,17 @@
       "synonyms": [],
       "name": "Acute EBV",
       "coding": {
-        "code": "0000000",
+        "code": "240530001",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Acute Hepatic Failure"
+      ],
       "name": "Acute Liver Failure",
       "coding": {
-        "code": "0000000",
+        "code": "197270009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -144,7 +148,7 @@
       "synonyms": [],
       "name": "Acute Pancreatitis",
       "coding": {
-        "code": "0000000",
+        "code": "197456007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -152,7 +156,7 @@
       "synonyms": [],
       "name": "Acute Sinusitis",
       "coding": {
-        "code": "0000000",
+        "code": "15805002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -162,7 +166,7 @@
       ],
       "name": "Acute on chronic SDH",
       "coding": {
-        "code": "0000000",
+        "code": "95453001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -170,15 +174,7 @@
       "synonyms": [],
       "name": "Addisons Disease",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Adhesions",
-      "coding": {
-        "code": "0000000",
+        "code": "363732003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -186,7 +182,7 @@
       "synonyms": [],
       "name": "African Tick Bite Fever",
       "coding": {
-        "code": "0000000",
+        "code": "406558002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -194,7 +190,7 @@
       "synonyms": [],
       "name": "Alcohol Dependence",
       "coding": {
-        "code": "0000000",
+        "code": "66590003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -202,7 +198,7 @@
       "synonyms": [],
       "name": "Allograft",
       "coding": {
-        "code": "0000000",
+        "code": "7970006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -210,23 +206,27 @@
       "synonyms": [],
       "name": "Alopecia",
       "coding": {
-        "code": "0000000",
+        "code": "56317004",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Alzheimer's Disease"
+      ],
       "name": "Alzheimer's",
       "coding": {
-        "code": "0000000",
+        "code": "26929004",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Amoebic Enteritis"
+      ],
       "name": "Amoebic Dysentry",
       "coding": {
-        "code": "0000000",
+        "code": "733153004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -234,15 +234,15 @@
       "synonyms": [],
       "name": "Amoebic liver abscess",
       "coding": {
-        "code": "0000000",
+        "code": "75119003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Amyloid",
+      "name": "Amyloidosis",
       "coding": {
-        "code": "0000000",
+        "code": "17602002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -250,7 +250,7 @@
       "synonyms": [],
       "name": "Anaemia",
       "coding": {
-        "code": "0000000",
+        "code": "271737000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -258,7 +258,7 @@
       "synonyms": [],
       "name": "Anaemia of Chronic Disease",
       "coding": {
-        "code": "0000000",
+        "code": "234347009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -266,7 +266,7 @@
       "synonyms": [],
       "name": "Ancylostoma",
       "coding": {
-        "code": "0000000",
+        "code": "17113000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -274,7 +274,7 @@
       "synonyms": [],
       "name": "Anisakiasis",
       "coding": {
-        "code": "0000000",
+        "code": "442652006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -282,7 +282,7 @@
       "synonyms": [],
       "name": "Ankylosing Spondylitis",
       "coding": {
-        "code": "0000000",
+        "code": "9631008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -290,7 +290,7 @@
       "synonyms": [],
       "name": "Anthrax",
       "coding": {
-        "code": "0000000",
+        "code": "409498004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -298,15 +298,17 @@
       "synonyms": [],
       "name": "Anti-phospholipid Syndrome",
       "coding": {
-        "code": "0000000",
+        "code": "26843008",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Dissection of Aorta"
+      ],
       "name": "Aortic dissection",
       "coding": {
-        "code": "0000000",
+        "code": "308546005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -314,7 +316,7 @@
       "synonyms": [],
       "name": "Aphthous ulcer",
       "coding": {
-        "code": "0000000",
+        "code": "427617000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -322,7 +324,7 @@
       "synonyms": [],
       "name": "Aplastic anemia",
       "coding": {
-        "code": "0000000",
+        "code": "306058006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -330,7 +332,7 @@
       "synonyms": [],
       "name": "Appendicitis",
       "coding": {
-        "code": "0000000",
+        "code": "74400008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -340,7 +342,7 @@
       ],
       "name": "Arthroplasty (hip)",
       "coding": {
-        "code": "0000000",
+        "code": "47458005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -350,7 +352,7 @@
       ],
       "name": "Arthroplasty (knee)",
       "coding": {
-        "code": "0000000",
+        "code": "19063003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -358,7 +360,7 @@
       "synonyms": [],
       "name": "Asbestosis",
       "coding": {
-        "code": "0000000",
+        "code": "22607003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -366,7 +368,7 @@
       "synonyms": [],
       "name": "Ascariasis",
       "coding": {
-        "code": "0000000",
+        "code": "2435008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -374,7 +376,7 @@
       "synonyms": [],
       "name": "Aseptic Meningitis",
       "coding": {
-        "code": "0000000",
+        "code": "301770000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -382,7 +384,7 @@
       "synonyms": [],
       "name": "Aspergillosis",
       "coding": {
-        "code": "0000000",
+        "code": "65553006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -390,7 +392,7 @@
       "synonyms": [],
       "name": "Aspiration Pneumonia",
       "coding": {
-        "code": "0000000",
+        "code": "422588002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -398,7 +400,7 @@
       "synonyms": [],
       "name": "Asthma",
       "coding": {
-        "code": "0000000",
+        "code": "195967001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -406,7 +408,7 @@
       "synonyms": [],
       "name": "Atrial flutter",
       "coding": {
-        "code": "0000000",
+        "code": "5370000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -414,15 +416,7 @@
       "synonyms": [],
       "name": "Atypical Pneumonia",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Autograft",
-      "coding": {
-        "code": "0000000",
+        "code": "233606009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -430,7 +424,7 @@
       "synonyms": [],
       "name": "Avascular Necrosis",
       "coding": {
-        "code": "0000000",
+        "code": "86217007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -440,7 +434,7 @@
       ],
       "name": "BKA",
       "coding": {
-        "code": "0000000",
+        "code": "88312006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -450,7 +444,7 @@
       ],
       "name": "BMT",
       "coding": {
-        "code": "0000000",
+        "code": "23719005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -458,7 +452,7 @@
       "synonyms": [],
       "name": "Babesiosis",
       "coding": {
-        "code": "0000000",
+        "code": "21061004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -466,7 +460,7 @@
       "synonyms": [],
       "name": "Bacteraemia",
       "coding": {
-        "code": "0000000",
+        "code": "5758002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -474,7 +468,7 @@
       "synonyms": [],
       "name": "Bacterial Gastroenteritis",
       "coding": {
-        "code": "0000000",
+        "code": "274080003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -482,7 +476,7 @@
       "synonyms": [],
       "name": "Bacterial Meningitis",
       "coding": {
-        "code": "0000000",
+        "code": "95883001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -490,7 +484,7 @@
       "synonyms": [],
       "name": "Balanitis",
       "coding": {
-        "code": "0000000",
+        "code": "44882003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -498,15 +492,17 @@
       "synonyms": [],
       "name": "Barrett's Oesophagus",
       "coding": {
-        "code": "0000000",
+        "code": "302914006",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "BCC"
+      ],
       "name": "Basal Cell Carcinoma",
       "coding": {
-        "code": "0000000",
+        "code": "254701007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -514,7 +510,7 @@
       "synonyms": [],
       "name": "Behcet's Syndrome",
       "coding": {
-        "code": "0000000",
+        "code": "310701003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -524,7 +520,7 @@
       ],
       "name": "Bejel",
       "coding": {
-        "code": "0000000",
+        "code": "240686008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -532,7 +528,7 @@
       "synonyms": [],
       "name": "Bell's Palsy",
       "coding": {
-        "code": "0000000",
+        "code": "193093009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -540,7 +536,7 @@
       "synonyms": [],
       "name": "Benign Intracranial Hypertension",
       "coding": {
-        "code": "0000000",
+        "code": "68267002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -548,7 +544,7 @@
       "synonyms": [],
       "name": "Benign Prostatic Hypertrophy",
       "coding": {
-        "code": "0000000",
+        "code": "266569009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -556,33 +552,26 @@
       "synonyms": [],
       "name": "Beri-beri",
       "coding": {
-        "code": "0000000",
+        "code": "36656008",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Bicuspid valve",
+      "name": "Bicuspid aortic valve",
       "coding": {
-        "code": "0000000",
+        "code": "72352009",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [
-        "Manic Depression"
+        "Manic Depression",
+        "Bipolar Affective Disorder"
       ],
-      "name": "Bipolar Syndrome",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
       "name": "Bipolar disorder",
       "coding": {
-        "code": "0000000",
+        "code": "13746004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -590,7 +579,7 @@
       "synonyms": [],
       "name": "Bladder Cancer",
       "coding": {
-        "code": "0000000",
+        "code": "399326009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -598,7 +587,7 @@
       "synonyms": [],
       "name": "Bladder stricture",
       "coding": {
-        "code": "0000000",
+        "code": "182661000119107",
         "system": "http://snomed.info/sct"
       }
     },
@@ -606,31 +595,31 @@
       "synonyms": [],
       "name": "Blind",
       "coding": {
-        "code": "0000000",
+        "code": "105597003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Blocked intrathecal pump",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
+      "name": "Blocked intrathecal pump"
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Furuncle"
+      ],
       "name": "Boil",
       "coding": {
-        "code": "0000000",
+        "code": "416675009",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Dermantoba hominis"
+      ],
       "name": "Botfly",
       "coding": {
-        "code": "0000000",
+        "code": "37096001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -638,15 +627,31 @@
       "synonyms": [],
       "name": "Botulism",
       "coding": {
-        "code": "0000000",
+        "code": "398565003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Bowl obstruction",
+      "name": "Bowel Obstruction",
       "coding": {
-        "code": "0000000",
+        "code": "81060008",
+        "system": "http://snomed.info/sct"
+      }
+    },
+    {
+      "synonyms": [],
+      "name": "Small Bowel Obstruction",
+      "coding": {
+        "code": "281255004",
+        "system": "http://snomed.info/sct"
+      }
+    },
+    {
+      "synonyms": [],
+      "name": "Large Bowl obstruction",
+      "coding": {
+        "code": "281254000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -656,7 +661,7 @@
       ],
       "name": "Brain Abscess",
       "coding": {
-        "code": "0000000",
+        "code": "27614006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -664,7 +669,7 @@
       "synonyms": [],
       "name": "Brainstem encephalitis",
       "coding": {
-        "code": "0000000",
+        "code": "230190006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -672,7 +677,7 @@
       "synonyms": [],
       "name": "Breast Cancer",
       "coding": {
-        "code": "0000000",
+        "code": "254837009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -680,7 +685,7 @@
       "synonyms": [],
       "name": "Bronchiectasis",
       "coding": {
-        "code": "0000000",
+        "code": "12295008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -688,7 +693,7 @@
       "synonyms": [],
       "name": "Brucellosis",
       "coding": {
-        "code": "0000000",
+        "code": "75702008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -696,7 +701,7 @@
       "synonyms": [],
       "name": "Burkitts Lymphoma",
       "coding": {
-        "code": "0000000",
+        "code": "118617000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -704,15 +709,7 @@
       "synonyms": [],
       "name": "Bursitis",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Bursititis",
-      "coding": {
-        "code": "0000000",
+        "code": "84017003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -720,17 +717,17 @@
       "synonyms": [],
       "name": "Buttock Abscess",
       "coding": {
-        "code": "0000000",
+        "code": "64576003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [
-        "Clostridium difficile"
+        "Clostridium difficile colitis"
       ],
       "name": "C diff",
       "coding": {
-        "code": "0000000",
+        "code": "423590009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -738,7 +735,7 @@
       "synonyms": [],
       "name": "CADASIL",
       "coding": {
-        "code": "0000000",
+        "code": "724779000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -748,7 +745,7 @@
       ],
       "name": "CAP",
       "coding": {
-        "code": "0000000",
+        "code": "385093006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -758,15 +755,19 @@
       ],
       "name": "CCHF",
       "coding": {
-        "code": "0000000",
+        "code": "43489008",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Jakob-Creutzfeldt disease",
+        "Creutzfeldt Jakob disease",
+        "Creutzfeldt-Jakob disease"
+      ],
       "name": "CJD",
       "coding": {
-        "code": "0000000",
+        "code": "792004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -776,7 +777,7 @@
       ],
       "name": "CKD",
       "coding": {
-        "code": "0000000",
+        "code": "709044004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -786,7 +787,7 @@
       ],
       "name": "CLL",
       "coding": {
-        "code": "0000000",
+        "code": "92814006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -796,7 +797,7 @@
       ],
       "name": "CLM",
       "coding": {
-        "code": "0000000",
+        "code": "19362000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -806,7 +807,7 @@
       ],
       "name": "CML",
       "coding": {
-        "code": "0000000",
+        "code": "92818009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -816,7 +817,7 @@
       ],
       "name": "COPD",
       "coding": {
-        "code": "0000000",
+        "code": "13645005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -826,7 +827,7 @@
       ],
       "name": "CVID",
       "coding": {
-        "code": "0000000",
+        "code": "23238000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -834,23 +835,15 @@
       "synonyms": [],
       "name": "Candidaemia",
       "coding": {
-        "code": "0000000",
+        "code": "432261003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Candidiaemia",
+      "name": "Carcinoid tumour",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Carcinoid",
-      "coding": {
-        "code": "0000000",
+        "code": "443492008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -858,23 +851,25 @@
       "synonyms": [],
       "name": "Cardiomyopathy",
       "coding": {
-        "code": "0000000",
+        "code": "85898001",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Bartonellosis"
+      ],
       "name": "Cat-scratch disease",
       "coding": {
-        "code": "0000000",
+        "code": "79974007",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Cauda Equina",
+      "name": "Cauda Equina Syndrome",
       "coding": {
-        "code": "0000000",
+        "code": "192970008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -882,7 +877,7 @@
       "synonyms": [],
       "name": "Cellulitis",
       "coding": {
-        "code": "0000000",
+        "code": "128045006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -890,7 +885,7 @@
       "synonyms": [],
       "name": "Cerebellar Syndrome",
       "coding": {
-        "code": "0000000",
+        "code": "224186005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -898,7 +893,7 @@
       "synonyms": [],
       "name": "Cerebral Vasculitis",
       "coding": {
-        "code": "0000000",
+        "code": "427020007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -906,7 +901,7 @@
       "synonyms": [],
       "name": "Cervical Cancer",
       "coding": {
-        "code": "0000000",
+        "code": "363354003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -914,7 +909,7 @@
       "synonyms": [],
       "name": "Cervicitis",
       "coding": {
-        "code": "0000000",
+        "code": "37610005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -922,7 +917,7 @@
       "synonyms": [],
       "name": "Chagas Disease",
       "coding": {
-        "code": "0000000",
+        "code": "77506005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -930,31 +925,29 @@
       "synonyms": [],
       "name": "Chancroid",
       "coding": {
-        "code": "0000000",
+        "code": "266143009",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Chest crisis",
+      "name": "Chest crisis"
+    },
+    {
+      "synonyms": [
+        "Varicella"
+      ],
+      "name": "Chicken pox",
       "coding": {
-        "code": "0000000",
+        "code": "38907003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Chickenpox",
+      "name": "Chikungunya fever",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Chikungunya",
-      "coding": {
-        "code": "0000000",
+        "code": "111864006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -964,7 +957,7 @@
       ],
       "name": "Cholangitis",
       "coding": {
-        "code": "0000000",
+        "code": "26918003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -972,7 +965,7 @@
       "synonyms": [],
       "name": "Cholecystitis",
       "coding": {
-        "code": "0000000",
+        "code": "76581006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -980,15 +973,15 @@
       "synonyms": [],
       "name": "Cholera",
       "coding": {
-        "code": "0000000",
+        "code": "63650001",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Chronic Granulomatis Disease",
+      "name": "Chronic granulomatous disease",
       "coding": {
-        "code": "0000000",
+        "code": "387759001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -996,7 +989,7 @@
       "synonyms": [],
       "name": "Chronic Pain",
       "coding": {
-        "code": "0000000",
+        "code": "373621006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1004,7 +997,7 @@
       "synonyms": [],
       "name": "Chronic Pancreatitis",
       "coding": {
-        "code": "0000000",
+        "code": "235494005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1014,7 +1007,7 @@
       ],
       "name": "Chronic SDH",
       "coding": {
-        "code": "0000000",
+        "code": "304831001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1030,7 +1023,7 @@
       "synonyms": [],
       "name": "Chronic venous ulcer",
       "coding": {
-        "code": "0000000",
+        "code": "40055000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1038,7 +1031,7 @@
       "synonyms": [],
       "name": "Churg Strauss Syndrome",
       "coding": {
-        "code": "0000000",
+        "code": "82275008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1046,15 +1039,15 @@
       "synonyms": [],
       "name": "Ciguatera Poisoning",
       "coding": {
-        "code": "0000000",
+        "code": "241774007",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Cirrhosis",
+      "name": "Cirrhosis of liver",
       "coding": {
-        "code": "0000000",
+        "code": "19943007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1062,15 +1055,15 @@
       "synonyms": [],
       "name": "Coccidioidomycosis",
       "coding": {
-        "code": "0000000",
+        "code": "60826002",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Coeliac",
+      "name": "Coeliac disease",
       "coding": {
-        "code": "0000000",
+        "code": "396331005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1078,23 +1071,25 @@
       "synonyms": [],
       "name": "Colon Cancer",
       "coding": {
-        "code": "0000000",
+        "code": "363406005",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Anogenital warts"
+      ],
       "name": "Condyloma acuminatum",
       "coding": {
-        "code": "0000000",
+        "code": "240542006",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Conjuncitivitis",
+      "name": "Conjunctivitis",
       "coding": {
-        "code": "0000000",
+        "code": "9826008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1102,7 +1097,7 @@
       "synonyms": [],
       "name": "Connective Tissue Disease",
       "coding": {
-        "code": "0000000",
+        "code": "105969002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1110,15 +1105,15 @@
       "synonyms": [],
       "name": "Contact Dermatitis",
       "coding": {
-        "code": "0000000",
+        "code": "40275004",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Conyloma acuminata",
+      "name": "condyloma acuminata",
       "coding": {
-        "code": "0000000",
+        "code": "733132008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1126,15 +1121,18 @@
       "synonyms": [],
       "name": "Cor Pulmonale",
       "coding": {
-        "code": "0000000",
+        "code": "83291003",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Spinal cord compression",
+        "Compression of spinal cord"
+      ],
       "name": "Cord Compression",
       "coding": {
-        "code": "0000000",
+        "code": "71286001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1142,7 +1140,7 @@
       "synonyms": [],
       "name": "Cowpox",
       "coding": {
-        "code": "0000000",
+        "code": "70090004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1150,15 +1148,17 @@
       "synonyms": [],
       "name": "Crohn's Disease",
       "coding": {
-        "code": "0000000",
+        "code": "34000006",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Cryptococcus-related immune reconstitution inflammatory syndrome"
+      ],
       "name": "Cryptococcal IRIS",
       "coding": {
-        "code": "0000000",
+        "code": "426202004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1166,23 +1166,31 @@
       "synonyms": [],
       "name": "Cryptococcal Meningitis",
       "coding": {
-        "code": "0000000",
+        "code": "14232007",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Cryptosporidium",
+      "name": "Cryptosporidium infection",
       "coding": {
-        "code": "0000000",
+        "code": "58777003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Cushing's",
+      "name": "Cushing's Disease",
       "coding": {
-        "code": "0000000",
+        "code": "190502001",
+        "system": "http://snomed.info/sct"
+      }
+    },
+    {
+      "synonyms": [],
+      "name": "Cushing's Syndrome",
+      "coding": {
+        "code": "47270006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1190,7 +1198,7 @@
       "synonyms": [],
       "name": "Cutaneous Leishmaniasis",
       "coding": {
-        "code": "0000000",
+        "code": "240637006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1198,7 +1206,7 @@
       "synonyms": [],
       "name": "Cystic Fibrosis",
       "coding": {
-        "code": "0000000",
+        "code": "190905008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1208,7 +1216,7 @@
       ],
       "name": "DKA",
       "coding": {
-        "code": "0000000",
+        "code": "420422005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1218,7 +1226,7 @@
       ],
       "name": "DLBCL",
       "coding": {
-        "code": "0000000",
+        "code": "847741000000106",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1228,7 +1236,7 @@
       ],
       "name": "DVT",
       "coding": {
-        "code": "0000000",
+        "code": "128053003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1236,15 +1244,7 @@
       "synonyms": [],
       "name": "Dehydration",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Delirium",
-      "coding": {
-        "code": "0000000",
+        "code": "34095006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1252,7 +1252,7 @@
       "synonyms": [],
       "name": "Delusional parasitosis",
       "coding": {
-        "code": "0000000",
+        "code": "238973003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1260,7 +1260,7 @@
       "synonyms": [],
       "name": "Dementia",
       "coding": {
-        "code": "0000000",
+        "code": "52448006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1268,7 +1268,7 @@
       "synonyms": [],
       "name": "Dengue fever",
       "coding": {
-        "code": "0000000",
+        "code": "38362002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1276,7 +1276,7 @@
       "synonyms": [],
       "name": "Dental Abscess",
       "coding": {
-        "code": "0000000",
+        "code": "299709002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1284,7 +1284,7 @@
       "synonyms": [],
       "name": "Depression",
       "coding": {
-        "code": "0000000",
+        "code": "35489007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1292,7 +1292,7 @@
       "synonyms": [],
       "name": "Dermatitis herpetiformis",
       "coding": {
-        "code": "0000000",
+        "code": "111196000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1300,7 +1300,7 @@
       "synonyms": [],
       "name": "Dermatomyositis",
       "coding": {
-        "code": "0000000",
+        "code": "396230008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1308,15 +1308,17 @@
       "synonyms": [],
       "name": "Dermatophytosis",
       "coding": {
-        "code": "0000000",
+        "code": "47382004",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
-      "name": "Devics Disease",
+      "synonyms": [
+        "Neuromyelitis optica"
+      ],
+      "name": "Devic's Disease",
       "coding": {
-        "code": "0000000",
+        "code": "25044007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1324,7 +1326,7 @@
       "synonyms": [],
       "name": "Diabetes Insipidus",
       "coding": {
-        "code": "0000000",
+        "code": "15771004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1334,7 +1336,7 @@
       ],
       "name": "Diabetic Foot Infection",
       "coding": {
-        "code": "0000000",
+        "code": "419100001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1342,7 +1344,7 @@
       "synonyms": [],
       "name": "Diarrhoea",
       "coding": {
-        "code": "0000000",
+        "code": "128333008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1350,7 +1352,7 @@
       "synonyms": [],
       "name": "Diffuse Systemic Sclerosis",
       "coding": {
-        "code": "0000000",
+        "code": "128460000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1358,23 +1360,17 @@
       "synonyms": [],
       "name": "Diphtheria",
       "coding": {
-        "code": "0000000",
+        "code": "397428000",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Intervertebral disc prolapse"
+      ],
       "name": "Disc Prolapse",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Disciitis",
-      "coding": {
-        "code": "0000000",
+        "code": "73589001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1382,7 +1378,7 @@
       "synonyms": [],
       "name": "Discitis",
       "coding": {
-        "code": "0000000",
+        "code": "2304001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1390,7 +1386,7 @@
       "synonyms": [],
       "name": "Diverticular Disease",
       "coding": {
-        "code": "0000000",
+        "code": "397881000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1400,15 +1396,17 @@
       ],
       "name": "Drug Overdose",
       "coding": {
-        "code": "0000000",
+        "code": "55680006",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Adverse drug reaction"
+      ],
       "name": "Drug Reaction",
       "coding": {
-        "code": "0000000",
+        "code": "62014003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1416,7 +1414,7 @@
       "synonyms": [],
       "name": "Drug induced psychosis",
       "coding": {
-        "code": "0000000",
+        "code": "191483003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1424,7 +1422,7 @@
       "synonyms": [],
       "name": "Duodenal ulcer",
       "coding": {
-        "code": "0000000",
+        "code": "51868009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1432,7 +1430,7 @@
       "synonyms": [],
       "name": "Duodenitis",
       "coding": {
-        "code": "0000000",
+        "code": "72007001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1440,7 +1438,7 @@
       "synonyms": [],
       "name": "East African Trypanosomiasis",
       "coding": {
-        "code": "0000000",
+        "code": "27031003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1448,7 +1446,7 @@
       "synonyms": [],
       "name": "Ebola",
       "coding": {
-        "code": "0000000",
+        "code": "37109004",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1456,7 +1454,7 @@
       "synonyms": [],
       "name": "Eclampsia",
       "coding": {
-        "code": "0000000",
+        "code": "15938005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1464,7 +1462,7 @@
       "synonyms": [],
       "name": "Ectopic Pregnancy",
       "coding": {
-        "code": "0000000",
+        "code": "34801009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1472,7 +1470,7 @@
       "synonyms": [],
       "name": "Eczema",
       "coding": {
-        "code": "0000000",
+        "code": "43116000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1480,13 +1478,13 @@
       "synonyms": [],
       "name": "Eczema herpeticum",
       "coding": {
-        "code": "0000000",
+        "code": "186535001",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Ehrlichosis",
+      "name": "Ehrlichiosis",
       "coding": {
         "code": "0000000",
         "system": "http://snomed.info/sct"
@@ -1496,7 +1494,7 @@
       "synonyms": [],
       "name": "Empyema",
       "coding": {
-        "code": "0000000",
+        "code": "312682007",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1504,7 +1502,7 @@
       "synonyms": [],
       "name": "Encephalitis",
       "coding": {
-        "code": "0000000",
+        "code": "45170000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1512,7 +1510,7 @@
       "synonyms": [],
       "name": "Endometrial Cancer",
       "coding": {
-        "code": "0000000",
+        "code": "254878006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1520,23 +1518,25 @@
       "synonyms": [],
       "name": "Endometriosis",
       "coding": {
-        "code": "0000000",
+        "code": "129103003",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Endophtalmitis",
+      "name": "Endophthalmitis",
       "coding": {
-        "code": "0000000",
+        "code": "1847009",
         "system": "http://snomed.info/sct"
       }
     },
     {
-      "synonyms": [],
+      "synonyms": [
+        "Typhoid Fever"
+      ],
       "name": "Enteric Fever",
       "coding": {
-        "code": "0000000",
+        "code": "4834000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1544,15 +1544,15 @@
       "synonyms": [],
       "name": "Eosinophilia",
       "coding": {
-        "code": "0000000",
+        "code": "419455006",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Eosinophilic Meninigitis",
+      "name": "Eosinophilic meningitis",
       "coding": {
-        "code": "0000000",
+        "code": "25671008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1560,7 +1560,7 @@
       "synonyms": [],
       "name": "Epidemic Typhus",
       "coding": {
-        "code": "0000000",
+        "code": "39111003",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1568,7 +1568,7 @@
       "synonyms": [],
       "name": "Epididymitis",
       "coding": {
-        "code": "0000000",
+        "code": "31070006",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1576,7 +1576,7 @@
       "synonyms": [],
       "name": "Epidural Abscess",
       "coding": {
-        "code": "0000000",
+        "code": "61974008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1584,7 +1584,7 @@
       "synonyms": [],
       "name": "Epiglottitis",
       "coding": {
-        "code": "0000000",
+        "code": "80384002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1592,7 +1592,7 @@
       "synonyms": [],
       "name": "Epilepsy",
       "coding": {
-        "code": "0000000",
+        "code": "84757009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1600,7 +1600,7 @@
       "synonyms": [],
       "name": "Episcleritis",
       "coding": {
-        "code": "0000000",
+        "code": "815008",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1608,7 +1608,7 @@
       "synonyms": [],
       "name": "Erysipelas",
       "coding": {
-        "code": "0000000",
+        "code": "44653001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1616,7 +1616,7 @@
       "synonyms": [],
       "name": "Erythema Multiforme",
       "coding": {
-        "code": "0000000",
+        "code": "36715001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1624,7 +1624,7 @@
       "synonyms": [],
       "name": "Erythema Nodosum",
       "coding": {
-        "code": "0000000",
+        "code": "32861005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1632,15 +1632,7 @@
       "synonyms": [],
       "name": "Erythema Nodosum Leprosum",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Erythema Nodousm",
-      "coding": {
-        "code": "0000000",
+        "code": "240410002",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1648,7 +1640,7 @@
       "synonyms": [],
       "name": "Erythroderma",
       "coding": {
-        "code": "0000000",
+        "code": "399992009",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1658,33 +1650,35 @@
       ],
       "name": "EtOH Withdrawal",
       "coding": {
-        "code": "0000000",
+        "code": "191480000",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [],
-      "name": "Ewings Sarcoma",
+      "name": "Ewing's Sarcoma",
       "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Extrinsic\u00a0allergic\u00a0alveolitis",
-      "coding": {
-        "code": "0000000",
+        "code": "307608006",
         "system": "http://snomed.info/sct"
       }
     },
     {
       "synonyms": [
-        "Familial Meiterranean Fever"
+        "Bagpipe lung"
+      ],
+      "name": "Extrinsic allergic alveolitis",
+      "coding": {
+        "code": "37471005",
+        "system": "http://snomed.info/sct"
+      }
+    },
+    {
+      "synonyms": [
+        "Familial Mediterranean Fever"
       ],
       "name": "FMF",
       "coding": {
-        "code": "0000000",
+        "code": "12579009",
         "system": "http://snomed.info/sct"
       }
     },
