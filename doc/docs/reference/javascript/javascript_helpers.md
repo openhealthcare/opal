@@ -70,14 +70,6 @@ If the form is valid, it will allow the ng-click function to be called.
 This means that if you only want to show error messages after the user has clicked the save button you can do so with the
 form.$submitted variable.
 
-#### scroll-top
-
-Adds a click handler to the element that when click will animate the body of the element to scroll to the top
-
-#### go-to-top
-
-Similar to scroll-top, this moves the scroll bar to the top of the page but doesn't animate the transition.
-
 #### copy to clipboard
 
 ##### e.g.

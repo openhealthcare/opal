@@ -81,32 +81,6 @@ directives.directive("freezeHeaders", function () {
     };
 });
 
-directives.directive('scrollTop', function () {
-    return {
-        link: function (scope, element, attrs) {
-            var body = $("html, body");
-            element.bind("click", function(){
-                body.animate({ scrollTop: "0" });
-            });
-
-            $(window).on("scroll.scrollTop", function(){
-                window.requestAnimationFrame(function(){
-                    if($(window).scrollTop() > 0){
-                        $(element).removeClass("hidden-at-top");
-                    }
-                    else{
-                        $(element).addClass("hidden-at-top");
-                    }
-                });
-            });
-
-            scope.$on('$destroy', function(){
-                $(window).off("resize.fixHeight");
-            });
-        }
-    };
-});
-
 directives.directive('goToTop', function () {
     return {
         priority: 1,
@@ -118,7 +92,6 @@ directives.directive('goToTop', function () {
         }
     };
 });
-
 
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
