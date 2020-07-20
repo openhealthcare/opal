@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
-from django.views.generic import View, TemplateView
+from django.views.generic import View, TemplateView, ListView
 
 from rest_framework import status
 
@@ -118,7 +118,6 @@ def simple_search_view(request):
     )
 
     return json_response(paginated)
-
 
 class ExtractSearchView(View):
     @ajax_login_required_view
@@ -242,3 +241,60 @@ class ExtractFileView(View):
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp
         return resp
+
+
+class SimpleSearchResultsList(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    template_name = "search/simple_results.html"
+
+    def get_queryset(self, *args, **kwargs):
+        query_string = self.request.GET.get("query")
+        if not query_string:
+            return []
+
+        self.query = queries.create_query(self.request.user, query_string)
+        patients = self.query.fuzzy_query()
+        if not patients:
+            return models.Episode.objects.none()
+
+        episodes = models.Episode.objects.filter(
+            patient__in=patients
+        ).order_by("-pk")
+
+        patient_ids = set()
+        result = []
+
+        # If a patient has multiple episodes in the list
+        # ignore the additional episodes
+        for episode in episodes:
+            if episode.patient_id in patient_ids:
+                continue
+            result.append(episode)
+            patient_ids.add(episode.patient_id)
+        return result
+
+    def get_min_max_page_number(self, current_page_num, page_count):
+        """
+        Provdes the range shown by the paginator
+
+        if we're on page 1 of 100 results, show a page range of 1-7
+        if we're on page 2 show a page range of 1-7
+        if we're on page 5 show a page range of 2-8
+        if we're on page 99 show a page range of 94-100
+        """
+        min_page = min(current_page_num - 3, page_count-6)
+        min_page = max(min_page, 1)
+        max_page = min(min_page + 6, page_count)
+        return min_page, max_page
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        if context["object_list"]:
+            context["object_list"] = self.query.get_aggregate_patients_from_episodes(
+                context["object_list"]
+            )
+
+        context["min_page"], context["max_page"] = self.get_min_max_page_number(
+            context["page_obj"].number, context["paginator"].num_pages
+        )
+        return context

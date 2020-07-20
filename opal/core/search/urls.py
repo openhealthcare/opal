@@ -39,4 +39,5 @@ urlpatterns = [
 
     url(r'^search/extract/download/(?P<task_id>[a-zA-Z0-9-]*)',
         views.ExtractFileView.as_view(), name='extract_file'),
+    url(r'^search', views.SimpleSearchResultsList.as_view(), name="simple_search")
 ]
