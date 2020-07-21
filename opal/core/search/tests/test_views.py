@@ -7,6 +7,7 @@ from datetime import date
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
+from django.urls import reverse
 from unittest.mock import patch, mock_open
 
 from opal import models
@@ -138,185 +139,6 @@ class PatientSearchTestCase(BaseSearchTestCase):
         url = "/search/patient/"
         resp = self.get_response(url)
         self.assertEqual(400, resp.status_code)
-
-
-class SimpleSearchViewTestCase(BaseSearchTestCase):
-    maxDiff = None
-
-    def setUp(self):
-        super(SimpleSearchViewTestCase, self).setUp()
-        self.url = '/search/simple/'
-        self.view = views.simple_search_view
-        self.expected = {
-            u'page_number': 1,
-            u'object_list': [{
-                u'count': 1,
-                u'first_name': u'Sean',
-                u'surname': u'Connery',
-                u'end': u'15/10/2015',
-                u'patient_id': self.patient.id,
-                u'hospital_number': u'007',
-                u'date_of_birth': None,
-                u'start': u'15/10/2015',
-                u'categories': [u'Inpatient']
-            }],
-            u'total_count': 1,
-            u'total_pages': 1,
-        }
-
-        self.empty_expected = {
-            "page_number": 1,
-            "object_list": [],
-            "total_pages": 1,
-            "total_count": 0
-        }
-        dt = date(
-            day=15, month=10, year=2015
-        )
-        self.episode.date_of_episode = dt
-        self.episode.start = dt
-        self.episode.end = dt
-        self.episode.save()
-
-    def test_not_logged_in(self):
-        request = self.get_not_logged_in_request()
-        with self.assertRaises(PermissionDenied):
-            self.view(request)
-
-    def test_must_provide_name_or_hospital_number(self):
-        resp = self.get_response(self.url)
-        self.assertEqual(400, resp.status_code)
-
-    # Searching for a patient that exists by partial name match
-    def test_patient_exists_partial_name(self):
-        resp = self.get_response("%s?query=Co" % self.url)
-        data = json.loads(resp.content.decode('UTF-8'))
-        self.assertEqual(self.expected, data)
-
-    # Searching for a patient that exists by partial HN match
-    def test_patient_exists_partial_number(self):
-        resp = self.get_response('%s?query=07' % self.url)
-        data = json.loads(resp.content.decode('UTF-8'))
-        self.assertEqual(self.expected, data)
-
-    # Searching for a patient that exists by name
-    def test_patient_exists_name(self):
-        resp = self.get_response('%s?query=Connery' % self.url)
-        data = json.loads(resp.content.decode('UTF-8'))
-        self.assertEqual(self.expected, data)
-
-    # Searching for a patient that doesn't exist by Hospital Number
-    def test_patient_does_not_exist_number(self):
-        resp = self.get_response('%s?query=notareanumber' % self.url)
-        data = json.loads(resp.content.decode('UTF-8'))
-        self.assertEqual(self.empty_expected, data)
-
-    # Searching for a patient that doesn't exist by name
-    def test_patient_does_not_exist_name(self):
-        request = self.rf.get('%s/?query=notareaname' % self.url)
-        request.user = self.user
-        resp = self.view(request)
-        data = json.loads(resp.content.decode('UTF-8'))
-        self.assertEqual(self.empty_expected, data)
-
-    # Searching for a patient that exists by Hospital Number
-    def test_patient_exists_number(self):
-        request = self.rf.get('%s/?query=007' % self.url)
-        request.user = self.user
-        resp = self.view(request)
-        data = json.loads(resp.content.decode('UTF-8'))
-        self.assertEqual(self.expected, data)
-
-    # searching by James Bond should only yield James Bond
-    def test_incomplete_matching(self):
-        james_patient, sam_episode = self.create_patient(
-            "James", "Bond", "23412"
-        )
-        sam_patient, sam_episode = self.create_patient(
-            "Samantha", "Bond", "23432"
-        )
-        blofeld_patient, blofeld_episode = self.create_patient(
-            "Ernst", "Blofeld", "23422"
-        )
-        resp = self.get_response('{}/?query=James%20Bond'.format(self.url))
-        data = json.loads(resp.content.decode('UTF-8'))["object_list"]
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]["first_name"], "James")
-        self.assertEqual(data[0]["surname"], "Bond")
-
-    def test_number_of_queries(self):
-        """ Pagination should make sure we
-            do the same number of queries
-            despite the number of results.
-        """
-        # we need to make sure we're all logged in before we start
-        self.assertIsNotNone(self.user)
-        for i in range(100):
-            self.create_patient(
-                "James", "Bond", str(i)
-            )
-
-        with self.assertNumQueries(26):
-            self.get_response('{}/?query=Bond'.format(self.url))
-
-        for i in range(20):
-            self.create_patient(
-                "James", "Blofelt", str(i)
-            )
-
-        with self.assertNumQueries(26):
-            self.get_response('{}/?query=Blofelt'.format(self.url))
-
-    def test_with_multiple_patient_episodes(self):
-        self.patient.create_episode()
-        blofeld_patient, blofeld_episode = self.create_patient(
-            "Ernst", "Blofeld", "23422"
-        )
-        response = json.loads(
-            self.get_response(
-                '{}/?query=Blofeld'.format(self.url)
-            ).content.decode('UTF-8')
-        )
-        expected = {
-            "total_pages": 1,
-            "object_list": [{
-                "count": 1,
-                "first_name": "Ernst",
-                "surname": "Blofeld",
-                "start": None,
-                "patient_id": blofeld_patient.id,
-                "hospital_number": "23422",
-                "date_of_birth": None,
-                "end": None,
-                "categories": ["Inpatient"]
-            }],
-            "page_number": 1,
-            "total_count": 1
-        }
-        self.assertEqual(response, expected)
-
-    @patch('opal.core.search.views.PAGINATION_AMOUNT', 2)
-    def test_patients_more_than_pagination_amount(self):
-        """
-        Prior to 0.16.0 the implementation would sometimes
-        return results with fewer than the number of results
-        that should have been on that page.
-
-        This is because a subquery was paginating by the
-        number of episodes rather than the number of
-        patients.
-        """
-        blofeld_patient, blofeld_episode = self.create_patient(
-            "Ernst", "Blofeld", "23422"
-        )
-        blofeld_patient.create_episode()
-
-        response = json.loads(
-            self.get_response(
-                '{}/?query=o'.format(self.url)
-            ).content.decode('UTF-8')
-        )
-        self.assertEqual(len(response["object_list"]), 2)
 
 
 class SearchTemplateTestCase(OpalTestCase):
@@ -499,3 +321,68 @@ class ExtractFileView(BaseSearchTestCase):
         async_result.return_value.state = 'FAILURE'
         with self.assertRaises(ValueError):
             view.get(task_id=8902321890)
+
+
+class SimpleSearchResultsListTestCase(BaseSearchTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("simple_search")
+        self.view = views.SimpleSearchResultsList.as_view()
+
+    def test_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertRedirects(response, '/accounts/login/?next={}'.format(
+            self.url
+        ))
+
+    def test_no_querystring(self):
+        view = views.SimpleSearchResultsList()
+        view.request = self.get_logged_in_request()
+        self.assertEqual(
+            view.get_queryset(), []
+        )
+
+    def test_duplicate_episodes_for_the_same_patient_are_not_counted(self):
+        expected_episode = self.patient.create_episode()
+        request = self.rf.get("{}?query=Sean".format(self.url))
+        request.user = self.user
+        view = views.SimpleSearchResultsList()
+        view.request = request
+        self.assertEqual(
+            list(view.get_queryset()), [expected_episode]
+        )
+
+    def test_min_max_page_number_one(self):
+        self.assertEqual(
+            (1, 7,), views.SimpleSearchResultsList().get_min_max_page_number(1, 100)
+        )
+
+    def test_min_max_page_number_two(self):
+        self.assertEqual(
+            (1, 7,), views.SimpleSearchResultsList().get_min_max_page_number(2, 100)
+        )
+
+    def test_min_max_page_number_five(self):
+        self.assertEqual(
+            (2, 8,), views.SimpleSearchResultsList().get_min_max_page_number(5, 100)
+        )
+
+    def test_min_max_page_number_near_end(self):
+        self.assertEqual(
+            (94, 100,), views.SimpleSearchResultsList().get_min_max_page_number(99, 100)
+        )
+
+    def test_min_max_small_result_set(self):
+        self.assertEqual(
+            (1, 3,), views.SimpleSearchResultsList().get_min_max_page_number(2, 3)
+        )
+
+    def test_vanilla_get(self):
+        url = "{}?query=Sean".format(self.url)
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
+        self.client.get(url)
+
