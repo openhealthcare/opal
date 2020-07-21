@@ -1,5 +1,8 @@
 ### 0.18.4 (Minor Release)
 
+#### Search is now a static page
+Search is now a static page and renders its results on the server. This uses significantly less code for the same functionality.
+
 #### Remove shortDate and shortDateTime
 The angular filters shortDate and shortDateTime have been deprecated for some time.
 
