@@ -92,33 +92,6 @@ def patient_search_view(request):
     return json_response(query.patients_as_json())
 
 
-@with_no_caching
-@require_http_methods(['GET'])
-@ajax_login_required
-def simple_search_view(request):
-    page_number = int(request.GET.get("page_number", 1))
-    query_string = request.GET.get("query")
-    if not query_string:
-        return json_response({'error': "No search terms"}, 400)
-
-    query = queries.create_query(request.user, query_string)
-    patients = query.fuzzy_query()
-    paginated = _add_pagination(patients, page_number)
-    paginated_patients = paginated["object_list"]
-
-    # on postgres it blows up if we don't manually manage this
-    if not paginated_patients:
-        paginated_patients = models.Patient.objects.none()
-
-    episodes = models.Episode.objects.filter(
-        patient__in=paginated_patients
-    )
-    paginated["object_list"] = query.get_aggregate_patients_from_episodes(
-        episodes
-    )
-
-    return json_response(paginated)
-
 class ExtractSearchView(View):
     @ajax_login_required_view
     def post(self, *args, **kwargs):

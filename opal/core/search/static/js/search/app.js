@@ -17,10 +17,6 @@
 
   app.config(function($routeProvider){
     $routeProvider
-    .when('/', {
-      controller: 'SearchCtrl',
-      templateUrl: '/search/templates/search.html',
-    })
     .when('/extract', {
         controller: 'ExtractCtrl',
         templateUrl: '/search/templates/extract.html',
