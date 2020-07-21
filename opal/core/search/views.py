@@ -263,11 +263,14 @@ class SimpleSearchResultsList(LoginRequiredMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         if context["object_list"]:
-            context["object_list"] = self.query.get_aggregate_patients_from_episodes(
+            object_list = self.query.get_aggregate_patients_from_episodes(
                 context["object_list"]
             )
+            context["object_list"] = object_list
 
-        context["min_page"], context["max_page"] = self.get_min_max_page_number(
+        min_page, max_page = self.get_min_max_page_number(
             context["page_obj"].number, context["paginator"].num_pages
         )
+        context["min_page"] = min_page
+        context["max_page"] = max_page
         return context
