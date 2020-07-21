@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .service('UserProfile', function($q, $http, $window, $routeParams, $log) {
+    .service('UserProfile', function($q, $http, $window, $routeParams) {
         var UserProfile = function(profiledata){
             var profile = this;
 

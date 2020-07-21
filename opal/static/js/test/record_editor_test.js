@@ -2,41 +2,11 @@ describe('RecordEditor', function(){
     "use strict";
 
     var $scope, $modal, $routeParams;
-    var $rootScope, $q, $controller;
-    var Episode, episode;
-    var controller, UserProfile;
+    var $rootScope, $q;
+    var episode;
+    var UserProfile;
     var opalTestHelper;
     var profile, $log;
-
-    var episodeData = {
-        id: 123,
-        active: true,
-        prev_episodes: [],
-        next_episodes: [],
-        demographics: [{
-            id: 101,
-            patient_id: 99,
-            name: 'John Smith',
-            date_of_birth: '1980-07-31'
-        }],
-        tagging: [{'mine': true, 'tropical': true}],
-        location: [{
-            category: 'Inepisode',
-            hospital: 'UCH',
-            ward: 'T10',
-            bed: '15',
-            date_of_admission: '2013-08-01',
-        }],
-        diagnosis: [{
-            id: 102,
-            condition: 'Dengue',
-            provisional: true,
-        }, {
-            id: 103,
-            condition: 'Malaria',
-            provisional: false,
-        }]
-    };
 
     var columns = {
         "default": [
@@ -89,9 +59,7 @@ describe('RecordEditor', function(){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
             $routeParams = $injector.get('$routeParams');
-            $controller = $injector.get('$controller');
             $modal = $injector.get('$modal');
-            Episode = $injector.get('Episode');
             $q = $injector.get('$q');
             UserProfile = $injector.get('UserProfile');
             opalTestHelper = $injector.get('opalTestHelper');
@@ -109,8 +77,6 @@ describe('RecordEditor', function(){
         spyOn($log, "warn");
 
         episode = opalTestHelper.newEpisode($rootScope);
-        // $rootScope.fields = fields;
-        // episode = new Episode(angular.copy(episodeData));
     });
 
     describe("edit item", function(){

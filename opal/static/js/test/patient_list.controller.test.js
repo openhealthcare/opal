@@ -1,14 +1,14 @@
 describe('PatientListCtrl', function() {
     "use strict";
-    var episodeData, episodeData2, metaData, patientData;
+    var episodeData, episodeData2, metaData;
     var Episode, Item, episode, episodeVisibility;
     var profile, episode2;
-    var $scope, $cookies, $controller, $q, $dialog, $httpBackend;
+    var $scope, $cookies, $controller, $q, $httpBackend;
     var $$injector;
     var $location, $routeParams, $http;
     var opalTestHelper;
     var episodedata, controller;
-    var $modal, metadata, $rootScope;
+    var $modal, $rootScope;
 
     var _makecontroller;
 

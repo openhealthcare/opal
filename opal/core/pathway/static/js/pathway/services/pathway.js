@@ -1,5 +1,5 @@
 angular.module('opal.services').service('Pathway', function(
-    $http, FieldTranslator, $q, $controller, $window, $rootScope
+    $http, FieldTranslator, $q, $window, $rootScope
 ){
     "use strict";
     var Pathway = function(pathwayDefinition, episode){

@@ -1,7 +1,6 @@
 angular.module('opal.controllers').controller(
     'DeleteItemConfirmationCtrl',
-    function($scope, $timeout,
-             $modalInstance, item) {
+    function($scope, $modalInstance, item) {
     // TODO: Reimplement this!
     //
 	// $timeout(function() {

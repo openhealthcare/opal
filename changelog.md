@@ -3,6 +3,9 @@
 #### Search is now a static page
 Search is now a static page and renders its results on the server. This uses significantly less code for the same functionality.
 
+#### Removes scroll to top
+Removes the directory `scrolllto-top` as this is not commonly used. `go-to-top` is directive that is a a drop in replacement that will take the user up to the top of the page but without scrolling.
+
 #### Remove shortDate and shortDateTime
 The angular filters shortDate and shortDateTime have been deprecated for some time.
 
