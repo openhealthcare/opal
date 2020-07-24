@@ -235,16 +235,16 @@ class SimpleSearchResultsList(LoginRequiredMixin, ListView):
         ).order_by("-pk")
 
         patient_ids = set()
-        result = []
+        episode_ids = []
 
         # If a patient has multiple episodes in the list
         # ignore the additional episodes
         for episode in episodes:
             if episode.patient_id in patient_ids:
                 continue
-            result.append(episode)
+            episode_ids.append(episode.id)
             patient_ids.add(episode.patient_id)
-        return result
+        return models.Episode.objects.filter(id__in=episode_ids)
 
     def get_min_max_page_number(self, current_page_num, page_count):
         """
