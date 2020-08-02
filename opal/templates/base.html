@@ -23,41 +23,6 @@
       var version = '{{VERSION_NUMBER}}';
     </script>
 
-
-
-  <link href="{% static "js/lib/c3-0.4.10/c3.css" %}" rel="stylesheet" media="all">
-	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
-	<link href="{% static "css/select.css" %}" rel="stylesheet" media="all">
-	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
-	<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
-	<link href="{% static "css/awesome-bootstrap-checkbox.css" %}" rel="stylesheet" media="all">
-  <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
-	<link href="{% static "js/lib/bower_components/angular-growl-v2/build/angular-growl.css" %}" rel="stylesheet" media="screen">
-
-  <link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
-  {% plugin_stylesheets %}
-  {% application_stylesheets %}
-
-    <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
-
-    <script id="templates/growl/growl.html" type="text/ng-template">
-      <div class="growl-container" ng-class="wrapperClasses()">
-        <div class="growl-item alert" ng-repeat="message in growlMessages.directives[referenceId].messages" ng-class="alertClasses(message)" ng-click="stopTimeoutClose(message)">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true" ng-click="growlMessages.deleteMessage(message)" ng-show="!message.disableCloseButton">&times;</button>
-          <h4 class="growl-title" ng-show="message.title" ng-bind="message.title"></h4>
-          <div class="growl-message" ng-bind-html="message.text"></div>
-        </div>
-      </div>
-    </script>
-
-    {% plugin_head_extra %}
-
-  </head>
-  <body>
-    {% block application %}{% endblock %}
-
-
-    <!-- javascripts -->
     {% block javascripts %}
     {% core_javascripts 'opal.upstream.deps' %}
     {% block opal_js %}
@@ -91,6 +56,36 @@
     {% endblock opal_js %}
     {% endblock javascripts %}
 
+  <link href="{% static "js/lib/c3-0.4.10/c3.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/select.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/awesome-bootstrap-checkbox.css" %}" rel="stylesheet" media="all">
+  <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
+	<link href="{% static "js/lib/bower_components/angular-growl-v2/build/angular-growl.css" %}" rel="stylesheet" media="screen">
+
+  <link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
+  {% plugin_stylesheets %}
+  {% application_stylesheets %}
+
+    <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
+
+    <script id="templates/growl/growl.html" type="text/ng-template">
+      <div class="growl-container" ng-class="wrapperClasses()">
+        <div class="growl-item alert" ng-repeat="message in growlMessages.directives[referenceId].messages" ng-class="alertClasses(message)" ng-click="stopTimeoutClose(message)">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true" ng-click="growlMessages.deleteMessage(message)" ng-show="!message.disableCloseButton">&times;</button>
+          <h4 class="growl-title" ng-show="message.title" ng-bind="message.title"></h4>
+          <div class="growl-message" ng-bind-html="message.text"></div>
+        </div>
+      </div>
+    </script>
+
+    {% plugin_head_extra %}
+
+  </head>
+  <body>
+    {% block application %}{% endblock %}  
     <!-- google analytics -->
     {% block analytics %}
       <script>
