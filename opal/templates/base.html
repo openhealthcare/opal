@@ -33,10 +33,7 @@
     {% plugin_opal_angular_tracking_exclude %}
 
     <script type="text/javascript">
-      angular.module('opal.config', []).value(
-      'OPAL_FLOW_SERVICE',
-      {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
-      ).value(
+      angular.module('opal.config', [])).value(
       'DATE_DISPLAY_FORMAT',
       {% if DATE_DISPLAY_FORMAT %}'{{ DATE_DISPLAY_FORMAT }}'{% else %}'D MMM YYYY'{% endif %}
       );
