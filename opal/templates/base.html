@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load compress %}
 {% load application %}
 {% load plugins %}
 
@@ -24,7 +23,6 @@
       var version = '{{VERSION_NUMBER}}';
     </script>
 
-    {% compress js %}
     {% block javascripts %}
     {% core_javascripts 'opal.upstream.deps' %}
     {% block opal_js %}
@@ -57,7 +55,6 @@
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
     {% endblock opal_js %}
     {% endblock javascripts %}
-    {% endcompress %}
 
   <link href="{% static "js/lib/c3-0.4.10/c3.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
@@ -68,12 +65,9 @@
   <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
 	<link href="{% static "js/lib/bower_components/angular-growl-v2/build/angular-growl.css" %}" rel="stylesheet" media="screen">
 
-  {% compress css %}
   <link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
   {% plugin_stylesheets %}
   {% application_stylesheets %}
-  {% endcompress %}
-
 
     <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
 
