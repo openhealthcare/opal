@@ -2,7 +2,7 @@
 This module defines the base PatientList classes.
 """
 from opal import utils
-from opal.core import discoverable, exceptions, menus, metadata
+from opal.core import discoverable, menus, metadata
 
 
 class Column(object):
@@ -224,7 +224,8 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         return tags
 
     def get_queryset(self, **kwargs):
-        from opal.models import Episode, Tagging  # Avoid circular import in opal.models
+        # Avoid circular import in opal.models
+        from opal.models import Episode, Tagging
         tags = Tagging.objects.filter(
             value=self.tag
         ).filter(
