@@ -209,25 +209,11 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
     display_name = "Implement me please"
 
     @classmethod
-    def is_valid(klass):
-        if '-' in klass.tag:
-            msg = 'Invalid tag {0}'.format(klass.tag)
-            raise exceptions.InvalidDiscoverableFeatureError(msg)
-        if hasattr(klass, 'subtag'):
-            if '-' in klass.subtag:
-                msg = 'Invalid subtag {0}'.format(klass.subtag)
-                raise exceptions.InvalidDiscoverableFeatureError(msg)
-        return True
-
-    @classmethod
     def get_slug(klass):
         """
         For a tagged patient list, the slug is made up of the tags.
         """
-        s = klass.tag
-        if hasattr(klass, 'subtag'):
-            s += '-' + klass.subtag
-        return s
+        return klass.tag
 
     @classmethod
     def get_tag_names(kls):
@@ -235,29 +221,22 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         for patientlist in kls.list():
             if patientlist.tag not in tags:
                 tags.append(patientlist.tag)
-            if hasattr(patientlist, 'subtag'):
-                tags.append(patientlist.subtag)
         return tags
 
     def get_queryset(self, **kwargs):
-        from opal.models import Episode  # Avoid circular import in opal.models
-
-        filter_kwargs = dict(tagging__archived=False)
-        if getattr(self, "subtag", None):
-            filter_kwargs["tagging__value"] = self.subtag
-        else:
-            filter_kwargs["tagging__value"] = self.tag
-        return Episode.objects.filter(**filter_kwargs)
+        from opal.models import Episode, Tagging  # Avoid circular import in opal.models
+        tags = Tagging.objects.filter(
+            value=self.tag
+        ).filter(
+            archived=False
+        )
+        return Episode.objects.filter(tagging__in=tags)
 
     def get_template_prefixes(self):
         """ a patient list can return templates particular to themselves
             or indeed used by other patient lists
         """
-        possible = [self.tag]
-
-        if hasattr(self, 'subtag'):
-            possible.append("{0}.{1}".format(self.tag, self.subtag))
-        return possible
+        return [self.tag]
 
 
 """
@@ -356,8 +335,6 @@ class TaggedPatientListMetadata(metadata.Metadata):
             for taglist in tag_list:
                 slug = taglist().get_slug()
                 tag = taglist.tag
-                if hasattr(taglist, 'subtag'):
-                    tag = taglist.subtag
                 tag_display[tag] = taglist.display_name
                 tag_slugs[tag] = slug
                 tag_visible_in_list.append(tag)
@@ -372,9 +349,6 @@ class TaggedPatientListMetadata(metadata.Metadata):
 
         for tagging in tag_list:
             tag = tagging.tag
-            if hasattr(tagging, 'subtag'):
-                tag = tagging.subtag
-
             direct_add = tagging.direct_add
             slug = tagging().get_slug()
             data["tags"][tag] = dict(
@@ -383,9 +357,6 @@ class TaggedPatientListMetadata(metadata.Metadata):
                 slug=slug,
                 direct_add=direct_add
             )
-
-            if tag and hasattr(tagging, 'subtag'):
-                data["tags"][tag]["parent_tag"] = tagging.tag
 
         return data
 

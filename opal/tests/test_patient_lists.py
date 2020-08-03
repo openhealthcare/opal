@@ -15,14 +15,13 @@ from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
 from opal.core.patient_lists import (
-    PatientList, TaggedPatientList, TabbedPatientListGroup,
-    PatientListComparatorMetadata
+    PatientList, TaggedPatientList,
+    TabbedPatientListGroup, PatientListComparatorMetadata
 )
 
 """
 Begin discoverable definitions for test cases
 """
-
 
 class TaggingTestPatientList(TaggedPatientList):
     display_name       = "Herbivores"
@@ -48,24 +47,20 @@ class TaggingTestNotSubTag(TaggedPatientList):
         models.Demographics,
     ]
 
+class Omnivore(TaggedPatientList):
+    display_name = 'Omnivore'
+    direct_add = False
+    tag = "omnivore"
+    order = 2
+    template_name = 'omnivore.html'
 
-class TaggingTestSameTagPatientList(TaggedPatientList):
-        # we shouldn't have duplicate tags so lets check that by
-        # having another patient list with the same parent tag
-        # but different subtrags
-        display_name = "Omnivore"
-        tag = "eater"
-        subtag = "omnivore"
-        order = 5
-
-        schema = [
-            models.Demographics,
-        ]
+    schema = [
+        models.Demographics,
+    ]
 
 
 class InvisibleList(TaggedPatientList):
     tag    = 'eater'
-    subtag = 'shh'
     order  = 10
 
     @classmethod
@@ -78,8 +73,8 @@ class InvisibleList(TaggedPatientList):
 
 class TestTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [
-        TaggingTestSameTagPatientList,
         TaggingTestPatientList,
+        Omnivore,
         InvisibleList
     ]
 
@@ -370,8 +365,8 @@ class TestPatientList(OpalTestCase):
     def test_order_respected_by_list(self):
         expected = [
             TaggingTestNotSubTag,
+            Omnivore,
             TaggingTestPatientList,
-            TaggingTestSameTagPatientList,
             InvisibleList,
             DisplayList,
             IconicList
@@ -401,20 +396,6 @@ class TestTaggedPatientList(OpalTestCase):
     def test_default_direct_add(self):
         self.assertTrue(TaggingTestPatientList.direct_add)
 
-    def test_tagging_set_with_subtag(self):
-        ''' given an episode with certain tags and the required request we should
-            only return episodes with those tags
-        '''
-        self.episode_2.set_tag_names(["eater", "herbivore"], self.user)
-
-        patient_list = PatientList.get('eater-herbivore')()
-        self.assertEqual(
-            [self.episode_2], [i for i in patient_list.get_queryset()]
-        )
-        serialized = patient_list.to_dict(self.user)
-        self.assertEqual(len(serialized), 1)
-        self.assertEqual(serialized[0]["id"], self.episode_2.id)
-
     def test_tagging_set_without_subtag(self):
         ''' given an episode with certain tags and the required request we should
             only return episodes with those tags
@@ -432,27 +413,16 @@ class TestTaggedPatientList(OpalTestCase):
     def test_list(self):
         expected = [
             TaggingTestNotSubTag,
+            Omnivore,
             TaggingTestPatientList,
-            TaggingTestSameTagPatientList,
             InvisibleList,
         ]
         self.assertEqual(expected, list(TaggedPatientList.list()))
 
-    def test_invalid_tag_name(self):
-        with self.assertRaises(exceptions.InvalidDiscoverableFeatureError):
-            class MyList(TaggedPatientList):
-                tag = 'foo-bar'
-
-    def test_invalid_subtag_name(self):
-        with self.assertRaises(exceptions.InvalidDiscoverableFeatureError):
-            class MyList(TaggedPatientList):
-                tag = 'foo'
-                subtag = 'one-two'
-
     def test_get_tag_names(self):
 
         taglist = TaggedPatientList.get_tag_names()
-        expected = {'carnivore', 'herbivore', 'omnivore', 'eater', 'shh'}
+        expected = {'carnivore', 'eater', 'omnivore'}
         self.assertEqual(set(taglist), expected)
 
     def test_to_dict_inactive_episodes(self):
@@ -469,17 +439,17 @@ class TestTaggedPatientList(OpalTestCase):
 class TabbedPatientListGroupTestCase(OpalTestCase):
 
     def test_get_member_lists(self):
-        expected = [TaggingTestSameTagPatientList, TaggingTestPatientList, InvisibleList]
+        expected = [TaggingTestPatientList, Omnivore, InvisibleList]
         members = list(TestTabbedPatientListGroup.get_member_lists())
         self.assertEqual(expected, members)
 
     def test_get_member_lists_for_user(self):
-        expected = [TaggingTestSameTagPatientList, TaggingTestPatientList]
+        expected = [TaggingTestPatientList, Omnivore]
         members = list(TestTabbedPatientListGroup.get_member_lists_for_user(self.user))
         self.assertEqual(expected, members)
 
     def test_get_member_lists_for_user_with_restricted_lists(self):
-        expected = [TaggingTestSameTagPatientList, TaggingTestPatientList, InvisibleList]
+        expected = [TaggingTestPatientList, Omnivore, InvisibleList]
         user = self.user
         user.username = 'show me'
         members = list(TestTabbedPatientListGroup.get_member_lists_for_user(user))
@@ -527,4 +497,4 @@ class ComparatorMetadataTestCase(OpalTestCase):
 
     def test_to_dict(self):
         comparators = PatientListComparatorMetadata.to_dict(user=self.user)
-        self.assertEqual({'eater-herbivore': 'HerbivoresSortOrder'}, comparators['patient_list_comparators'])
+        self.assertEqual({'eater': 'HerbivoresSortOrder'}, comparators['patient_list_comparators'])

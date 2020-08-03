@@ -22,7 +22,7 @@ from django.utils.encoding import force_str
 from django.db.models.signals import post_save
 
 from opal.core import (
-    application, exceptions, lookuplists, plugins, patient_lists, tagging
+    application, exceptions, lookuplists, plugins, patient_lists
 )
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
@@ -786,12 +786,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             updated_by=user,
             updated=timezone.now()
         )
-        parents = []
-        for tag in tag_names:
-            parent = tagging.parent(tag)
-            if parent:
-                parents.append(parent)
-        tag_names += parents
 
         for tag in tag_names:
             tagg, created = self.tagging_set.get_or_create(

@@ -100,21 +100,9 @@ class EpisodeTest(OpalTestCase):
 
         for tag_names in test_cases:
             self.episode.set_tag_names(tag_names, self.user)
-            self.assertEqual(set(tag_names),
-                             set(self.episode.get_tag_names(self.user)))
-
-    def test_set_tagging_parent(self):
-        self.episode.set_tag_names(["mine", "herbivore"], self.user)
-
-        self.assertTrue(Tagging.objects.filter(
-            value='eater', archived=False).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            value='herbivore', archived=False).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            value='mine', user=self.user, archived=False).exists()
-        )
+            self.assertEqual(
+                set(tag_names), set(self.episode.get_tag_names(self.user))
+            )
 
     def test_user_cannot_see_other_users_mine_tag(self):
         other_user = User.objects.create(username='seconduser')
