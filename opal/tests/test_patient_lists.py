@@ -23,10 +23,9 @@ from opal.core.patient_lists import (
 Begin discoverable definitions for test cases
 """
 
-class TaggingTestPatientList(TaggedPatientList):
+class Herbivore(TaggedPatientList):
     display_name       = "Herbivores"
-    tag                = "eater"
-    subtag             = "herbivore"
+    tag                = "herbivore"
     order              = 4
     icon               = 'fa-diplodocus'
     comparator_service = 'HerbivoresSortOrder'
@@ -36,7 +35,7 @@ class TaggingTestPatientList(TaggedPatientList):
     ]
 
 
-class TaggingTestNotSubTag(TaggedPatientList):
+class DirectAddFalse(TaggedPatientList):
     display_name = 'Carnivores'
     direct_add = False
     tag = "carnivore"
@@ -60,7 +59,7 @@ class Omnivore(TaggedPatientList):
 
 
 class InvisibleList(TaggedPatientList):
-    tag    = 'eater'
+    tag    = 'herbivore'
     order  = 10
 
     @classmethod
@@ -73,7 +72,7 @@ class InvisibleList(TaggedPatientList):
 
 class TestTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [
-        TaggingTestPatientList,
+        Herbivore,
         Omnivore,
         InvisibleList
     ]
@@ -240,13 +239,13 @@ class TestPatientList(OpalTestCase):
             queryset = PatientList().queryset
 
     def test_get_absolute_url(self):
-        self.assertEqual('/#/list/carnivore', TaggingTestNotSubTag.get_absolute_url())
+        self.assertEqual('/#/list/carnivore', DirectAddFalse.get_absolute_url())
 
     def test_get_icon(self):
-        self.assertEqual('fa-diplodocus', TaggingTestPatientList.get_icon())
+        self.assertEqual('fa-diplodocus', Herbivore.get_icon())
 
     def test_get_display_name(self):
-        self.assertEqual('Herbivores', TaggingTestPatientList.get_display_name())
+        self.assertEqual('Herbivores', Herbivore.get_display_name())
 
     def test_get_queryset_default(self):
         mock_queryset = MagicMock('Mock Queryset')
@@ -276,11 +275,11 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(e.id, All().to_dict(self.user)[0]['id'])
 
     def test_visible_to(self):
-        self.assertTrue(TaggingTestPatientList.visible_to(self.user))
+        self.assertTrue(Herbivore.visible_to(self.user))
 
     def test_as_menuitem(self):
-        href = TaggingTestPatientList.get_absolute_url()
-        menu = TaggingTestPatientList.as_menuitem()
+        href = Herbivore.get_absolute_url()
+        menu = Herbivore.as_menuitem()
         self.assertEqual(menu.href, href)
         self.assertEqual(menu.activepattern, href)
         self.assertEqual(menu.icon, 'fa-diplodocus')
@@ -297,7 +296,7 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(menu.display, 'Foo')
 
     def test_as_menuitem_set_index(self):
-        menu = TaggingTestPatientList.as_menuitem(index=-30)
+        menu = Herbivore.as_menuitem(index=-30)
         self.assertEqual(-30, menu.index)
 
     def test_as_menuitem_uses_getter_for_icon(self):
@@ -321,7 +320,7 @@ class TestPatientList(OpalTestCase):
                 'model_column': True
             }
         ]
-        self.assertEqual(dicts, TaggingTestPatientList.schema_to_dicts())
+        self.assertEqual(dicts, Herbivore.schema_to_dicts())
 
     def test_schema_to_dicts_with_column(self):
 
@@ -347,26 +346,26 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(dicts, ColList.schema_to_dicts())
 
     def test_visible_to_restricted_only(self):
-        self.assertFalse(TaggingTestPatientList.visible_to(self.restricted_user))
+        self.assertFalse(Herbivore.visible_to(self.restricted_user))
 
     def test_for_user(self):
-        self.assertIn(TaggingTestPatientList, list(PatientList.for_user(self.user)))
-        self.assertIn(TaggingTestNotSubTag, list(PatientList.for_user(self.user)))
+        self.assertIn(Herbivore, list(PatientList.for_user(self.user)))
+        self.assertIn(DirectAddFalse, list(PatientList.for_user(self.user)))
 
     def test_for_user_restricted_only(self):
         self.assertEqual([], list(PatientList.for_user(self.restricted_user)))
 
     def test_order(self):
-        self.assertEqual(1, TaggingTestNotSubTag.order)
+        self.assertEqual(1, DirectAddFalse.order)
 
     def test_order_unimplemented(self):
         self.assertEqual(0, PatientList.order)
 
     def test_order_respected_by_list(self):
         expected = [
-            TaggingTestNotSubTag,
+            DirectAddFalse,
             Omnivore,
-            TaggingTestPatientList,
+            Herbivore,
             InvisibleList,
             DisplayList,
             IconicList
@@ -378,7 +377,7 @@ class TestPatientList(OpalTestCase):
                          PatientList().get_template_names())
 
     def test_get_template_names_overridden_proerty(self):
-        self.assertEqual(['carnivore.html'], TaggingTestNotSubTag().get_template_names())
+        self.assertEqual(['carnivore.html'], DirectAddFalse().get_template_names())
 
     def test_known_abstract_subclasses_not_in_list(self):
         lists = list(PatientList.list())
@@ -394,9 +393,9 @@ class TestTaggedPatientList(OpalTestCase):
         self.episode_2 = self.patient.create_episode()
 
     def test_default_direct_add(self):
-        self.assertTrue(TaggingTestPatientList.direct_add)
+        self.assertTrue(Herbivore.direct_add)
 
-    def test_tagging_set_without_subtag(self):
+    def test_tagging_set(self):
         ''' given an episode with certain tags and the required request we should
             only return episodes with those tags
         '''
@@ -412,9 +411,9 @@ class TestTaggedPatientList(OpalTestCase):
 
     def test_list(self):
         expected = [
-            TaggingTestNotSubTag,
+            DirectAddFalse,
             Omnivore,
-            TaggingTestPatientList,
+            Herbivore,
             InvisibleList,
         ]
         self.assertEqual(expected, list(TaggedPatientList.list()))
@@ -422,7 +421,7 @@ class TestTaggedPatientList(OpalTestCase):
     def test_get_tag_names(self):
 
         taglist = TaggedPatientList.get_tag_names()
-        expected = {'carnivore', 'eater', 'omnivore'}
+        expected = {'carnivore', 'herbivore', 'omnivore'}
         self.assertEqual(set(taglist), expected)
 
     def test_to_dict_inactive_episodes(self):
@@ -430,26 +429,26 @@ class TestTaggedPatientList(OpalTestCase):
         # Explicitly test to prevent a reversion
         p, e = self.new_patient_and_episode_please()
         e.set_tag_names(['carnivore'], self.user)
-        self.assertEqual(e.pk, TaggingTestNotSubTag().to_dict(self.user)[0]['id'])
+        self.assertEqual(e.pk, DirectAddFalse().to_dict(self.user)[0]['id'])
         e.end = datetime.date.today()
         e.save()
-        self.assertEqual(1, len(TaggingTestNotSubTag().to_dict(self.user)))
+        self.assertEqual(1, len(DirectAddFalse().to_dict(self.user)))
 
 
 class TabbedPatientListGroupTestCase(OpalTestCase):
 
     def test_get_member_lists(self):
-        expected = [TaggingTestPatientList, Omnivore, InvisibleList]
+        expected = [Herbivore, Omnivore, InvisibleList]
         members = list(TestTabbedPatientListGroup.get_member_lists())
         self.assertEqual(expected, members)
 
     def test_get_member_lists_for_user(self):
-        expected = [TaggingTestPatientList, Omnivore]
+        expected = [Herbivore, Omnivore]
         members = list(TestTabbedPatientListGroup.get_member_lists_for_user(self.user))
         self.assertEqual(expected, members)
 
     def test_get_member_lists_for_user_with_restricted_lists(self):
-        expected = [TaggingTestPatientList, Omnivore, InvisibleList]
+        expected = [Herbivore, Omnivore, InvisibleList]
         user = self.user
         user.username = 'show me'
         members = list(TestTabbedPatientListGroup.get_member_lists_for_user(user))
@@ -497,4 +496,4 @@ class ComparatorMetadataTestCase(OpalTestCase):
 
     def test_to_dict(self):
         comparators = PatientListComparatorMetadata.to_dict(user=self.user)
-        self.assertEqual({'eater': 'HerbivoresSortOrder'}, comparators['patient_list_comparators'])
+        self.assertEqual({'herbivore': 'HerbivoresSortOrder'}, comparators['patient_list_comparators'])

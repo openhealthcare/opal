@@ -29,7 +29,7 @@ from opal.core.exceptions import APIError
 
 # this is used just to import the class for
 # EpisodeListApiTestCase and OptionsViewSetTestCase
-from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
+from opal.tests.test_patient_lists import Herbivore # flake8: noqa
 
 from opal.core import api
 

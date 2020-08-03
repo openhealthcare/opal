@@ -18,7 +18,7 @@ from opal.core.test import OpalTestCase
 from opal.views import csrf_failure
 
 # this is used just to import the class for EpisodeListApiTestCase
-from opal.tests.test_patient_lists import TaggingTestPatientList, TestTabbedPatientListGroup # flake8: noqa
+from opal.tests.test_patient_lists import Herbivore, TestTabbedPatientListGroup # flake8: noqa
 from opal.tests import models as testmodels
 
 class BaseViewTestCase(OpalTestCase):
@@ -54,7 +54,7 @@ class LoginRequredTestCase(OpalTestCase):
 
     def get_urls(self):
         return [
-            reverse("patient_list_template_view", kwargs=dict(slug="eater")),
+            reverse("patient_list_template_view", kwargs=dict(slug="herbivore")),
             reverse("patient_detail"),
             reverse("episode_detail", kwargs=dict(pk=self.episode.id)),
             reverse("raw_template_view", kwargs=dict(template_name="not_a_real_template.html")),
@@ -74,11 +74,11 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
     # opal.tests.test_patient_lists
 
     def test_dispatch_sets_list(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-")
-        view.dispatch(request, slug="eater")
-        self.assertEqual(TaggingTestPatientList, view.patient_list)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore-")
+        view.dispatch(request, slug="herbivore")
+        self.assertEqual(Herbivore, view.patient_list)
 
     def test_dispatch_no_list(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="notalist"))
@@ -88,48 +88,48 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         self.assertEqual(None, view.patient_list)
 
     def test_episode_list_view(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
 
         self.assertEqual(200, view.get(request, **view.kwargs).status_code)
 
     def test_get_context_data(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
 
-        context_data = view.get_context_data(slug="eater")
+        context_data = view.get_context_data(slug="herbivore")
         column_names = [i["name"] for i in context_data["columns"]]
         self.assertEqual(column_names, ["demographics"])
 
     def test_get_context_data_lists(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
 
-        context_data = view.get_context_data(slug="eater")
+        context_data = view.get_context_data(slug="herbivore")
         expected = list(patient_lists.PatientList.for_user(self.user))
         self.assertEqual(expected, list(context_data['lists']))
 
     def test_get_context_data_num_lists(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
 
-        context_data = view.get_context_data(slug="eater")
+        context_data = view.get_context_data(slug="herbivore")
         self.assertIsInstance(context_data['num_lists'], int)
 
     def test_get_context_data_list_group(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
-        context_data = view.get_context_data(slug="eater")
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
+        context_data = view.get_context_data(slug="herbivore")
         self.assertEqual(TestTabbedPatientListGroup, context_data['list_group'])
 
     def test_get_context_data_list_group_no_list(self):
@@ -141,7 +141,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         self.assertEqual(None, context_data['list_group'])
 
     def test_get_context_data_list_group_no_group_for_list(self):
-        from opal.tests.test_patient_lists import TaggingTestNotSubTag as CarnivoreList
+        from opal.tests.test_patient_lists import DirectAddFalse as CarnivoreList
         url = reverse("patient_list_template_view", kwargs=dict(slug="carnivore"))
         request = self.get_request(url)
         view = self.setup_view(views.PatientListTemplateView, request, slug="carnivore")
@@ -150,18 +150,18 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         self.assertEqual(None, context_data['list_group'])
 
     def test_get_context_data_list_slug(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
 
-        context_data = view.get_context_data(slug="eater")
-        self.assertEqual('eater', context_data['list_slug'])
+        context_data = view.get_context_data(slug="herbivore")
+        self.assertEqual('herbivore', context_data['list_slug'])
 
     def test_get_context_data_list_slug_no_list(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
         view.patient_list = None
 
         context_data = view.get_context_data()
@@ -202,23 +202,23 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
 
     def test_get_template_names(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
-        view.patient_list = TaggingTestPatientList
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
+        view.patient_list = Herbivore
 
         self.assertEqual(['patient_lists/layouts/spreadsheet_list.html'], view.get_template_names())
 
     def test_get_template_names_no_list(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater"))
+        url = reverse("patient_list_template_view", kwargs=dict(slug="herbivore"))
         request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater")
+        view = self.setup_view(views.PatientListTemplateView, request, slug="herbivore")
         view.patient_list = None
         self.assertEqual(['patient_lists/layouts/spreadsheet_list.html'], view.get_template_names())
 
     def test_end_to_end_200(self):
-        request = self.get_request('/templates/patient_list.html/eater')
-        self.should_200(views.PatientListTemplateView, request, slug='eater')
+        request = self.get_request('/templates/patient_list.html/herbivore')
+        self.should_200(views.PatientListTemplateView, request, slug='herbivore')
 
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
 
@@ -350,21 +350,21 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
     @patch("opal.tests.models.DogOwner.get_modal_template")
     def test_model_specific_lookups(self, get_modal_template):
         # test patient list look up
-        request = self.get_request('/colour_modal.html/eater')
+        request = self.get_request('/colour_modal.html/herbivore')
         view = self.setup_view(views.ModalTemplateView, request)
         view.column = testmodels.DogOwner
-        view.list_slug = 'eater'
-        get_modal_template.return_value = "eater/colour_modal.html"
+        view.list_slug = 'herbivore'
+        get_modal_template.return_value = "herbivore/colour_modal.html"
         result = view.get_template_from_model()
         self.assertEqual(
-            ['eater'],
+            ['herbivore'],
             get_modal_template.call_args[1]["prefixes"]
         )
-        self.assertEqual(result, "eater/colour_modal.html")
+        self.assertEqual(result, "herbivore/colour_modal.html")
 
     @patch("opal.tests.models.DogOwner.get_modal_template")
     def test_no_modal_template(self, get_modal_template):
-        request = self.get_request('/colour_modal.html/eater')
+        request = self.get_request('/colour_modal.html/herbivore')
         view = self.setup_view(views.ModalTemplateView, request)
         get_modal_template.return_value = None
         with self.assertRaises(ValueError):
