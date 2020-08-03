@@ -225,13 +225,11 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
 
     def get_queryset(self, **kwargs):
         # Avoid circular import in opal.models
-        from opal.models import Episode, Tagging
-        tags = Tagging.objects.filter(
-            value=self.tag
-        ).filter(
-            archived=False
+        from opal.models import Episode
+
+        return Episode.objects.filter(
+            tagging__value=self.tag, tagging__archived=False
         )
-        return Episode.objects.filter(tagging__in=tags)
 
     def get_template_prefixes(self):
         """ a patient list can return templates particular to themselves

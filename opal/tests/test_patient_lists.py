@@ -434,6 +434,27 @@ class TestTaggedPatientList(OpalTestCase):
         e.save()
         self.assertEqual(1, len(DirectAddFalse().to_dict(self.user)))
 
+    def test_get_queryset(self):
+        p, e = self.new_patient_and_episode_please()
+        e.set_tag_names(['carnivore'], self.user)
+        self.assertEqual([e], list(DirectAddFalse().get_queryset()))
+
+    def test_get_queryset_inactive_and_active(self):
+        # Make sure that if an episode has an active tag
+        # and an inactive tag that it only appears on the
+        # correct patient list
+        p, e = self.new_patient_and_episode_please()
+        e.tagging_set.create(
+            value="carnivore",
+            archived=True
+        )
+        e.tagging_set.create(
+            value="herbivore",
+            archived=False
+        )
+        self.assertEqual([], list(DirectAddFalse().get_queryset()))
+        self.assertEqual([e], list(Herbivore().get_queryset()))
+
 
 class TabbedPatientListGroupTestCase(OpalTestCase):
 
