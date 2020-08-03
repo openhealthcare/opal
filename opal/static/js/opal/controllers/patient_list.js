@@ -138,17 +138,7 @@ angular.module('opal.controllers').controller(
     }
 
     $scope.jumpToTag = function(tag){
-      if(_.contains(_.keys(metadata.tag_hierarchy), tag)){
-        $location.path($scope.path_base + tag)
-      }else{
-        for(var prop in metadata.tag_hierarchy){
-          if(metadata.tag_hierarchy.hasOwnProperty(prop)){
-            if(_.contains(_.values(metadata.tag_hierarchy[prop]), tag)){
-              $location.path($scope.path_base + prop + '-' + tag)
-            }
-          }
-        }
-      }
+      $location.path($scope.path_base + tag)
     };
 
 	$scope.$on('keydown', function(event, e) {

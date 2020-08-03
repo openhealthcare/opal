@@ -117,7 +117,6 @@
     };
 
     var metadata = {
-        tag_hierarchy :{'tropical': [], 'inpatients': ['icu']},
         micro_test_defaults: {
             micro_test_c_difficile: {
                 c_difficile_antigen: "pending",

@@ -4,12 +4,6 @@ describe('PatientListRedirectListCtrl', function() {
   var $location, $cookies, $controller, $scope, $rootScope;
   var metadata = {
       first_list_slug: 'carnivore-eater',
-      tag_hierarchy: {
-          "parentTag": [
-              "childTag",
-              "otherChildTag"
-          ]
-      }
   };
 
   beforeEach(module('opal.controllers'));
