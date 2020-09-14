@@ -140,15 +140,7 @@ describe('PatientListCtrl', function() {
 
         it('should extract single tags', function(){
             expect($scope.currentTag).toBe('tropical');
-            expect($scope.currentSubTag).toBe('');
         })
-
-        it('should extract subtags', function() {
-            $routeParams.slug = 'inpatients-icu'
-            _makecontroller();
-            expect($scope.currentTag).toBe('inpatients');
-            expect($scope.currentSubTag).toBe('icu');
-        });
 
         it('should set the URL of the last list visited', function() {
             expect($cookies.put).toHaveBeenCalledWith('opal.previousPatientList', 'tropical');
@@ -243,14 +235,6 @@ describe('PatientListCtrl', function() {
             spyOn($location, 'path');
             $scope.jumpToTag('tropical');
             expect($location.path).toHaveBeenCalledWith('/list/tropical');
-        });
-
-        describe('for a subtag', function() {
-            it('should find the parent tag', function() {
-                spyOn($location, 'path');
-                $scope.jumpToTag('icu');
-                expect($location.path).toHaveBeenCalledWith('/list/inpatients-icu');
-            });
         });
     });
 

@@ -803,10 +803,9 @@ class TaggingTestCase(OpalTestCase):
 
     @patch.object(patient_lists.TaggedPatientList, "list")
     def test_field_schema(self, patient_list):
-        patient_list.return_value = [test_patient_lists.TaggingTestPatientList]
+        patient_list.return_value = [test_patient_lists.Herbivore]
         expected = [
-            {'name': 'eater', 'title': 'Eater', 'type': 'boolean'},
-            {'type': 'boolean', 'name': 'herbivore', 'title': 'Herbivore'}
+            {'name': 'herbivore', 'title': 'Herbivore', 'type': 'boolean'},
         ]
         schema = Tagging.build_field_schema()
         self.assertEqual(expected, schema)

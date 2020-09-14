@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 from opal.core.test import OpalTestCase
 
-from opal.tests.test_patient_lists import TestTabbedPatientListGroup, TaggingTestPatientList
+from opal.tests.test_patient_lists import TestTabbedPatientListGroup, Herbivore
 from opal.templatetags import patient_lists
 
 class TabbedListGroupTestCase(OpalTestCase):
@@ -15,10 +15,10 @@ class TabbedListGroupTestCase(OpalTestCase):
         request.user = self.user
         mock_context = dict(
             list_group=TestTabbedPatientListGroup,
-            patient_list=TaggingTestPatientList,
+            patient_list=Herbivore,
             request=request
         )
         ctx = patient_lists.tabbed_list_group(mock_context)
-        self.assertEqual(TaggingTestPatientList, ctx['active_list'])
+        self.assertEqual(Herbivore, ctx['active_list'])
         expected_members = list(TestTabbedPatientListGroup.get_member_lists_for_user(self.user))
         self.assertEqual(expected_members, list(ctx['members']))

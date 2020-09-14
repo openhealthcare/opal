@@ -117,16 +117,6 @@ Opal provides a specific subclass for working with Tagged Patient Lists:
 Tagged lists will automatically fetch the appropriate queryset for patients tagged with the tag
 you specify.
 
-### Invalid Tagged Patient Lists
-
-Tag names may not have hyphens in them - Opal uses hyphens to distinguish between tags and subtags
-in the urls for lists, so attempting to define one will raise an exception.
-
-    class MyList(TaggedPatientList):
-        tag = 'foo-bar'
-
-    # This will raise InvalidDiscoverableFeatureError !
-
 ### Direct Add
 
 Sometimes, we want to control the flow of patients onto, off, or between lists a little more closely.

@@ -34,11 +34,8 @@ angular.module('opal.controllers').controller(
       $scope.profile = profile;
 
       $cookies.put('opal.previousPatientList', $routeParams.slug);
-      var tags = $routeParams.slug.split('-')
-      $scope.currentTag = tags[0];
-      $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
+      $scope.currentTag = $routeParams.slug;
       $scope.tag_display = metadata.tag_display;
-      var pertinantTag = $scope.currentSubTag || $scope.currentTag;
 
       //
       // These are used for setting custom list sort orders
@@ -122,7 +119,7 @@ angular.module('opal.controllers').controller(
         '/templates/modals/edit_teams.html',
         {episode: $scope.episode}
       ).then(function(){
-        if(!$scope.episode.hasTag(pertinantTag)){
+        if(!$scope.episode.hasTag($scope.currentTag)){
           delete $scope.episodes[$scope.episode.id];
           $scope.rows = _.filter($scope.rows, function(e){
             return e.id !== $scope.episode.id;

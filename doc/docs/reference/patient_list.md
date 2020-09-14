@@ -112,12 +112,7 @@ Tagged Patient Lists inherit from Patient Lists - as such they have all of the s
 ### Properties
 
 #### TaggedPatientList.tag
-The main, or parent tag for this list. Should be lowercase, with no numbers or dashes. Underscores are OK. Further information is available in the [Guides section](../guides/list_views.md#tagged-patient-lists).
-
-#### TaggedPatientList.subtag
-The child tag for this list. Should be lowercase, with no numbers or dashes. Underscores are OK.
-
-
+The main, or parent tag for this list. Should be lowercase, with no numbers. Underscores and dashes are OK. Further information is available in the [Guides section](../guides/list_views.md#tagged-patient-lists).
 
 ### class TabbedPatientListGroup
 Groups Patient Lists together, to display as tabs at the top of any list in the group.

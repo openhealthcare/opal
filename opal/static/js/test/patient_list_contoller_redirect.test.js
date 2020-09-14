@@ -3,7 +3,7 @@ describe('PatientListRedirectListCtrl', function() {
 
   var $location, $cookies, $controller, $scope, $rootScope;
   var metadata = {
-      first_list_slug: 'carnivore-eater',
+      first_list_slug: 'carnivore',
       tag_hierarchy: {
           "parentTag": [
               "childTag",
@@ -50,7 +50,7 @@ describe('PatientListRedirectListCtrl', function() {
             $location: $location,
             metadata: metadata
         });
-        expect($location.path).toHaveBeenCalledWith("/list/carnivore-eater/");
+        expect($location.path).toHaveBeenCalledWith("/list/carnivore/");
         expect($cookies.get).toHaveBeenCalledWith("opal.previousPatientList");
     });
 

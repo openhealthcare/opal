@@ -1,5 +1,13 @@
 ### 0.18.4 (Minor Release)
 
+#### Removes subtag
+Removes the notion of a subtag. Tags are now not hierachical.
+
+##### Fixes TaggedPatientList query bug
+It used to be that if an episode had an active tag and an archived tag
+the Episode would appear in the patient list for both the active tag list
+and the archived tag list rather than just the active list.
+
 #### Removes scroll to top
 Removes the directory `scrolllto-top` as this is not commonly used. `go-to-top` is directive that is a a drop in replacement that will take the user up to the top of the page but without scrolling.
 

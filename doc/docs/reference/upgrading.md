@@ -3,6 +3,8 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.18.3 -> v0.18.4
+PatientList.subtag is no longer a thing. This means adding an episode with a subtag will no longer add it with a tag.
 
 #### v0.17.1 -> v0.18.2
 

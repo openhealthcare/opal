@@ -17,7 +17,6 @@ describe('episodeVisibility', function(){
 
       $scope = {
         currentTag: 'micro',
-        currentSubTag: 'all',
         query: {
             hospital_number: '',
             ward: ''

@@ -1,5 +1,5 @@
 <span ng-repeat="tag in otherTags(row)" class="screen-only">
-  <span ng-show="tag_display[tag] != undefined && tag != currentSubTag && tag != currentTag">
+  <span ng-show="tag_display[tag] != undefined && tag != currentTag">
   <button class="btn btn-xs" ng-bdblclick="jumpToTag(tag)" ng-click="jumpToTag(tag)" >
     [[ tag_display[tag] ]]
   </button>
