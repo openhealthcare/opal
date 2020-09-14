@@ -1,0 +1,116 @@
+{% extends 'static_page.html' %}
+
+{% block javascripts %}
+
+{% endblock %}
+{% block angularapp %}
+
+{% endblock %}
+{% block application_javascripts %}
+{% endblock %}
+
+{% block content %}
+<div class="outer-container">
+  <div class="container content-offset panel-container search-container">
+    <div class="panel panel-primary panel-container">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+        <h2>
+          <i class="fa fa-search"></i>
+          Patient Search
+        </h2>
+      </div>
+      <div class="panel-body">
+        <form class="form form-horizontal">
+          <div class="row content-offset">
+              <div class="col-sm-4 col-sm-push-4">
+                <input type="text" autofocus
+                       name="query"
+                       placeholder="Name or Hospital Number"
+                       class="form-control"
+                       autocomplete="off"
+                       />
+              </div>
+              <div class="col-sm-4 col-sm-push-4 text-right">
+                  <a href="/search/#/extract" class="btn btn-secondary pull-right">
+                    <i class="fa fa-sliders"></i>
+                    Advanced
+                  </a>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-4 col-sm-push-4 text-center">
+                  <button class="btn btn-lg btn-primary content-offset-25">
+                      <i class="glyphicon glyphicon-search"></i>
+                      Search
+                  </button>
+              </div>
+          </div>
+        </form>
+        <p>
+        </p>
+      </div>
+      {% if request.GET.query %}
+        {% if object_list %}
+          <div class="row">
+            <div class="col-sm-4 col-sm-push-4">
+              <h4>
+                We've found <strong>{{ paginator.total_count }}</strong> patient<span ng-if="results.length != 1">s</span>
+              </h4>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-sm-4 col-sm-push-4">
+              <ul>
+                {% for result in object_list %}
+                <li class="content-offset-10 content-offset-below-10">
+                  <div>
+                    <h4 class="inline">
+                      <a class="orange-link" href="/#/patient/{{ result.patient_id }}">
+                        {{ result.first_name }} {{ result.surname }} {{ result.hospitalNumber }}
+                      </a>
+                    </h4>
+                    {% if result.date_of_birth %}
+                      ({{ result.date_of_birth }})
+                    {% endif %}
+                  </div>
+                  <div>
+                    {{ result.count }} Episode{% if result.count %}s{% endif %} ({{ result.categories|join:", " }}) {{ result.years }}
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+  
+          {% if is_paginated %}
+            <div class="row">
+              <div class="col-sm-4 col-sm-push-4" ng-show="paginator.totalPages.length > 1">
+                <nav>
+                  <ul class="pagination">
+                    {% if page_obj.number > 6 %}
+                      <li><a href="?page={{ page_obj.previous_page_number }}&query={{ request.GET.query }}"><i class="fa fa-caret-left"></i></a></li>
+                    {% endif %}
+                    {% for i in paginator.page_range %}
+                      {% if i <= max_page and i >= min_page %}
+                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="?page={{ i }}&query={{ request.GET.query }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                      <li><a href="?page={{ page_obj.next_page_number }}&query={{ request.GET.query }}"><i class="fa fa-caret-right"></i></a></li>
+                    {% endif %}
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          {% include 'partials/_no_search_results.html' %}
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

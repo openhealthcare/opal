@@ -3,6 +3,11 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.18.3 -> v0.18.4
+Search is now a static page and autocomplete search is no longer supported.
+All search queries should be redirected to /search?query='your query'.
+`_nav_search.html` has been updated to reflect this.
+
 
 #### v0.17.1 -> v0.18.2
 

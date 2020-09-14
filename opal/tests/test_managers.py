@@ -92,6 +92,13 @@ class PatientManagerTestCase(OpalTestCase):
         query = Patient.objects.search('rien')
         self.assertEqual(query.get(), self.patient_1)
 
+    def test_partial_hospital_number(self):
+        """
+        should find from a partial hospital_number
+        """
+        query = Patient.objects.search('ri')
+        self.assertEqual(query.get(), self.patient_1)
+
     def test_first_name(self):
         """
         should find by first_name

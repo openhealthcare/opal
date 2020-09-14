@@ -19,9 +19,6 @@ urlpatterns = [
     url(r'^search/patient/?$',
         views.patient_search_view, name="patient_search"),
 
-    url(r'^search/simple/$',
-        views.simple_search_view, name="simple_search"),
-
     url(r'^search/extract/$',
         views.ExtractSearchView.as_view(), name="extract_search"),
 
@@ -39,4 +36,9 @@ urlpatterns = [
 
     url(r'^search/extract/download/(?P<task_id>[a-zA-Z0-9-]*)',
         views.ExtractFileView.as_view(), name='extract_file'),
+    url(
+        r'^search',
+        views.SimpleSearchResultsList.as_view(),
+        name="simple_search"
+    )
 ]
