@@ -117,6 +117,14 @@ describe('PatientDetailCtrl', function(){
       $scope.refresh();
       expect($scope.episode.demographics[0].first_name).toBe("Gerald");
     });
+
+    it('should return a promise that resolve', function(){
+      var resolved = false;
+      $scope.refresh().then(function(){resolved = true;});
+      expect($scope.episode.demographics[0].first_name).toBe("Gerald");
+      $scope.$apply();
+      expect(resolved).toBe(true);
+    });
   });
 
   describe('switch_to_view()', function() {

@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'PatientDetailCtrl',
     function(
-        $scope, $routeParams, patientLoader, patient, profile, metadata
+        $scope, $routeParams, patientLoader, patient, profile, metadata, $q
     ){
         $scope.profile = profile;
         $scope.patient = patient;
@@ -11,10 +11,13 @@ angular.module('opal.controllers').controller(
         $scope.view = null;
 
         $scope.refresh = function(){
+          var deferred = $q.defer();
           patientLoader().then(function(refreshedPatient){
             $scope.patient = refreshedPatient;
             $scope.episode = _.findWhere($scope.patient.episodes, {id: $scope.episode.id});
+            deferred.resolve();
           });
+          return deferred.promise;
         };
 
         $scope.initialise = function(){

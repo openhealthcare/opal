@@ -225,6 +225,22 @@ describe('PatientListCtrl', function() {
         expect($scope.episodes['123'].active).toBe(false);
         expect($scope.rows[0].active).toEqual(false);
       });
+
+      it('should return a promise that resolves when complete', function(){
+        var resolved = false;
+        var updated = angular.copy(episodeData)
+        updated.active = false;
+
+        $httpBackend.expectGET('/api/v0.1/record/').respond({})
+        $httpBackend.expectGET('/api/v0.1/episode/123/').respond(updated);
+        $scope.refresh(123).then(function(){
+          resolved = true;
+        });
+
+        $httpBackend.flush();
+        $rootScope.$apply();
+        expect(resolved).toBe(true);
+      });
   });
 
     describe('isSelectedEpisode()', function() {

@@ -1,5 +1,8 @@
 ### 0.18.4 (Minor Release)
 
+#### PatientListCtrl.refresh and PatientDetailCtrl.refresh return promises
+PatientListCtrl.refresh and PatientDetailCtrl.refresh now return a promise which resolves after the refresh is complete.
+
 #### Removes scroll to top
 Removes the directory `scrolllto-top` as this is not commonly used. `go-to-top` is directive that is a a drop in replacement that will take the user up to the top of the page but without scrolling.
 

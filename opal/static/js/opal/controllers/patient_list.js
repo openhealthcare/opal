@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
   'PatientListCtrl', function($scope, $cookies,
                               $location, $routeParams,
-                              $modal, $rootScope, $window, $injector,
+                              $modal, $rootScope, $window, $injector, $q,
                               episodedata, metadata, profile, episodeLoader,
                               episodeVisibility){
 
@@ -96,15 +96,18 @@ angular.module('opal.controllers').controller(
     // Useful for Pathway callbacks.
     //
     $scope.refresh = function(episode_id){
+      var deferred = $q.defer();
       episodeLoader(episode_id).then(
         function(episode){
           $scope.episodes[episode_id] = episode;
           if($scope.episode.id == episode_id){
             $scope.episode = episode;
           }
-          $scope.rows = $scope.getVisibleEpisodes()
+          $scope.rows = $scope.getVisibleEpisodes();
+          deferred.resolve();
         }
       )
+      return deferred.promise;
     }
 
     //
