@@ -49,8 +49,8 @@ class TestInferFromSubrecordPath(TestCase):
         self.assertFalse(ctx["required"])
 
     def test_get_label_from_the_model(self):
-        ctx = infer_from_subrecord_field_path("Demographics.hospital_number")
-        self.assertEqual(ctx["label"], "Hospital Number")
+        ctx = infer_from_subrecord_field_path("HatWearer.wearing_a_hat")
+        self.assertEqual(ctx["label"], "Wearing A Hat")
 
     def test_infer_many_to_many_fields(self):
         ctx = infer_from_subrecord_field_path("HatWearer.hats")
