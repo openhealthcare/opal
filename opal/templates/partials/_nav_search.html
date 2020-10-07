@@ -1,3 +1,4 @@
+{% load i18n %}
 <script type="text/ng-template" id="searchSuggestTemplate.html">
   <div class="search-suggest">
     <h4 class="inline orange">
@@ -35,7 +36,7 @@
           ng-focus="disableShortcuts()"
           type="text"
           class="form-control"
-          placeholder="Search"
+          placeholder='{% trans "Search "%}'
         />
       </div>
     </form>

@@ -4,7 +4,7 @@ Application helpers for Opal
 import inspect
 import itertools
 import os
-
+from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from opal.core import plugins, menus
 
@@ -119,7 +119,7 @@ class OpalApplication(object):
             href=reverse(logout_view), icon="fa-sign-out", index=1000
         )
         admin = menus.MenuItem(
-            href="/admin/", icon="fa-cogs", display="Admin",
+            href="/admin/", icon="fa-cogs", display=_("Admin"),
             index=999
         )
         items = []
