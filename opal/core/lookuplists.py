@@ -5,6 +5,7 @@ import logging
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from opal import utils
@@ -111,13 +112,21 @@ def synonym_exists(lookuplist, name):
 class LookupList(models.Model):
     # For the purposes of FHIR CodeableConcept, .name is .display
     # We keep it as .name for Opal backwards compatibility
-    name          = models.CharField(max_length=255, unique=True)
-    synonyms      = GenericRelation('opal.Synonym')
-    system        = models.CharField(max_length=255, blank=True, null=True)
-    code          = models.CharField(max_length=255, blank=True, null=True)
+    name          = models.CharField(
+        max_length=255, unique=True, verbose_name=_("Name")
+    )
+    synonyms      = GenericRelation('opal.Synonym', verbose_name=_("Synonym"))
+    system        = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("System")
+    )
+    code          = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("Code")
+    )
     # We don't particularly use .version in the current implementation, but we
     # include here for the sake of FHIR CodeableConcept compatibility
-    version       = models.CharField(max_length=255, blank=True, null=True)
+    version       = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("Version")
+    )
 
     class Meta:
         ordering = ['name']
