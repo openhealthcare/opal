@@ -1,7 +1,7 @@
 ### 0.18.4 (Minor Release)
 
 #### Some models have translations
-Episodes/Patients/Demographics now use usegettext_lazy on all their fields
+Episodes/Patients/Demographics now use use gettext_lazy on all their fields
 
 #### PatientListCtrl.refresh and PatientDetailCtrl.refresh return promises
 PatientListCtrl.refresh and PatientDetailCtrl.refresh now return a promise which resolves after the refresh is complete.
