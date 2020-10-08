@@ -208,7 +208,7 @@ class SerialisableFields(object):
         choices = getattr(field, "choices", [])
 
         if choices:
-            return [i[1] for i in choices]
+            return [i[0] for i in choices]
 
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
