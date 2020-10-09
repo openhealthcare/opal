@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="container content-offset search-container">
 
   <div class="panel panel-primary search-panel panel-container">
@@ -5,7 +6,7 @@
     <div class="panel-heading">
       <h2>
         <i class="fa fa-search"></i>
-        Patient Search
+        {% trans "Patient Search" %}
       </h2>
     </div>
     <div class="panel-body">
@@ -26,7 +27,7 @@
             <div class="col-sm-4 col-sm-push-4 text-right">
                 <a href="/search/#/extract" class="btn btn-secondary pull-right">
                   <i class="fa fa-sliders"></i>
-                  Advanced
+                  {% trans "Advanced" %}
                 </a>
             </div>
         </div>
@@ -34,7 +35,7 @@
             <div class="col-sm-4 col-sm-push-4 text-center">
                 <a ng-click="search()" class="btn btn-lg btn-primary content-offset-25">
                     <i class="glyphicon glyphicon-search"></i>
-                    Search
+                    {% trans "Search" %}
                 </a>
             </div>
         </div>

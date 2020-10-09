@@ -208,7 +208,7 @@ class SerialisableFields(object):
         choices = getattr(field, "choices", [])
 
         if choices:
-            return [i[1] for i in choices]
+            return [i[0] for i in choices]
 
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
@@ -1175,7 +1175,9 @@ class Condition(lookuplists.LookupList):
 
 
 class Destination(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name = _("Destination")
+        verbose_name_plural = _("Destinations")
 
 
 class Drug(lookuplists.LookupList):
@@ -1199,11 +1201,14 @@ class Duration(lookuplists.LookupList):
 
 class Ethnicity(lookuplists.LookupList):
     class Meta:
-        verbose_name_plural = "Ethnicities"
+        verbose_name = _("Ethnicity")
+        verbose_name_plural = _("Ethnicities")
 
 
 class Gender(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name = _("Gender")
+        verbose_name_plural = _("Genders")
 
 
 class Hospital(lookuplists.LookupList):
@@ -1221,7 +1226,8 @@ class Speciality(lookuplists.LookupList):
 
 class MaritalStatus(lookuplists.LookupList):
     class Meta:
-        verbose_name_plural = "Marital statuses"
+        verbose_name = _("Marital Status")
+        verbose_name_plural = _("Marital statuses")
 
 
 class ReferralType(lookuplists.LookupList):
@@ -1237,7 +1243,9 @@ class Symptom(lookuplists.LookupList):
 
 
 class Title(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name = _("Title")
+        verbose_name_plural = _("Titles")
 
 
 class Travel_reason(lookuplists.LookupList):
@@ -1276,7 +1284,9 @@ class Demographics(PatientSubrecord):
     date_of_birth = models.DateField(
         null=True, blank=True, verbose_name=_("Date of Birth")
     )
-    marital_status = ForeignKeyOrFreeText(MaritalStatus)
+    marital_status = ForeignKeyOrFreeText(
+        MaritalStatus, verbose_name=_("Marital status")
+    )
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(
         null=True, blank=True, verbose_name=_("Date of Death")
