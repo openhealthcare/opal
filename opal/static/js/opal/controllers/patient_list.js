@@ -1,13 +1,11 @@
 angular.module('opal.controllers').controller(
-  'PatientListCtrl', function($scope, $q, $http, $cookies,
+  'PatientListCtrl', function($scope, $cookies,
                               $location, $routeParams,
-                              $modal, $rootScope, $window, $injector,
-                              growl, Item, Episode,
+                              $modal, $rootScope, $window, $injector, $q,
                               episodedata, metadata, profile, episodeLoader,
                               episodeVisibility){
 
     $scope.ready = false;
-    var version = window.version;
     if(episodedata.status == 'error'){
       if($cookies.get('opal.previousPatientList')){
         $cookies.remove('opal.previousPatientList');
@@ -98,15 +96,18 @@ angular.module('opal.controllers').controller(
     // Useful for Pathway callbacks.
     //
     $scope.refresh = function(episode_id){
+      var deferred = $q.defer();
       episodeLoader(episode_id).then(
         function(episode){
           $scope.episodes[episode_id] = episode;
           if($scope.episode.id == episode_id){
             $scope.episode = episode;
           }
-          $scope.rows = $scope.getVisibleEpisodes()
+          $scope.rows = $scope.getVisibleEpisodes();
+          deferred.resolve();
         }
       )
+      return deferred.promise;
     }
 
     //

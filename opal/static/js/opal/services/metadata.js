@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('Metadata', function($q, $http, $window, $log) {
+angular.module('opal.services').factory('Metadata', function($q, $http, $window) {
     "use strict";
 
     var url = '/api/v0.1/metadata/';

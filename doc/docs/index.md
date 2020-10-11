@@ -12,7 +12,7 @@ This is the **developer documentation**.
 <img src="/img/clinical.advice.png" width="600px;" style="margin: 12px auto; border: 1px solid black;"/>
 
 Opal is an entirely open [source](https://github.com/openhealthcare/opal),
-open [governance](https://github.com/openhealthcare/opal/issues) product, as are the wide library of plugins.
+open [governance](https://github.com/openhealthcare/opal/issues) product.
 
 ### First Steps
 

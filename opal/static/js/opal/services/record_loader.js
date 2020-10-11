@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('recordLoader', function($q, $http, $rootScope, $window, $log){
+    .factory('recordLoader', function($q, $http, $rootScope, $window){
     "use strict";
 
   var load = function(){

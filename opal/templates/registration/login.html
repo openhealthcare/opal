@@ -1,4 +1,5 @@
 {% extends "opal.html" %}
+{% load i18n %}
 {% load static %}
 {% block angularapp %}{% endblock %}
 {% block angulardefinition %}{% endblock %}
@@ -19,14 +20,14 @@
 
         <div class="panel-body">
           {% if form.errors %}
-          <p>Your username and password didn't match. Please try again.</p>
+          <p>{% trans "Your username and password didn't match. Please try again." %}</p>
           {% endif %}
 
           <form method="post" action="{% url 'login' %}?next=/" class="form-horizontal">
 	        {% csrf_token %}
 	        <div class="form-group">
 		      <div class="col-sm-12">
-                <input type="text" id="username" name="username"  placeholder="Username"
+                <input type="text" id="username" name="username"  placeholder="{% trans "Username" %}"
                        autocomplete="off"
                        class="form-control lg-text"
                        autofocus="autofocus"
@@ -36,13 +37,15 @@
 
             <div class="form-group">
 		      <div class="col-sm-12 lg-text">
-                <input type="password" name="password" id="password" placeholder="Password" class="form-control">
+                <input type="password" name="password" id="password" placeholder="{% trans "Password"%}" class="form-control">
 		      </div>
             </div>
 
             <div class="form-group">
               <div class="col-sm-12">
-	            <button type="submit" class="btn btn-lg btn-primary pull-right" id="login"><i class="fa fa-key"></i> Sign in</button>
+	            <button type="submit" class="btn btn-lg btn-primary pull-right" id="login"><i class="fa fa-key"></i>
+                  {% trans "Sign in" %}
+                </button>
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('Referencedata', function($q, $http, $window, $log) {
+angular.module('opal.services').factory('Referencedata', function($q, $http, $window) {
 
     "use strict";
 

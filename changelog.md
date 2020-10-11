@@ -1,3 +1,24 @@
+### 0.18.4 (Minor Release)
+
+#### Some models have translations
+Episodes/Patients/Demographics now use use gettext_lazy on all their fields
+
+#### PatientListCtrl.refresh and PatientDetailCtrl.refresh return promises
+PatientListCtrl.refresh and PatientDetailCtrl.refresh now return a promise which resolves after the refresh is complete.
+
+#### Removes scroll to top
+Removes the directory `scrolllto-top` as this is not commonly used. `go-to-top` is directive that is a a drop in replacement that will take the user up to the top of the page but without scrolling.
+
+#### Remove shortDate and shortDateTime
+The angular filters shortDate and shortDateTime have been deprecated for some time.
+
+#### Stop an index being passed to recordEditor.editItem
+recordEditor.editItem used to take either a number or an item (subrecord) as its second argument.
+Now it will only take an item.
+
+#### Removes the account page
+Removes the user account detail page as this is not tested/used and can be easily created within an app.
+
 ### 0.18.3 (Minor Release)
 
 #### Complex objects are now serialized in the extract as json

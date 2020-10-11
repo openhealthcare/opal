@@ -10,7 +10,6 @@ A list of all available topic guides.
 |[Command line tool](command_line_tool.md) | Running admin tasks from the command line|
 |[Discoverable](discoverable.md)| Design patterns and library for creating easily reusable features |
 |[Plugins](plugins.md)| Available interfaces for Opal plugins|
-|[List of Plugins](plugins_list.md)| A list of available high quality plugins|
 
 
 ### Data and Business Logic
