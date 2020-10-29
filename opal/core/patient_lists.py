@@ -298,17 +298,17 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         Returns an iterable of PatientLists
         Defaults to the `.member_lists` property
         """
-        for l in klass.member_lists:
-            yield l
+        for member_list in klass.member_lists:
+            yield member_list
 
     @classmethod
     def get_member_lists_for_user(klass, user):
         """
         Returns an iterable of the visible member lists for a given USER
         """
-        for l in klass.get_member_lists():
-            if l.visible_to(user):
-                yield l
+        for member_list in klass.get_member_lists():
+            if member_list.visible_to(user):
+                yield member_list
 
     @classmethod
     def visible_to(klass, user):
