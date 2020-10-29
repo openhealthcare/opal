@@ -135,7 +135,6 @@ rather than `media="screen".
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 * python-dateutil 2.7.5 -> 2.8.0
 
-
 ### 0.17.1 (Minor Release)
 Removes a now deleted file from the default application javascripts list
 
