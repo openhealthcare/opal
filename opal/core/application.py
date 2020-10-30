@@ -113,10 +113,8 @@ class OpalApplication(object):
         """
         Default implementation of get_menu_items()
         """
-        # we import here as settings must be set before this is imported
-        from django.contrib.auth.views import logout as logout_view
         logout = menus.MenuItem(
-            href=reverse(logout_view), icon="fa-sign-out", index=1000
+            href=reverse("logout"), icon="fa-sign-out", index=1000
         )
         admin = menus.MenuItem(
             href="/admin/", icon="fa-cogs", display=_("Admin"),

@@ -3,6 +3,19 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.18.3 -> v0.20.0
+
+How you do this depends on how you have configured your application. You will need to
+update both the Opal version, and versions of dependencies upgraded dependencies if
+you have specified them in for instance, a requirements.txt.
+
+(This will be the case if you use the requirements.txt originally provided by
+`opal startproject`)
+
+    # requirements.txt
+    django== 2.1.15
+
+
 
 #### v0.17.1 -> v0.18.2
 

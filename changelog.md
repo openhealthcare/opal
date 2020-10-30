@@ -1,3 +1,10 @@
+### 0.20.0 (Major Release)
+
+#### Updates to the Dependency Graph
+
+* Django: 2.0.13 -> 2.1.15
+
+
 ### 0.18.4 (Minor Release)
 
 #### Some models have translations
