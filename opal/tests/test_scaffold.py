@@ -617,12 +617,12 @@ class ScaffoldIntegrationTestCase(OpalTestCase):
         scaffold.scaffold_subrecords('tests', migrations=False)
         self.assertTrue(
             os.path.isfile(
-                os.path.join(tmp_dir, "records", "hat_wearer.html")
+                os.path.join(tmp_dir, "records", "entitled_hat_wearer.html")
             )
         )
         self.assertTrue(
             os.path.isfile(
-                os.path.join(tmp_dir, "forms", "hat_wearer_form.html")
+                os.path.join(tmp_dir, "forms", "entitled_hat_wearer_form.html")
             )
         )
 

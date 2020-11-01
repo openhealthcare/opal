@@ -18,7 +18,7 @@ class OpalPluginTestCase(OpalTestCase):
         class TestPlugin1(plugins.OpalPlugin):
             javascripts = ['js/test/notreal.js']
             stylesheets = ['css/test/notreal.css']
-            head_extra = ['notareal_template.html']
+            head_extra = ['head_extra_template.html']
             menuitems = [menus.MenuItem(display='test') ]
             angular_module_deps = ['js/test.angular.mod.js']
 
