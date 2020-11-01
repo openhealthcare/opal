@@ -2,7 +2,7 @@
 
 #### Updates to the Dependency Graph
 
-* Django: 2.0.13 -> 2.1.15
+* Django: 2.0.13 -> 2.2.16
 
 
 ### 0.18.4 (Minor Release)

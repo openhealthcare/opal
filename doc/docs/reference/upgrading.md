@@ -13,7 +13,8 @@ you have specified them in for instance, a requirements.txt.
 `opal startproject`)
 
     # requirements.txt
-    django== 2.1.15
+    opal==0.20.0
+    django==2.2.16
 
 
 
