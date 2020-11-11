@@ -15,6 +15,7 @@ you have specified them in for instance, a requirements.txt.
     # requirements.txt
     opal==0.20.0
     django==2.2.16
+    django-compressor==2.4
 
 
 
