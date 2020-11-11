@@ -17,7 +17,7 @@ class PluginTestCase(OpalTestCase):
                 'opal.test': ['js/test/notreal.js']
             }
             stylesheets = ['css/test/notreal.css']
-            head_extra = ['notareal_template.html']
+            head_extra = ['head_extra_template.html']
             menuitems = [menus.MenuItem(display='test')]
             angular_module_deps = ['js/test.angular.mod.js']
             opal_angular_exclude_tracking_qs = [
@@ -54,7 +54,7 @@ class PluginTestCase(OpalTestCase):
         plugins.return_value = [self.plugin1]
         context = opalplugins.plugin_head_extra({})
         templates = list(context['head_extra']())
-        self.assertEqual(['notareal_template.html'], templates)
+        self.assertEqual(['head_extra_template.html'], templates)
 
     def test_prefixes(self, plugins):
         plugins.return_value = [self.plugin1]

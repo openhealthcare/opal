@@ -47,6 +47,7 @@ test_settings_config = dict(
         'django.contrib.contenttypes',
         'django.contrib.staticfiles',
         'django.contrib.sessions',
+        'django.contrib.messages',
         'django.contrib.admin',
         'reversion',
         'compressor',

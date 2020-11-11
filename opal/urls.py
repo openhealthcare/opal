@@ -2,30 +2,28 @@
 Core Opal URlconfs
 """
 from django.conf.urls import include, url
-from django.contrib.auth.views import logout, password_change
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
-
 from opal import views
 from opal.core import api, subrecords, plugins
-from opal.forms import ChangePasswordForm
 
 api.initialize_router()
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view()),
 
-    url(r'^accounts/login/$', views.check_password_reset, name='login'),
+    url(r'^accounts/login/$', views.LoginView.as_view(), name='login'),
 
     url(r'^accounts/logout/$',
-        logout, {'next_page': '/'},
-        name='logout'),
+        views.LogoutView.as_view(),
+        name='logout'
+    ),
 
-    url(r'^accounts/change-password/?$',
-        password_change,
-        {'post_change_redirect': '/',
-         'password_change_form': ChangePasswordForm},
-        name='change-password'),
+    url(
+        r'^accounts/change-password/?$',
+        views.PasswordChangeView.as_view(),
+        name='change-password'
+    ),
 
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
