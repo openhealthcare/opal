@@ -5,9 +5,13 @@ from opal.core import application
 from opal.core import menus
 
 class Application(application.OpalApplication):
+
+    default_episode_category = '{{ name }}'
+
     javascripts   = [
         'js/{{ name }}/routes.js',
     ]
+
 
     menuitems = [
         menus.MenuItem(
@@ -22,5 +26,3 @@ class Application(application.OpalApplication):
             activepattern='/pathway/#/add_patient'
         )
     ]
-
-

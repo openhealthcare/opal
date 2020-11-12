@@ -13,7 +13,7 @@ from unittest.mock import patch, MagicMock
 from opal import models, views
 from opal.core import detail, patient_lists
 from opal.core.subrecords import subrecords
-from opal.core.episodes import InpatientEpisode
+from opal.core.test.episode_categories import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.views import csrf_failure
 

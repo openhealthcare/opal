@@ -85,13 +85,3 @@ class EpisodeCategory(DiscoverableFeature):
                 )
                 raise ValueError(msg)
         self.episode.stage = stage
-
-
-class InpatientEpisode(EpisodeCategory):
-    display_name    = 'Inpatient'
-    detail_template = 'detail/inpatient.html'
-    stages          = [
-        'Inpatient',
-        'Followup',
-        'Discharged'
-    ]
