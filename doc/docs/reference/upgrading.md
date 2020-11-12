@@ -5,6 +5,8 @@ application to a later version where there are extra steps required.
 
 #### v0.18.3 -> v0.20.0
 
+##### Dependency upgrades
+
 How you do this depends on how you have configured your application. You will need to
 update both the Opal version, and versions of dependencies upgraded dependencies if
 you have specified them in for instance, a requirements.txt.
@@ -18,6 +20,26 @@ you have specified them in for instance, a requirements.txt.
     django-compressor==2.4
     six==1.15.0
     psycopg2==2.8.6
+
+
+##### Episode Categories
+
+
+`Inpatient` is not longer provided in `opal.core.episodes`. If you are using the
+Inpatient episode category you can add it in your `{{ appname }}/episode_categories.py
+```
+from opal.core.episodes import EpisodeCategory
+
+
+class InpatientEpisode(EpisodeCategory):
+    display_name    = 'Inpatient'
+    detail_template = 'detail/inpatient.html'
+    stages          = [
+        'Inpatient',
+        'Followup',
+        'Discharged'
+    ]
+```
 
 
 #### v0.17.1 -> v0.18.2

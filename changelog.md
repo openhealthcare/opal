@@ -1,5 +1,10 @@
 ### 0.20.0 (Major Release)
 
+### Scaffold application episode category
+
+The scaffolded application created by `startproject` now creates a custom
+episode category class.
+
 #### Updates to the Dependency Graph
 
 * Django: 2.0.13 -> 2.2.16
