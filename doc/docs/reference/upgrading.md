@@ -16,7 +16,7 @@ you have specified them in for instance, a requirements.txt.
     opal==0.20.0
     django==2.2.16
     django-compressor==2.4
-
+    six==1.15.0
 
 
 #### v0.17.1 -> v0.18.2

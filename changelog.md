@@ -4,6 +4,7 @@
 
 * Django: 2.0.13 -> 2.2.16
 * Django-compressor: 2.2 -> 2.4
+* Six==1.15.0
 
 ### 0.18.4 (Minor Release)
 
