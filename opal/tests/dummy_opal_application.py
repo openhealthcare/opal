@@ -6,7 +6,7 @@ from opal.tests.episode_categories import InpatientEpisode
 
 class Application(application.OpalApplication):
     default_episode_category = InpatientEpisode.display_name
-    pass
+
 
 list_schemas = {
     'default': []
