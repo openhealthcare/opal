@@ -23,6 +23,7 @@ The dependency on the letter python package has been removed from the Opal core 
 * Six==1.15.0
 * Psycopg2: 2.8.3 -> 2.8.6
 * Requests: 2.22.0 -> 2.25.0
+* Python-dateutil: 2.8.0 -> 2.8.1
 * Django-Axes -> Removed
 * Letter -> Removed
 
