@@ -9,7 +9,7 @@ episode category class.
 
 Axes has been removed from the Opal core application. The package creates a database
 log of all login attempts and was installed by default. It is now considered that this
-should be an application level choie rather than a framework choice. Installing it on a
+should be an application level choice rather than a framework choice. Installing it on a
 per application basis is simple, and requires only settings and requirements changes.
 
 #### Updates to the Dependency Graph
