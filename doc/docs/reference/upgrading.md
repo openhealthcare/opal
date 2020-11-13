@@ -25,8 +25,8 @@ you have specified them in for instance, a requirements.txt.
 ##### Episode Categories
 
 
-`Inpatient` is not longer provided in `opal.core.episodes`. If you are using the
-Inpatient episode category you can add it in your `{{ appname }}/episode_categories.py
+`Inpatient` is no longer provided in `opal.core.episodes`. If you are using the
+Inpatient episode category you can add it in your `{{ appname }}/episode_categories.py`
 ```
 from opal.core.episodes import EpisodeCategory
 
