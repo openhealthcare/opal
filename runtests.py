@@ -51,7 +51,6 @@ test_settings_config = dict(
         'django.contrib.admin',
         'reversion',
         'compressor',
-        'axes',
         'djcelery',
         'opal',
         'opal.tests',
