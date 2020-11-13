@@ -46,7 +46,6 @@ setup(
     },
     install_requires=[
         'ffs>=0.0.8.2',
-        'letter==0.5',
         'Jinja2==2.10.1',
         'django==2.2.16',
         'requests==2.22.0',
