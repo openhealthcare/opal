@@ -41,6 +41,13 @@ class InpatientEpisode(EpisodeCategory):
     ]
 ```
 
+##### Django Axes
+
+Opal has removed the built in dependency on Django Axes. If your application wishes to
+continue using it, then the relevant settings should already be in your settings file.
+If you were relying on the entry in the opal `setup.py` to install it at deployment time,
+you will need to ensure this via some other mechanism - for instance ensuring it is in your
+application `requirements.txt`.
 
 #### v0.17.1 -> v0.18.2
 

@@ -5,12 +5,20 @@
 The scaffolded application created by `startproject` now creates a custom
 episode category class.
 
+### Removes Django Axes
+
+Axes has been removed from the Opal core application. The package creates a database
+log of all login attempts and was installed by default. It is now considered that this
+should be an application level choie rather than a framework choice. Installing it on a
+per application basis is simple, and requires only settings and requirements changes.
+
 #### Updates to the Dependency Graph
 
 * Django: 2.0.13 -> 2.2.16
 * Django-compressor: 2.2 -> 2.4
 * Six==1.15.0
 * Psycopg2: 2.8.3 -> 2.8.6
+* Django-Axes -> Removed
 
 ### 0.18.4 (Minor Release)
 
