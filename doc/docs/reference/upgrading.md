@@ -17,10 +17,12 @@ you have specified them in for instance, a requirements.txt.
     # requirements.txt
     opal==0.20.0
     django==2.2.16
+    djangorestframework==3.12.2
     django-compressor==2.4
     six==1.15.0
     psycopg2==2.8.6
 
+Note that within the djangorestframework update, they changed their public api which may affect your application. The `base_name` attribute of a ViewSet has been renamed to `basename`, you can read more details in their [release notes](https://www.django-rest-framework.org/community/release-notes/#390).
 
 ##### Episode Categories
 

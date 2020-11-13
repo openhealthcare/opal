@@ -18,6 +18,7 @@ per application basis is simple, and requires only settings and requirements cha
 * Django-compressor: 2.2 -> 2.4
 * Six==1.15.0
 * Psycopg2: 2.8.3 -> 2.8.6
+* Django-rest-framework: 3.10.2 -> 3.12.2
 * Django-Axes -> Removed
 
 ### 0.18.4 (Minor Release)
