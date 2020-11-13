@@ -112,13 +112,13 @@ test_settings_config = dict(
     }
 )
 
-if 'TRAVIS' in os.environ:
+if os.environ.get('GITHUB_WORKFLOW') == 'tests':
     test_settings_config["DATABASES"] = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'travis_ci_test',
+            'NAME': 'ci_db_test',
             'USER': 'postgres',
-            'PASSWORD': '',
+            'PASSWORD': 'postgres',
             'HOST': 'localhost',
         }
     }

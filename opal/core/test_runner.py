@@ -10,7 +10,7 @@ import ffs
 
 from opal.utils import write
 
-TRAVIS = os.environ.get('TRAVIS', False)
+GITHUB_ACTION = os.environ.get('GITHUB_WORKFLOW', False)
 
 
 def _has_file(where, filename):
@@ -84,7 +84,7 @@ def _run_js_tests(args):
     # to a string
     env["OPAL_LOCATION"] = str(args.opal_location)
 
-    if TRAVIS:
+    if GITHUB_ACTION:
         karma = './node_modules/karma/bin/karma'
     else:
         karma = 'karma'
