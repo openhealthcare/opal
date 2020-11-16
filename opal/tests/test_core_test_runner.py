@@ -10,6 +10,7 @@ from opal.core.test import OpalTestCase
 
 from opal.core import test_runner
 
+
 class RunPyTestsTestCase(OpalTestCase):
 
     @patch('subprocess.check_call')

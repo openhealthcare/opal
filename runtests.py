@@ -43,7 +43,7 @@ test_settings_config = dict(
         'reversion.middleware.RevisionMiddleware'
     ),
     INSTALLED_APPS=(
-        'django.contrib.auth',
+    'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.staticfiles',
         'django.contrib.sessions',
@@ -112,7 +112,7 @@ test_settings_config = dict(
     }
 )
 
-if os.environ.get('GITHUB_WORKFLOW') == 'tests':
+if os.environ.get('USE_POSTGRES'):
     test_settings_config["DATABASES"] = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',

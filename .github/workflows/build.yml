@@ -34,23 +34,26 @@ jobs:
         uses: actions/setup-ruby@v1
       - name: Set up js
         uses: actions/setup-node@v1
+      - run: gem install coveralls-lcov
+      - run: gem install rake
       - name: Install js dependencies
         run: npm install jasmine-core@2.3.4 karma@1.5 karma-coverage@1.1.1 karma-jasmine@0.3.8 karma-firefox-launcher@2.1.0 karma-coveralls@1.1.2
       - name: Install opal
         run: python setup.py develop
+        env:
+          OPAL_TEST_USE_POSTGRES: 1
       - name: Install dependencies
         run: pip install -r test-requirements.txt
       - run: gem install coveralls-lcov
+      - run: gem install rake
       - name: run tests
         run: opal test --coverage
       - name: flake8
         run: flake8
-      - run: find . -iname '*.info' -exec cp '{}' coverage \;
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: coverage/lcov.info
+      - run: coveralls-lcov -v -n coverage/Firefox\ 82.0.0\ \(Ubuntu\ 0.0.0\)/lcov.info > coverage/coverage.json
+      - run: coveralls --merge=coverage/coverage.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
 
 
 
