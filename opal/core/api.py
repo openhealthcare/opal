@@ -21,10 +21,10 @@ app = application.get_app()
 
 
 class OPALRouter(routers.DefaultRouter):
-    def get_default_base_name(self, viewset):
-        name = getattr(viewset, 'base_name', None)
+    def get_default_basename(self, viewset):
+        name = getattr(viewset, 'basename', None)
         if name is None:
-            return routers.DefaultRouter.get_default_base_name(self, viewset)
+            return routers.DefaultRouter.get_default_basename(self, viewset)
         return name
 
 
@@ -81,7 +81,7 @@ class RecordViewSet(LoginRequiredViewset):
     Return the serialization of all active record types ready to
     initialize on the client side.
     """
-    base_name = 'record'
+    basename = 'record'
 
     def list(self, request):
         return json_response(schemas.list_records())
@@ -91,7 +91,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
     """
     API for referencedata
     """
-    base_name = 'referencedata'
+    basename = 'referencedata'
 
     def list(self, request):
         data = {}
@@ -141,7 +141,7 @@ class MetadataViewSet(LoginRequiredViewset):
     """
     Our metadata API
     """
-    base_name = 'metadata'
+    basename = 'metadata'
 
     def list(self, request):
         data = {}
@@ -237,7 +237,7 @@ class UserProfileViewSet(LoginRequiredViewset):
     """
     Returns the user profile details for the currently logged in user
     """
-    base_name = 'userprofile'
+    basename = 'userprofile'
 
     def list(self, request):
         profile = request.user.profile
@@ -248,7 +248,7 @@ class UserViewSet(LoginRequiredViewset):
     """
     Provides applications with information about all system users
     """
-    base_name = 'user'
+    basename = 'user'
 
     def list(self, request):
         """
@@ -269,7 +269,7 @@ class TaggingViewSet(LoginRequiredViewset):
     """
     Returns taggings associated with episodes
     """
-    base_name = 'tagging'
+    basename = 'tagging'
 
     @episode_from_pk
     def retrieve(self, request, episode):
@@ -293,7 +293,7 @@ class EpisodeViewSet(LoginRequiredViewset):
     """
     Episodes of care
     """
-    base_name = 'episode'
+    basename = 'episode'
 
     def list(self, request):
         return json_response(
@@ -357,7 +357,7 @@ class EpisodeViewSet(LoginRequiredViewset):
 
 
 class PatientViewSet(LoginRequiredViewset):
-    base_name = 'patient'
+    basename = 'patient'
 
     @patient_from_pk
     def retrieve(self, request, patient):
@@ -366,7 +366,7 @@ class PatientViewSet(LoginRequiredViewset):
 
 
 class PatientRecordAccessViewSet(LoginRequiredViewset):
-    base_name = 'patientrecordaccess'
+    basename = 'patientrecordaccess'
 
     def retrieve(self, request, pk=None):
         return json_response([
@@ -376,7 +376,7 @@ class PatientRecordAccessViewSet(LoginRequiredViewset):
 
 
 class PatientListViewSet(LoginRequiredViewset):
-    base_name = 'patientlist'
+    basename = 'patientlist'
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
@@ -401,7 +401,7 @@ def register_subrecords():
         sub_name = subrecord.get_api_name()
 
         class SubViewSet(SubrecordViewSet):
-            base_name = sub_name
+            basename  = sub_name
             model     = subrecord
 
         router.register(sub_name, SubViewSet)

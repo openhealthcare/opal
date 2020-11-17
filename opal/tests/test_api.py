@@ -96,15 +96,15 @@ class TestDecorators(OpalTestCase):
 
 class OPALRouterTestCase(TestCase):
 
-    def test_default_base_name(self):
+    def test_default_basename(self):
         class ViewSet:
-            base_name = 'the name'
-        self.assertEqual(api.OPALRouter().get_default_base_name(ViewSet), 'the name')
+            basename = 'the name'
+        self.assertEqual(api.OPALRouter().get_default_basename(ViewSet), 'the name')
 
-    def test_default_base_name_unset(self):
+    def test_default_basename_unset(self):
         class ColourViewSet:
             queryset = Colour.objects.all()
-        self.assertEqual(api.OPALRouter().get_default_base_name(ColourViewSet), 'colour')
+        self.assertEqual(api.OPALRouter().get_default_basename(ColourViewSet), 'colour')
 
 
 class RecordTestCase(TestCase):
@@ -186,11 +186,11 @@ class SubrecordTestCase(OpalTestCase):
         self.patient, self.episode = self.new_patient_and_episode_please()
 
         class OurViewSet(api.SubrecordViewSet):
-            base_name = 'colour'
+            basename = 'colour'
             model     = Colour
 
         class OurPatientViewSet(api.SubrecordViewSet):
-            base_name = 'patientcolour'
+            basename = 'patientcolour'
             model = PatientColour
 
 
@@ -307,7 +307,7 @@ class SubrecordTestCase(OpalTestCase):
         self.maxDiff = None
         instance = self.patient.demographics_set.get()
         class DemographicsViewSet(api.SubrecordViewSet):
-            base_name = 'demographics'
+            basename = 'demographics'
             model     = Demographics
 
         expected = {
@@ -343,7 +343,7 @@ class SubrecordTestCase(OpalTestCase):
         with patch.object(self.model, "get_api_name") as mock_api_name:
             mock_api_name.return_value = "something"
             reload_module(api)
-            api.initialize_router()
+            api.register_subrecords()
             router = api.router
             self.assertIn(
                 "something",
@@ -456,7 +456,7 @@ class ManyToManyTestSubrecordWithLookupListTest(TestCase):
         self.user = User.objects.create(username='testuser')
 
         class ManyToManyViewSet(api.SubrecordViewSet):
-            base_name = 'hatwearer'
+            basename = 'hatwearer'
             model = HatWearer
 
         self.model = HatWearer
