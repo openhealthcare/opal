@@ -1,7 +1,7 @@
 Opal
 ====
 
-![Integration tests](https://github.com/fredkingham/opal/workflows/.github/workflows/build.yml/badge.svg)
+![Build](https://github.com/openhealthcare/opal/workflows/.github/workflows/build.yml/badge.svg)
 
 [![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.11.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.11.0)
 
