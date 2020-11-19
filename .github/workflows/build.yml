@@ -54,6 +54,33 @@ jobs:
       - run: coveralls --merge=coverage/coverage.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
+  # make sure the python side of things works on windows
+  other-os-tests:
+    name: Test ${{ matrix.os }} Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - windows-latest
+        python-version:
+        - 3.6
+        - 3.7
+        - 3.8
+        - 3.9
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install opal
+        run: python setup.py develop
+      - name: Install dependencies
+        run: pip install -r test-requirements.txt
+      - name: run tests
+        run: opal test py
 
 
 
