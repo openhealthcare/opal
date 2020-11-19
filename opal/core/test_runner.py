@@ -10,6 +10,9 @@ import ffs
 
 from opal.utils import write
 
+# We're using the GITHUB_WORKFLOW env variable
+# to determine that we are running in a github action.
+# GITHUB_WORKFLOW is set in the env by github.
 GITHUB_ACTION = os.environ.get('GITHUB_WORKFLOW', False)
 
 
