@@ -235,7 +235,7 @@ class WarnForPython35TestCase(OpalTestCase):
         sys.version_info.minor = 5
         commandline.warn_for_python_35()
         logging.warn.assert_called_with(
-            "Python 3.5 will be deprecated in the opal 0.21.0"
+            "Python 3.5 will be deprecated in Opal 0.21.0"
         )
 
     def test_not_with_python_35(self, logging, sys):
