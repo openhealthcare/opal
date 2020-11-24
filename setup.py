@@ -49,7 +49,7 @@ setup(
         'Jinja2==2.10.1',
         'django==2.2.16',
         'requests==2.25.0',
-        'djangorestframework==3.10.2',
+        'djangorestframework==3.12.2',
         'django-reversion==3.0.8',
         'django-compressor==2.4',
         'python-dateutil==2.8.1',
