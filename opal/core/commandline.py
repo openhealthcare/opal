@@ -247,7 +247,7 @@ def warn_for_python_35():
     vi = sys.version_info
     if vi.major == 3 and vi.minor == 5:
         logging.warn(
-            "Python 3.5 will be deprecated in the opal 0.21.0",
+            "Python 3.5 will be deprecated in Opal 0.21.0",
         )
 
 
