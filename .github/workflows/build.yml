@@ -48,10 +48,17 @@ jobs:
         run: opal test --coverage
       - name: flake8
         run: flake8
-      - run: coveralls-lcov -v -n coverage/Firefox\ 82.0.0\ \(Ubuntu\ 0.0.0\)/lcov.info > coverage/coverage.json
-      - run: coveralls --merge=coverage/coverage.json
+      # - run: coveralls-lcov -v -n coverage/Firefox\ 82.0.0\ \(Ubuntu\ 0.0.0\)/lcov.info > coverage/coverage.json
+      # - run: coveralls --merge=coverage/coverage.json
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
+      - name: Coveralls
+        run: coveralls
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
   # make sure the python side of things works on windows
   other-os-tests:
     name: Test ${{ matrix.os }} Python ${{ matrix.python-version }}
