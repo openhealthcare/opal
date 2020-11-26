@@ -21,6 +21,8 @@ you have specified them in for instance, a requirements.txt.
     django-compressor==2.4
     six==1.15.0
     psycopg2==2.8.6
+    requests==2.25.0
+    python-dateutil==2.8.1
 
 
 ##### API API Changes (REST Framework)

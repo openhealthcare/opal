@@ -17,14 +17,21 @@ log of all login attempts and was installed by default. It is now considered tha
 should be an application level choice rather than a framework choice. Installing it on a
 per application basis is simple, and requires only settings and requirements changes.
 
+### Removes Letter
+
+The dependency on the letter python package has been removed from the Opal core application. If you wish to send emails, django ships with email wrappers to make this easy.
+
 #### Updates to the Dependency Graph
 
 * Django: 2.0.13 -> 2.2.16
 * Django-compressor: 2.2 -> 2.4
 * Six==1.15.0
 * Psycopg2: 2.8.3 -> 2.8.6
+* Requests: 2.22.0 -> 2.25.0
+* Python-dateutil: 2.8.0 -> 2.8.1
 * Django-rest-framework: 3.10.2 -> 3.12.2
 * Django-Axes -> Removed
+* Letter -> Removed
 
 ### 0.18.4 (Minor Release)
 
