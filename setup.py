@@ -53,7 +53,7 @@ setup(
         'django-reversion==3.0.8',
         'django-compressor==2.4',
         'python-dateutil==2.8.1',
-        'django-celery==3.2.2',
+        'django-celery==3.3.1',
         'celery==3.1.25',
         'MarkupSafe==1.1.1', # required for python 3.5
         'six==1.15.0'
