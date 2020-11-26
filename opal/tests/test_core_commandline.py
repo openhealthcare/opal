@@ -225,3 +225,21 @@ class MainTestCase(OpalTestCase):
         with patch.object(commandline, 'parse_args') as pa:
             commandline.main()
             pa.assert_called_with(sys.argv[1:])
+
+
+@patch("opal.core.commandline.sys")
+@patch("opal.core.commandline.logging")
+class WarnForPython35TestCase(OpalTestCase):
+    def test_with_python_35(self, logging, sys):
+        sys.version_info.major = 3
+        sys.version_info.minor = 5
+        commandline.warn_for_python_35()
+        logging.warn.assert_called_with(
+            "Python 3.5 will be deprecated in Opal 0.21.0"
+        )
+
+    def test_not_with_python_35(self, logging, sys):
+        sys.version_info.major = 3
+        sys.version_info.minor = 6
+        commandline.warn_for_python_35()
+        self.assertFalse(logging.called)

@@ -1,5 +1,10 @@
 ### 0.20.0 (Major Release)
 
+#### Python 3 version changes.
+
+Opal now supports python 3.5 - python 3.8.
+Please note that the 0.21.0 release will drop support for python 3.5.
+
 ### Scaffold application episode category
 
 The scaffolded application created by `startproject` now creates a custom
