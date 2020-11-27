@@ -1,3 +1,9 @@
+### 0.21.0 (Major Release)
+
+#### Drops support for python 3.5
+Opal now supports python 3.6 - python 3.8.
+
+
 ### 0.20.0 (Major Release)
 
 #### Python 3 version changes.

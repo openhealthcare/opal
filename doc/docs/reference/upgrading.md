@@ -3,6 +3,9 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.20.0 -> v0.21.0
+Opal no longer supports python 3.5. You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
+
 #### v0.18.3 -> v0.20.0
 
 ##### Dependency upgrades
