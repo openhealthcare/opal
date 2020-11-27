@@ -5,7 +5,6 @@ such as a start and end date, and the type of episode. This may be an inpatient
 stay, an outpatient treatment, a telephone consultation  - or any other arbitrarily
 defined period of care.
 
-
 ## Episode Categories
 
 An episode must have a related category. An Opal `EpisodeCategory` is a discoverable
@@ -19,7 +18,7 @@ the `display_name` attribute of the relevant category.
 ```python
 episode = patient.episode_set.first()
 print episode.category
-# <opal.core.episode.InpatientEpisode object>
+# <{{ your app name }}.InpatientEpisode object>
 
 print episode.category.display_name
 # "Inpatient"
@@ -33,15 +32,6 @@ print episode.category_name
 The category of an episode determines which template will be used to display it
 on the detail page for the patient. This template is determined by looking up
 the `detail_template` attribute of the `EpisodeCategory`.
-
-```python
-episode.category
-print episode.category
-# <opal.core.episode.InpatientEpisode object>
-
-print episode.category.detail_template
-# detail/inpatient.html
-```
 
 The Episode Category template does not comprise the entire
 [Patient detail view](patient_detail_views.md). This is made of multiple episodes

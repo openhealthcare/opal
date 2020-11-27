@@ -202,6 +202,7 @@ def start_project(name, USERLAND_HERE):
     9. Create a superuser
     10. Initialise our git repo
     11. Load referencedata shipped with Opal
+    12. Create the episode category template
     """
 
     project_dir = USERLAND_HERE/name
@@ -289,6 +290,12 @@ def start_project(name, USERLAND_HERE):
     # 11. Load referencedata shipped with Opal
     manage('load_lookup_lists')
 
+    # 12. Create app detail template
+    nix.mv(
+        app_dir/'templates/detail/app.html',
+        app_dir/'templates/detail/{0}.html'.format(name)
+    )
+
 
 def _strip_non_user_fields(schema):
     exclude = [
@@ -346,7 +353,9 @@ def create_display_template_for(record, scaffold_base):
     contents = mold.cast(display_template, record=record, fields=fields)
     # We often get lots of lines containing just spaces as a Jinja2
     # artifact. Lose them.
-    contents = "\n".join(l for l in contents.split("\n") if l.strip())
+    contents = "\n".join(
+        line for line in contents.split("\n") if line.strip()
+    )
     template << contents
     return
 
@@ -369,6 +378,8 @@ def create_form_template_for(record, scaffold_base):
     contents = mold.cast(form_template, record=record, fields=fields)
     # We often get lots of lines containing just spaces as a Jinja2
     # artifact. Lose them.
-    contents = "\n".join(l for l in contents.split("\n") if l.strip())
+    contents = "\n".join(
+        line for line in contents.split("\n") if line.strip()
+    )
     template << contents
     return

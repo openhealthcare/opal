@@ -46,18 +46,17 @@ setup(
     },
     install_requires=[
         'ffs>=0.0.8.2',
-        'letter==0.5',
         'Jinja2==2.10.1',
-        'django==2.0.13',
-        'requests==2.22.0',
-        'django-axes==1.7.0',
-        'djangorestframework==3.10.2',
-        'django-reversion==3.0.1',
-        'django-compressor==2.2',
-        'python-dateutil==2.8.0',
+        'django==2.2.16',
+        'requests==2.25.0',
+        'djangorestframework==3.12.2',
+        'django-reversion==3.0.8',
+        'django-compressor==2.4',
+        'python-dateutil==2.8.1',
         'django-celery==3.2.2',
         'celery==3.1.25',
-        'MarkupSafe==1.1.1' # required for python 3.5
+        'MarkupSafe==1.1.1', # required for python 3.5
+        'six==1.15.0'
         ],
     classifiers = [
         "Programming Language :: Python",

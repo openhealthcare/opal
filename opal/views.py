@@ -3,7 +3,7 @@ Module entrypoint for core Opal views
 """
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import login
+from django.contrib.auth import views as django_views
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
@@ -14,12 +14,18 @@ from opal import models
 from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import get_subrecord_from_api_name
+from opal.forms import ChangePasswordForm
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
 app = application.get_app()
 
 Synonym = models.Synonym
+
+
+class PasswordChangeView(django_views.PasswordChangeView):
+    form_class = ChangePasswordForm
+    success_url = "/"
 
 
 class PatientListTemplateView(LoginRequiredMixin, TemplateView):
@@ -117,18 +123,16 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
 
-def check_password_reset(request, *args, **kwargs):
-    """
-    Check to see if the user needs to reset their password
-    """
-    response = login(request, *args, **kwargs)
-    if response.status_code == 302:
-        profile = request.user.profile
+class LoginView(django_views.LoginView):
+    def get_success_url(self):
+        profile = self.request.user.profile
         if profile and profile.force_password_change:
-            return redirect(
-                reverse('change-password')
-            )
-    return response
+            return reverse('change-password')
+        return super().get_success_url()
+
+
+class LogoutView(django_views.LogoutView):
+    next_page = "/"
 
 
 """

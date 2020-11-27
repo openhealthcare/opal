@@ -110,10 +110,10 @@ class SerialisableFields(object):
     def get_human_readable_type(cls, field_name):
         field_type = cls._get_field(field_name)
 
-        if isinstance(field_type, models.BooleanField):
-            return "Either True or False"
         if isinstance(field_type, models.NullBooleanField):
             return "Either True, False or None"
+        if isinstance(field_type, models.BooleanField):
+            return "Either True or False"
         if isinstance(field_type, models.DateTimeField):
             return "Date & Time"
         if isinstance(field_type, models.DateField):
