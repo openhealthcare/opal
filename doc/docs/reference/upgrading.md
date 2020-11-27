@@ -17,10 +17,22 @@ you have specified them in for instance, a requirements.txt.
     # requirements.txt
     opal==0.20.0
     django==2.2.16
+    djangorestframework==3.12.2
     django-compressor==2.4
     six==1.15.0
     psycopg2==2.8.6
+    requests==2.25.0
+    python-dateutil==2.8.1
 
+
+##### API API Changes (REST Framework)
+
+Note that the Django REST Framework update includes a breaking change to their public 
+API which may affect your application. The `base_name` attribute of a ViewSet has been 
+renamed to `basename` ([release notes](https://www.django-rest-framework.org/community/release-notes/#390)).
+
+Any APIs implemented in your application will likely need to rename this attribute as
+part of this upgrade.
 
 ##### Episode Categories
 
