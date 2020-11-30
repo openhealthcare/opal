@@ -150,7 +150,7 @@ class DownloadSearchView(View):
         if getattr(settings, 'EXTRACT_ASYNC', None):
             criteria = _get_request_data(self.request)['criteria']
             extract_id = async_extract(
-                self.request.user,
+                self.request.user.id,
                 json.loads(criteria)
             )
             return json_response({'extract_id': extract_id})
