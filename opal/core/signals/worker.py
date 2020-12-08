@@ -11,6 +11,7 @@ patient_post_save   = dispatch.Signal(providing_args=["created", "instance"])
 episode_post_save   = dispatch.Signal(providing_args=["created", "instance"])
 subrecord_post_save = dispatch.Signal(providing_args=["created", "instance"])
 
+
 def post_save_worker_forwarder(sender, created=None, instance=None, **kwargs):
     from django.conf import settings
     if 'django_celery_results' in settings.INSTALLED_APPS:

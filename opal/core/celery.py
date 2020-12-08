@@ -1,8 +1,8 @@
 import os
 import sys
 from opal.core import commandline
-
 from celery import Celery
+
 
 def setUp():
     if 'runtests.py' not in sys.argv:
@@ -18,8 +18,7 @@ def setUp():
 
 app = setUp()
 
+
 @app.task(bind=True)
 def debug_task(self):
     sys.stdout.write('Request: {0!r}\n'.format(self.request))
-
-
