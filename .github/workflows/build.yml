@@ -48,7 +48,8 @@ jobs:
         run: opal test --coverage
       - name: flake8
         run: flake8
-      - run: coveralls-lcov -v -n coverage/Firefox\ 82.0.0\ \(Ubuntu\ 0.0.0\)/lcov.info > coverage/coverage.json
+      - name: combine coveralls
+        run: find coverage -name "lcov.info" -exec coveralls-lcov -v -n {} \; > coverage/coverage.json
       - run: coveralls --merge=coverage/coverage.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
