@@ -54,7 +54,7 @@ setup(
         'django-compressor==2.4',
         'python-dateutil==2.8.1',
         'django-celery==3.2.2',
-        'celery==3.1.25',
+        'celery==5.0.4',
         'MarkupSafe==1.1.1', # required for python 3.5
         'six==1.15.0'
         ],
