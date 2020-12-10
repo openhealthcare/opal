@@ -34,6 +34,13 @@ CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 ```
 
+Remove `djcelery` from your `INSTALLED APPS` in settings and add `django_celery_results`
+```
+INSTALLED_APPS = (
+    ...,
+    'django_celery_results',
+)
+```
 
 #### v0.18.3 -> v0.20.0
 
