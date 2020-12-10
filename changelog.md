@@ -1,8 +1,7 @@
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and django celery library change.
-`django-celery` is only 3.5 and is no longer the recommended solution for Celery/Django.
-This library has been changed to `django-celery-results`
+`django-celery` only officially supports python 3.5 which Opal no longer supports. It is also no longer the recommended solution for results by celery. So we have removed this dependency and added the `django-celery-results` module that has a similar functionality.
 
 #### Drops support for python 3.5
 Opal now supports python 3.6 - python 3.8.
