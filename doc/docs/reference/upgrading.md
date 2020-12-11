@@ -4,17 +4,17 @@ This document provides instructions for specific steps required to upgrading you
 application to a later version where there are extra steps required.
 
 #### v0.20.0 -> v0.21.0
-Opal no longer supports python 3.5. You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
+Opal no longer supports Python 3.5. You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
 
 #### Celery changes
-Opal does not require you to run celery but it comes out of the box with it configured for your use.
+Opal does not require you to run Celery but it comes out of the box with it configured for your use.
 If you don't have `celery` or `django-celery` in your requirements.txt this section can be ignored.
 
 `django-celery` has been removed as a dependency. Please remove it from your requirements.
 
 __Note__ This means that old results from `django-celery` will no longer be visible from the admin.
 
-`django-celery-results==2.0.0` replaces `django-celery`, please add it to your requirements. This will show celery task results in the admin in its own model and requires `python manage.py migrate` to be run.
+`django-celery-results==2.0.0` replaces `django-celery`, please add it to your requirements. This will show Celery task results in the admin in its own model and requires `python manage.py migrate` to be run.
 
 Celery has been upgraded to 5.0.2.
 
@@ -25,7 +25,7 @@ So if you're using a requirements.txt for example it should not include.
     django-celery-results==2.0.0
 
 
-The django celery admin command is no longer available change your celery deployment command from
+The Django Celery admin command is no longer available change your Celery deployment command from
 `python manage.py celery worker -l info` to `celery -A opal.core worker -l INFO`
 
 Add the below to your settings.py.
