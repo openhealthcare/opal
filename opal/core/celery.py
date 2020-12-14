@@ -4,7 +4,7 @@ from opal.core import commandline
 from celery import Celery
 
 
-def setUp():
+def set_up():
     if 'runtests.py' not in sys.argv:
         if 'DJANGO_SETTINGS_MODULE' not in os.environ:
             app_name = commandline.find_application_name()
@@ -16,7 +16,7 @@ def setUp():
     return app
 
 
-app = setUp()
+app = set_up()
 
 
 @app.task(bind=True)

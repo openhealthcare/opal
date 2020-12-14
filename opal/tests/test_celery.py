@@ -1,8 +1,7 @@
 """
 Unittests for opal.core.celery
 """
-from unittest.mock import patch, MagicMock
-
+from unittest.mock import patch
 from opal.core.test import OpalTestCase
 
 from opal.core import celery
@@ -20,7 +19,7 @@ class DebugTaskTestCase(OpalTestCase):
     def test_with_settings_module(self, os, Celery, sys):
         sys.argv = []
         os.environ = {'DJANGO_SETTINGS_MODULE': 'already_set'}
-        celery.setUp()
+        celery.set_up()
         Celery.assert_called_once_with('opal')
         app = Celery.return_value
         app.config_from_object.assert_called_once_with(
@@ -36,7 +35,7 @@ class DebugTaskTestCase(OpalTestCase):
         sys.argv = []
         os.environ = {}
         commandline.find_application_name.return_value = "my_fake_app"
-        celery.setUp()
+        celery.set_up()
         Celery.assert_called_once_with('opal')
         app = Celery.return_value
         app.config_from_object.assert_called_once_with(
