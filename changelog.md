@@ -6,6 +6,11 @@
 #### Drops support for Python 3.5
 Opal now supports Python 3.6 - Python 3.8.
 
+#### Updates to the Dependency Graph
+
+* Django: 2.2.16 -> 3.0.11
+* django-celery-results==2.0.0 # Added
+* django-celery -> Removed
 
 ### 0.20.0 (Major Release)
 

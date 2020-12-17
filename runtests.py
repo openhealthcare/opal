@@ -116,7 +116,7 @@ test_settings_config = dict(
 if 'TRAVIS' in os.environ:
     test_settings_config["DATABASES"] = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'travis_ci_test',
             'USER': 'postgres',
             'PASSWORD': '',
