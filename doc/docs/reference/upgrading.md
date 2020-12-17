@@ -18,7 +18,7 @@ __Note__ This means that old results from `django-celery` will no longer be visi
 
 Celery has been upgraded to 5.0.2.
 
-So if you're using a requirements.txt for example it should not include.
+So if you're using a requirements.txt for example it should now include.
     # requirements.txt
     opal==0.21.0
     celery==5.0.2
