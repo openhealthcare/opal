@@ -3,6 +3,51 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.20.0 -> v0.21.0
+
+Opal no longer supports Python 3.5. 
+You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
+
+#### Celery changes
+
+Opal does not require you to run Celery but we do pre-configure Opal applications for use with 
+Celery.
+
+If you don't have `celery` or `django-celery` in your requirements.txt this section can be ignored.
+
+`django-celery` has been removed as a dependency. Please remove it from your requirements.
+
+__Note__ This means that old results from `django-celery` will no longer be visible from the admin.
+
+`django-celery-results==2.0.0` replaces `django-celery`, please add it to your requirements. 
+This will show Celery task results in the admin and requires `python manage.py migrate` to be run.
+
+Celery has been upgraded to 5.0.2.
+
+So if you're using a requirements.txt for example it should now include.
+    # requirements.txt
+    opal==0.21.0
+    celery==5.0.2
+    django-celery-results==2.0.0
+
+
+The Django Celery management command has changed from
+`python manage.py celery worker -l info` to `celery -A opal.core worker -l INFO`
+
+Add the below to your settings.py.
+```
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+```
+
+Remove `djcelery` from your `INSTALLED APPS` in settings and add `django_celery_results`
+```
+INSTALLED_APPS = (
+    ...,
+    'django_celery_results',
+)
+```
+
 #### v0.18.3 -> v0.20.0
 
 ##### Dependency upgrades

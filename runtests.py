@@ -51,12 +51,13 @@ test_settings_config = dict(
         'django.contrib.admin',
         'reversion',
         'compressor',
-        'djcelery',
+        'django_celery_results',
         'opal',
         'opal.tests',
         'opal.core.search',
         'opal.core.pathway.tests.pathway_test',
         'opal.core.pathway',
+        'opal.core.signals'
     ),
     TEMPLATES = [
         {
@@ -80,7 +81,7 @@ test_settings_config = dict(
             },
         },
     ],
-    CELERY_ALWAYS_EAGER=True,
+    CELERY_TASK_ALWAYS_EAGER=True,
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -131,7 +132,6 @@ from opal.tests import dummy_opal_application  # NOQA
 import django
 django.setup()
 from opal.core import celery
-celery.app.config_from_object('django.conf:settings')
 
 try:
     sys.argv.remove('--failfast')
