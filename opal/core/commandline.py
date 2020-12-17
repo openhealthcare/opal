@@ -8,8 +8,6 @@ import functools
 import os
 import subprocess
 import sys
-import logging
-
 from django.core import management
 import ffs
 
@@ -243,14 +241,5 @@ def parse_args(args):
     sys.exit(0)
 
 
-def warn_for_python_35():
-    vi = sys.version_info
-    if vi.major == 3 and vi.minor == 5:
-        logging.warn(
-            "Python 3.5 will be deprecated in Opal 0.21.0",
-        )
-
-
 def main():
-    warn_for_python_35()
     parse_args(sys.argv[1:])

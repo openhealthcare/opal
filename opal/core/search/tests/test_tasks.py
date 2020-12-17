@@ -21,5 +21,5 @@ class ExtractTestCase(OpalTestCase):
                 u'queryType': u'Equals'
             }
         ]
-        fname = tasks.extract(self.user, criteria)
+        fname = tasks.extract(self.user.id, criteria)
         self.assertEqual('Help', fname)
