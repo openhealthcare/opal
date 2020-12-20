@@ -19,7 +19,7 @@ you have specified them in for instance, a requirements.txt.
 
     # requirements.txt
     opal==0.20.0
-    django==3.0.11
+    django==3.1.4
 
 
 ##### API API Changes (Django)
