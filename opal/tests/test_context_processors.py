@@ -8,13 +8,14 @@ from opal.core.subrecords import subrecords
 
 
 class SettingsTestCase(TestCase):
-    def test_settings(self):
-        from django.conf import settings
+    @patch("opal.context_processors.s")
+    def test_settings(self, s):
+        s.some_attribute = 'hello'
 
         context = context_processors.settings(None)
-
-        for s in dir(settings):
-            self.assertEqual(getattr(settings, s), context[s])
+        self.assertEqual(
+            context["some_attribute"], "hello"
+        )
 
 
 class ModelsTestCase(TestCase):
