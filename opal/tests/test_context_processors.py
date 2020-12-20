@@ -13,7 +13,7 @@ class SettingsTestCase(TestCase):
 
         context = context_processors.settings(None)
 
-        for s in dir(settings):
+        for s in vars(settings).keys():
             self.assertEqual(getattr(settings, s), context[s])
 
 
