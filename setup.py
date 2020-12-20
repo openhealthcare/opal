@@ -47,7 +47,7 @@ setup(
     install_requires=[
         'ffs>=0.0.8.2',
         'Jinja2==2.10.1',
-        'django==3.0.11',
+        'django==3.1.4',
         'requests==2.25.0',
         'djangorestframework==3.12.2',
         'django-reversion==3.0.8',
