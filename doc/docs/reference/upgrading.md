@@ -22,7 +22,7 @@ you have specified them in for instance, a requirements.txt.
     django==3.1.4
 
 
-##### API API Changes (Django)
+##### API Changes (Django)
 Note Django has removed `django.db.backends.postgresql_psycopg2` in this release and you should use `django.db.backends.postgresql`. For more details see
 https://docs.djangoproject.com/en/3.1/releases/3.0/#features-removed-in-3-0
 
@@ -89,7 +89,7 @@ you have specified them in for instance, a requirements.txt.
     python-dateutil==2.8.1
 
 
-##### API API Changes (REST Framework)
+##### API Changes (REST Framework)
 
 Note that the Django REST Framework update includes a breaking change to their public 
 API which may affect your application. The `base_name` attribute of a ViewSet has been 
