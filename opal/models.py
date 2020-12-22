@@ -87,7 +87,7 @@ class SerialisableFields(object):
     def _get_field_type(cls, name):
         try:
             return type(cls._meta.get_field(name))
-        except models.FieldDoesNotExist:
+        except FieldDoesNotExist:
             pass
 
         # TODO: Make this dynamic
