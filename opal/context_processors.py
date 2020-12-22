@@ -17,7 +17,7 @@ def settings(request):
     """
     Put all settings in locals() for our templte context.
     """
-    return {x: getattr(s, x) for x in dir(s)}
+    return {x: getattr(s, x) for x in dir(s) if hasattr(s, x)}
 
 
 def models(request):

@@ -8,9 +8,28 @@ application to a later version where there are extra steps required.
 Opal no longer supports Python 3.5. 
 You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
 
+##### Dependency upgrades
+
+How you do this depends on how you have configured your application. You will need to
+update both the Opal version, and versions of dependencies upgraded dependencies if
+you have specified them in for instance, a requirements.txt.
+
+(This will be the case if you use the requirements.txt originally provided by
+`opal startproject`)
+
+    # requirements.txt
+    opal==0.20.0
+    django==3.1.4
+
+
+##### API Changes (Django)
+Note Django has removed `django.db.backends.postgresql_psycopg2` in this release and you should use `django.db.backends.postgresql`. For more details see
+https://docs.djangoproject.com/en/3.1/releases/3.0/#features-removed-in-3-0
+
+
 #### Celery changes
 
-Opal does not require you to run Celery but we do pre-configure Opal applications for use with 
+Opal does not require you to run Celery but we do pre-configure Opal applications for use with
 Celery.
 
 If you don't have `celery` or `django-celery` in your requirements.txt this section can be ignored.
@@ -70,7 +89,7 @@ you have specified them in for instance, a requirements.txt.
     python-dateutil==2.8.1
 
 
-##### API API Changes (REST Framework)
+##### API Changes (REST Framework)
 
 Note that the Django REST Framework update includes a breaking change to their public 
 API which may affect your application. The `base_name` attribute of a ViewSet has been 
