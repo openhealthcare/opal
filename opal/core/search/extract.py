@@ -20,6 +20,7 @@ from opal.models import Episode
 from opal.core.subrecords import (
     episode_subrecords, subrecords
 )
+from opal.core.search.extract_rule import ModelRule, ExtractRule
 
 
 class CsvColumn(object):
@@ -263,7 +264,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         )
 
 
-def generate_csv_files(root_dir, episodes, user):
+def generate_csv_files_old(root_dir, episodes, user):
     """ Generate the files and return a tuple of absolute_file_name, file_name
     """
     file_names = []
@@ -299,6 +300,39 @@ def generate_csv_files(root_dir, episodes, user):
     return file_names
 
 
+def generate_csv_files(root_dir, episodes, user):
+    file_names = []
+
+    file_name = "data_dictionary.html"
+    full_file_name = os.path.join(root_dir, file_name)
+    write_data_dictionary(full_file_name)
+    file_names.append(file_name)
+    for subrecord in subrecords():
+        if getattr(subrecord, '_exclude_from_extract', False):
+            continue
+        if subrecord in episode_subrecords():
+            rule = ModelRule(
+                episodes, user, subrecord, "episode__id"
+            )
+        else:
+            rule = ModelRule(
+                episodes, user, subrecord, "patient__episode__id"
+            )
+        file_name = rule.write_to_file(root_dir)
+        if file_name:
+            file_names.append(file_name)
+
+    for rule in ExtractRule.list():
+        file_name = rule(episodes, user).write_to_file(root_dir)
+        if not file_name:
+            continue
+        if isinstance(file_name, list):
+            file_names.extend(file_name)
+        else:
+            file_names.append(file_name)
+        return file_names
+
+
 def zip_archive(episodes, description, user):
     """
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
@@ -314,10 +348,12 @@ def zip_archive(episodes, description, user):
         os.mkdir(root_dir)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
         file_names = generate_csv_files(root_dir, episodes, user)
-        for full_file_name, file_name in file_names:
+        for file_name in file_names:
+            full_file_name = os.path.join(root_dir, file_name)
+            zip_relative_file_path = os.path.join(zipfolder, file_name)
             z.write(
                 full_file_name,
-                zip_relative_file_path(file_name)
+                zip_relative_file_path
             )
 
     return target
