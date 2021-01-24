@@ -33,6 +33,18 @@ class ExtractRule(DiscoverableFeature):
         """
         pass
 
+    def get_data_dictionary(self):
+        """
+        return {
+            {{ display_name }}: [{
+                display_name: {{ field display name }},
+                description: {{ field description }},
+                type_display_name: {{ field type }},
+            }]
+        }
+        """
+        return {}
+
 
 class ModelRule(ExtractRule, AbstractBase):
     """
@@ -55,6 +67,8 @@ class ModelRule(ExtractRule, AbstractBase):
        (by default episode id)
     3. the output of get_instance_dict(instance) that returns serializes an instance to a dict
     """
+    additional_fields = []
+
     def __init__(self, episode_list, user, model, path_to_episode_id):
         self.episode_list = episode_list
         self.user = user
@@ -76,6 +90,26 @@ class ModelRule(ExtractRule, AbstractBase):
 
         # a dict of episode id to base fields
         self.base_field_dict = self.get_base_field_dict()
+        self.validate_additional_fields()
+
+    def validate_additional_fields(self):
+        for field in self.additional_fields:
+            extract_method = "extract_{}".format(field)
+            get_field_description_method = "get_{}_description".format(field)
+            if not hasattr(self.model, field) and not hasattr(self, extract_method):
+                err_message = " ".join((
+                    "{} is not an attribute on the model",
+                    "please implement a {} on the extract rule {}",
+                )).format(field, extract_method, self)
+                raise NotImplementedError(err_message)
+
+            if not hasattr(self, get_field_description_method):
+                err_message = " ".join(
+                    "Please implement a {} message on the model",
+                    "that returns a dictionary with 'display_name',",
+                    "'description' and 'type_display_name'"
+                )
+                raise NotImplementedError(err_message)
 
     @property
     def file_name(self):
@@ -126,6 +160,11 @@ class ModelRule(ExtractRule, AbstractBase):
             if field_name in fields_to_ignore:
                 continue
             result[field_name] = self.model._get_field_title(field_name)
+
+        for field_name in self.additional_fields:
+            description_getter = "get_{}_description".format(field_name)
+            result[field_name] = getattr(self, description_getter)()["display_name"]
+
         return result
 
     def get_model_id_to_episode_ids(self):
@@ -207,6 +246,7 @@ class ModelRule(ExtractRule, AbstractBase):
 
     def write_to_file(self, directory):
         """
+        Writes what is generated out to a file
         """
         file_name = self.file_name
         full_file_name = os.path.join(directory, file_name)
@@ -221,17 +261,47 @@ class ModelRule(ExtractRule, AbstractBase):
                 writer.writerow(row)
         return file_name
 
+    def get_field_description(self, field_name):
+        get_method = "get_{}_description".format(
+            field_name
+        )
+        if hasattr(self, get_method):
+            return getattr(self, get_method)()
+        return {
+            "display_name": self.model._get_field_title(field_name),
+            "description": self.model.get_field_description(field_name),
+            "type_display_name": self.model.get_human_readable_type(field_name),
+        }
+
+    def get_data_dictionary(self):
+        fields = self.model_field_name_to_display_name.keys()
+        fields_descriptions = [
+            self.get_field_description(field) for field in fields
+        ]
+        fields_descriptions = sorted(
+            fields_descriptions, key=lambda x: x["display_name"]
+        )
+        display_name = getattr(self, "display_name", None)
+
+        if not display_name:
+            display_name = self.model.get_display_name()
+        return {display_name: fields_descriptions}
+
 
 class EpisodeRule(ModelRule):
     file_name = "episodes.csv"
+    additional_fields = ["tagging"]
+    display_name = "Episode"
 
     def __init__(self, episode_list, user):
         super().__init__(episode_list, user, Episode, "id")
 
-    def get_fields_name_to_display_name(self):
-        fields = super().get_fields_name_to_display_name()
-        fields["tagging"] = "Tagging"
-        return fields
+    def get_tagging_description(self):
+        return {
+            "display_name": "Tagging",
+            "description": "A list of tags that the episode has been tagged with",
+            "type_display_name": "semicolon seperated list"
+        }
 
     def extract_tagging(self, episode):
         return ";".join(
