@@ -4,6 +4,7 @@ from collections import defaultdict
 from opal.core.discoverable import DiscoverableFeature
 from opal.models import Episode
 import json
+from django.utils.module_loading import import_string
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from opal.utils import AbstractBase
@@ -16,7 +17,12 @@ def default_base_fields(user):
     }
 
 
-BASE_FIELDS = getattr(settings, "BASE_FIELDS", default_base_fields)
+EXTRACT_BASE_FIELDS = getattr(settings, "EXTRACT_BASE_FIELDS", None)
+
+if BASE_FIELDS:
+    base_fields_function = import_string(BASE_FIELDS)
+else:
+    base_fields_function = default_base_fields
 
 
 class ExtractRule(DiscoverableFeature):
@@ -86,7 +92,7 @@ class ModelRule(ExtractRule, AbstractBase):
 
         # the additional fields that will be attatched to every row
         # e.g. patient__demographics__surname
-        self.base_fields = BASE_FIELDS(user)
+        self.base_fields = base_fields_function(user)
 
         # a dict of episode id to base fields
         self.base_field_dict = self.get_base_field_dict()
