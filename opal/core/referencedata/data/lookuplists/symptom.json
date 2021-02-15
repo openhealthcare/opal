@@ -4,227 +4,447 @@
       "synonyms": [
         "Abdo Pain"
       ], 
-      "name": "Abdominal Pain"
+      "name": "Abdominal Pain",
+      "coding": {
+        "code": "404684003",
+        "system": "http://snomed.info/sct"
+     }
+    }, 
+    {
+      "synonyms": ["Swollen Abdomen"], 
+      "name": "Abdominal Swelling",
+      "coding": {
+        "code": "60728008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Abdominal Swelling"
+      "name": "Abnormal Investigation",
+      "coding": {
+        "code": "263654008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Abnormal Investigation"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Abnormal blood tests"
+      "name": "Abnormal blood tests",
+      "coding": {
+        "code": "151271000119102",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
-        "Parasthesia"
+        "Paresthesia"
       ], 
-      "name": "Altered Sensation"
+      "name": "Altered Sensation",
+      "coding": {
+        "code": "91019004",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Anxiety"
+      "name": "Anxiety",
+      "coding": {
+        "code": "48694002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
-      "synonyms": [], 
-      "name": "Arm Pain"
+      "synonyms": ["Pain in Upper Limb"], 
+      "name": "Arm Pain",
+      "coding": {
+        "code": "102556003",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "Joint Pain"
       ], 
-      "name": "Arthalgia"
+      "name": "Arthalgia",
+      "coding": {
+        "code": "57676002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Arthritis"
+      "name": "Arthritis",
+      "coding": {
+        "code": "3723001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Back Pain"
+      "name": "Back Pain",
+      "coding": {
+        "code": "161891005",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Bloody Diarrhoea"
+      "name": "Bloody Diarrhoea",
+      "coding": {
+        "code": "95545007",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Change in Behaviour"
+      "name": "Change in Behaviour",
+      "coding": {
+        "code": "315244000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Chest Pain"
+      "name": "Chest Pain",
+      "coding": {
+        "code": "29857009",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Colitis"
+      "name": "Colitis",
+      "coding": {
+        "code": "64226004",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Collapse"
+      "name": "Collapse",
+      "coding": {
+        "code": "271787007",
+        "system": "http://snomed.info/sct"
+     }
+    }, 
+    {
+      "synonyms": [
+        "Clouded consciousness"
+      ], 
+      "name": "Confusion",
+      "coding": {
+        "code": "40917007",
+        "system": "http://snomed.info/sct"
+     }
+    }, 
+    {
+      "synonyms": [
+        "Constipated"
+      ], 
+      "name": "Constipation",
+      "coding": {
+        "code": "14760008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Confusion"
+      "name": "Cough",
+      "coding": {
+        "code": "49727002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Constipation"
+      "name": "Deliberate self-harm",
+      "coding": {
+        "code": "248062006",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Coryzal Symptoms"
+      "name": "Diarrhoea",
+      "coding": {
+        "code": "62315008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Cough"
-    }, 
+      "name": "Difficulty passing urine",
+      "coding": {
+        "code": "102835006",
+        "system": "http://snomed.info/sct"
+     }
+    },
+    {
+      "synonyms": [
+        "Slurred Speech"
+      ], 
+      "name": "Dysarthria",
+      "coding": {
+        "code": "8011004",
+        "system": "http://snomed.info/sct"
+     }
+    },  
     {
       "synonyms": [], 
-      "name": "Deliberate self-harm"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Diarrhoea"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Difficulty passing urine"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Dyspareunia"
+      "name": "Dyspareunia",
+      "coding": {
+        "code": "71315007",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "Difficulty Swallowing"
       ], 
-      "name": "Dysphagia"
+      "name": "Dysphagia",
+      "coding": {
+        "code": "40739000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
-        "Slurred Speech"
+        "Speech Disturbance"
       ], 
-      "name": "Dysphasia"
+      "name": "Dysphasia",
+      "coding": {
+        "code": "20301004",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Dysuria"
+      "name": "Dysuria",
+      "coding": {
+        "code": "49650001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "Otalgia"
       ], 
-      "name": "Ear pain"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Epidemiological exposure"
+      "name": "Ear pain",
+      "coding": {
+        "code": "16001004",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "Nose Bleed"
       ], 
-      "name": "Epistaxis"
+      "name": "Epistaxis",
+      "coding": {
+        "code": "249366005",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Erythema"
+      "name": "Erythema",
+      "coding": {
+        "code": "247441003",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Facial Pain"
+      "name": "Facial Pain",
+      "coding": {
+        "code": "95668009",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Fall"
+      "name": "Falls",
+      "coding": {
+        "code": "161898004",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Fever"
+      "name": "Fever",
+      "coding": {
+        "code": "386661006",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Flank Pain"
+      "name": "Flank Pain",
+      "coding": {
+        "code": "247355005",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Gait abnormality"
+      "name": "Gait abnormality",
+      "coding": {
+        "code": "247355005",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Genital discharge"
+      "name": "Genital discharge",
+      "coding": {
+        "code": "422910009",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Genital ulceration"
+      "name": "Male Genital ulceration",
+      "coding": {
+        "code": "95589007",
+        "system": "http://snomed.info/sct"
+     }
+    },
+    {
+      "synonyms": [], 
+      "name": "Female Genital ulceration",
+      "coding": {
+        "code": "95589008",
+        "system": "http://snomed.info/sct"
+     }
+    },  
+    {
+      "synonyms": [], 
+      "name": "Haematemesis",
+      "coding": {
+        "code": "8765009",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Haematemesis"
+      "name": "Haematuria",
+      "coding": {
+        "code": "34436003",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Haematuria"
+      "name": "Haemoptysis",
+      "coding": {
+        "code": "66857006",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Haemoptysis"
+      "name": "Head injury",
+      "coding": {
+        "code": "82271004",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Head injury"
+      "name": "Headache",
+      "coding": {
+        "code": "25064002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Headache"
+      "name": "Hearing loss",
+      "coding": {
+        "code": "14230001000004101",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Hearing loss"
+      "name": "Hoarseness",
+      "coding": {
+        "code": "50219008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Hoarseness"
+      "name": "Insect bite",
+      "coding": {
+        "code": "402150002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Insect bite"
+      "name": "Involuntary movements",
+      "coding": {
+        "code": "267078001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Involuntary movements"
+      "name": "Jaundice",
+      "coding": {
+        "code": "18165001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Jaundice"
+      "name": "Joint Swelling",
+      "coding": {
+        "code": "271771009",
+        "system": "http://snomed.info/sct"
+     }
+    }, 
+    {
+      "synonyms": [
+        "Pain in lower limb"
+      ], 
+      "name": "Leg Pain",
+      "coding": {
+        "code": "287047008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Joint Swelling"
+      "name": "Limb Swelling",
+      "coding": {
+        "code": "449614009",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Leg Pain"
+      "name": "Limb weakness",
+      "coding": {
+        "code": "713514005",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Limb Swelling"
+      "name": "Loin Pain",
+      "coding": {
+        "code": "271857006",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Limb weakness"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Loin Pain"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Malaena"
+      "name": "Malaena",
+      "coding": {
+        "code": "272045003",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
@@ -232,57 +452,103 @@
         "Lethargy", 
         "Tiredness"
       ], 
-      "name": "Malaise"
+      "name": "Malaise",
+      "coding": {
+        "code": "367391008",
+        "system": "http://snomed.info/sct"
+     }
+    }, 
+    {
+      "synonyms": [
+        "Amnesia"
+      ], 
+      "name": "Memory Loss",
+      "coding": {
+        "code": "48167000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Memory Loss"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Mouth Ulcer"
+      "name": "Mouth Ulcer",
+      "coding": {
+        "code": "26284000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "Muscle Pain"
       ], 
-      "name": "Myalgia"
+      "name": "Myalgia",
+      "coding": {
+        "code": "68962001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Nausea"
+      "name": "Nausea",
+      "coding": {
+        "code": "422587007",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Neck Stiffness"
+      "name": "Neck Stiffness",
+      "coding": {
+        "code": "161882006",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Neck pain"
+      "name": "Neck pain",
+      "coding": {
+        "code": "81680005",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Night Sweats"
+      "name": "Night Sweats",
+      "coding": {
+        "code": "42984000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Nocturia"
+      "name": "Nocturia",
+      "coding": {
+        "code": "139394000",
+        "system": "http://snomed.info/sct"
+     }
+    },
+    {
+      "synonyms": [], 
+      "name": "Palpitations",
+      "coding": {
+        "code": "80313002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Overdose"
+      "name": "Oedema",
+      "coding": {
+        "code": "267038008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Palpitations"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Peripheral Odema"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Photophopbia"
+      "name": "Photophopbia",
+      "coding": {
+        "code": "409668002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
@@ -290,81 +556,148 @@
     }, 
     {
       "synonyms": [], 
-      "name": "Polyuria"
+      "name": "Polyuria",
+      "coding": {
+        "code": "28442001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Pre-Syncope"
+      "name": "Pre-Syncope",
+      "coding": {
+        "code": "427461000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "Itching"
       ], 
-      "name": "Pruritus"
+      "name": "Pruritus",
+      "coding": {
+        "code": "418363000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Rash"
+      "name": "Rash",
+      "coding": {
+        "code": "112625008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
         "PR Bleeding"
       ], 
-      "name": "Rectal Bleeding"
+      "name": "Rectal Bleeding",
+      "coding": {
+        "code": "12063002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Reduced Conciousness"
+      "name": "Reduced Conciousness",
+      "coding": {
+        "code": "443371007",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Rigors"
+      "name": "Rigors",
+      "coding": {
+        "code": "38880002",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Seizure"
+      "name": "Seizure",
+      "coding": {
+        "code": "91175000",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [
-        "Breathlessness"
+        "Breathlessness",
+        "Dyspnoea"
       ], 
-      "name": "Shortness of Breath"
+      "name": "Shortness of Breath",
+      "coding": {
+        "code": "267036007",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Sore throat"
+      "name": "Sore throat",
+      "coding": {
+        "code": "162397003",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Stridor"
+      "name": "Stridor",
+      "coding": {
+        "code": "70407001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Testicular Pain"
+      "name": "Testicular Pain",
+      "coding": {
+        "code": "282360001",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Unsteadiness"
+      "name": "Unsteadiness",
+      "coding": {
+        "code": "394616008",
+        "system": "http://snomed.info/sct"
+     }
+    },
+    {
+      "synonyms": [], 
+      "name": "Visual disturbance",
+      "coding": {
+        "code": "162279009",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Urinary Frequency"
+      "name": "Vomiting",
+      "coding": {
+        "code": "422400008",
+        "system": "http://snomed.info/sct"
+     }
+    }, 
+    {
+      "synonyms": [
+        "Asthenia"
+      ], 
+      "name": "Weakness",
+      "coding": {
+        "code": "13791008",
+        "system": "http://snomed.info/sct"
+     }
     }, 
     {
       "synonyms": [], 
-      "name": "Visual disturbance"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Vomiting"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Weakness"
-    }, 
-    {
-      "synonyms": [], 
-      "name": "Weight Loss"
+      "name": "Weight Loss",
+      "coding": {
+        "code": "89362005",
+        "system": "http://snomed.info/sct"
+     }
     }
   ]
 }

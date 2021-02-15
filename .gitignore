@@ -16,3 +16,7 @@ node_modules
 *.swp
 .vscode
 doc/site
+
+Pipfile
+Pipfile.lock
+opal-env
