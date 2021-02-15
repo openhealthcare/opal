@@ -2,41 +2,11 @@ describe('RecordEditor', function(){
     "use strict";
 
     var $scope, $modal, $routeParams;
-    var $rootScope, $q, $controller;
-    var Episode, episode;
-    var controller, UserProfile;
+    var $rootScope, $q;
+    var episode;
+    var UserProfile;
     var opalTestHelper;
     var profile, $log;
-
-    var episodeData = {
-        id: 123,
-        active: true,
-        prev_episodes: [],
-        next_episodes: [],
-        demographics: [{
-            id: 101,
-            patient_id: 99,
-            name: 'John Smith',
-            date_of_birth: '1980-07-31'
-        }],
-        tagging: [{'mine': true, 'tropical': true}],
-        location: [{
-            category: 'Inepisode',
-            hospital: 'UCH',
-            ward: 'T10',
-            bed: '15',
-            date_of_admission: '2013-08-01',
-        }],
-        diagnosis: [{
-            id: 102,
-            condition: 'Dengue',
-            provisional: true,
-        }, {
-            id: 103,
-            condition: 'Malaria',
-            provisional: false,
-        }]
-    };
 
     var columns = {
         "default": [
@@ -89,9 +59,7 @@ describe('RecordEditor', function(){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
             $routeParams = $injector.get('$routeParams');
-            $controller = $injector.get('$controller');
             $modal = $injector.get('$modal');
-            Episode = $injector.get('Episode');
             $q = $injector.get('$q');
             UserProfile = $injector.get('UserProfile');
             opalTestHelper = $injector.get('opalTestHelper');
@@ -109,34 +77,16 @@ describe('RecordEditor', function(){
         spyOn($log, "warn");
 
         episode = opalTestHelper.newEpisode($rootScope);
-        // $rootScope.fields = fields;
-        // episode = new Episode(angular.copy(episodeData));
     });
 
     describe("edit item", function(){
-          it('should open the EditItemCtrl with an index but warn', function(){
-              var deferred, callArgs;
-              deferred = $q.defer();
-              deferred.resolve();
-              var modalPromise = deferred.promise;
-              spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
-              episode.recordEditor.editItem('diagnosis', 1);
-              $scope.$digest();
-              callArgs = $modal.open.calls.mostRecent().args;
-              var expected = "The ability to pass in an index to recordEditor.editItem will be removed in Opal v0.15.0, please pass in an item";
-              expect($log.warn).toHaveBeenCalledWith(expected);
-              expect(callArgs.length).toBe(1);
-              var resolves = callArgs[0].resolve;
-              expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 1));
-          });
-
           it('should accept a url that is passed through to the modal open', function(){
             var deferred, callArgs;
             deferred = $q.defer();
             deferred.resolve();
             var modalPromise = deferred.promise;
             spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
-            episode.recordEditor.editItem('diagnosis', 1, '/custom_template/');
+            episode.recordEditor.editItem('diagnosis', episode.diagnosis[0], '/custom_template/');
             $scope.$digest();
             callArgs = $modal.open.calls.mostRecent().args;
             expect(callArgs[0].templateUrl).toBe("/custom_template/")
@@ -176,7 +126,7 @@ describe('RecordEditor', function(){
               var modalPromise = deferred.promise;
 
               spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
-              episode.recordEditor.editItem('demographics', 0);
+              episode.recordEditor.editItem('demographics', episode.demographics[0]);
               $scope.$digest();
               callArgs = $modal.open.calls.mostRecent().args;
           });
@@ -189,7 +139,7 @@ describe('RecordEditor', function(){
 
               spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
               $routeParams.slug = 'tropical-all'
-              episode.recordEditor.editItem('diagnosis', 0);
+              episode.recordEditor.editItem('diagnosis', episode.diagnosis[0]);
               $scope.$digest();
               callArgs = $modal.open.calls.mostRecent().args;
               expect(callArgs.length).toBe(1);
@@ -209,7 +159,7 @@ describe('RecordEditor', function(){
                 var modalPromise = deferred.promise;
 
                 spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
-                episode.recordEditor.editItem('demographics', 0);
+                episode.recordEditor.editItem('demographics', episode.demographics[0]);
                 $scope.$digest();
                 expect($modal.open.calls.count()).toBe(0);
               });
@@ -225,7 +175,7 @@ describe('RecordEditor', function(){
               deferred = $q.defer();
               spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
-              episode.recordEditor.editItem('demographics', 0);
+              episode.recordEditor.editItem('demographics', episode.demographics[0]);
 
               deferred.resolve('save');
               $rootScope.$apply();
@@ -239,7 +189,7 @@ describe('RecordEditor', function(){
 
             deferred = $q.defer();
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-            episode.recordEditor.editItem('demographics', 0).then(function(modalResult){
+            episode.recordEditor.editItem('demographics', episode.demographics[0]).then(function(modalResult){
                 called = modalResult == "save";
             });
 
@@ -258,7 +208,7 @@ describe('RecordEditor', function(){
             nestedDeferred = $q.defer()
 
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-            episode.recordEditor.editItem('demographics', 0).then(function(modalResult){
+            episode.recordEditor.editItem('demographics', episode.demographics[0]).then(function(modalResult){
                 called = modalResult == "delete";
             });
 

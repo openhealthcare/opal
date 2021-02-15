@@ -1,0 +1,6 @@
+from opal.core.episodes import EpisodeCategory
+
+
+class ApplicationEpisode(EpisodeCategory):
+    display_name    = '{{ name }}'
+    detail_template = 'detail/{{ name }}.html'

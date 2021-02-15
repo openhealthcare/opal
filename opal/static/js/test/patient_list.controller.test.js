@@ -1,14 +1,14 @@
 describe('PatientListCtrl', function() {
     "use strict";
-    var episodeData, episodeData2, metaData, patientData;
+    var episodeData, episodeData2, metaData;
     var Episode, Item, episode, episodeVisibility;
     var profile, episode2;
-    var $scope, $cookies, $controller, $q, $dialog, $httpBackend;
+    var $scope, $cookies, $controller, $q, $httpBackend;
     var $$injector;
     var $location, $routeParams, $http;
     var opalTestHelper;
     var episodedata, controller;
-    var $modal, metadata, $rootScope;
+    var $modal, $rootScope;
 
     var _makecontroller;
 
@@ -224,6 +224,22 @@ describe('PatientListCtrl', function() {
         //
         expect($scope.episodes['123'].active).toBe(false);
         expect($scope.rows[0].active).toEqual(false);
+      });
+
+      it('should return a promise that resolves when complete', function(){
+        var resolved = false;
+        var updated = angular.copy(episodeData)
+        updated.active = false;
+
+        $httpBackend.expectGET('/api/v0.1/record/').respond({})
+        $httpBackend.expectGET('/api/v0.1/episode/123/').respond(updated);
+        $scope.refresh(123).then(function(){
+          resolved = true;
+        });
+
+        $httpBackend.flush();
+        $rootScope.$apply();
+        expect(resolved).toBe(true);
       });
   });
 

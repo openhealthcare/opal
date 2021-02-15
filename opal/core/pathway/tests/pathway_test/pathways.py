@@ -6,7 +6,7 @@ from opal.tests import models as test_models
 class SomeComplicatedStep(steps.Step):
     display_name = "Some complicated step"
     step_controller = "SomeController"
-    template = "Sometemplate.html"
+    template = "complicated_step_template.html"
 
 
 class PagePathwayExample(pathways.PagePathway):

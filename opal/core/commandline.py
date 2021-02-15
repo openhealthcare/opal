@@ -8,7 +8,6 @@ import functools
 import os
 import subprocess
 import sys
-
 from django.core import management
 import ffs
 

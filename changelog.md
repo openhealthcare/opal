@@ -1,3 +1,68 @@
+### 0.21.0 (Major Release)
+
+#### Celery upgrade and Django Celery library change.
+`django-celery` only officially supports Python 3.5 which Opal no longer supports. It is also no longer the recommended solution for results by Celery. So we have removed this dependency and added the `django-celery-results` module that has a similar functionality.
+
+#### Drops support for Python 3.5
+Opal now supports Python 3.6 - Python 3.8.
+
+
+### 0.20.0 (Major Release)
+
+#### Python 3 version changes.
+
+Opal now supports Python 3.5 - Python 3.8.
+Please note that the 0.21.0 release will drop support for Python 3.5.
+
+### Scaffold application episode category
+
+The scaffolded application created by `startproject` now creates a custom
+episode category class.
+
+### Removes Django Axes
+
+Axes has been removed from the Opal core application. The package creates a database
+log of all login attempts and was installed by default. It is now considered that this
+should be an application level choice rather than a framework choice. Installing it on a
+per application basis is simple, and requires only settings and requirements changes.
+
+### Removes Letter
+
+The dependency on the letter python package has been removed from the Opal core application. If you wish to send emails, Django ships with email wrappers to make this easy.
+
+#### Updates to the Dependency Graph
+
+* Django: 2.0.13 -> 2.2.16
+* Django-compressor: 2.2 -> 2.4
+* Six==1.15.0
+* Psycopg2: 2.8.3 -> 2.8.6
+* Requests: 2.22.0 -> 2.25.0
+* Python-dateutil: 2.8.0 -> 2.8.1
+* Django-rest-framework: 3.10.2 -> 3.12.2
+* Django-Axes -> Removed
+* Letter -> Removed
+
+### 0.18.4 (Minor Release)
+
+#### Some models have translations
+Episodes/Patients/Demographics now use use gettext_lazy on all their fields
+
+#### PatientListCtrl.refresh and PatientDetailCtrl.refresh return promises
+PatientListCtrl.refresh and PatientDetailCtrl.refresh now return a promise which resolves after the refresh is complete.
+
+#### Removes scroll to top
+Removes the directory `scrolllto-top` as this is not commonly used. `go-to-top` is directive that is a a drop in replacement that will take the user up to the top of the page but without scrolling.
+
+#### Remove shortDate and shortDateTime
+The angular filters shortDate and shortDateTime have been deprecated for some time.
+
+#### Stop an index being passed to recordEditor.editItem
+recordEditor.editItem used to take either a number or an item (subrecord) as its second argument.
+Now it will only take an item.
+
+#### Removes the account page
+Removes the user account detail page as this is not tested/used and can be easily created within an app.
+
 ### 0.18.3 (Minor Release)
 
 #### Complex objects are now serialized in the extract as json

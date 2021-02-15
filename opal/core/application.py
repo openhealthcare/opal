@@ -4,7 +4,7 @@ Application helpers for Opal
 import inspect
 import itertools
 import os
-
+from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from opal.core import plugins, menus
 
@@ -76,7 +76,6 @@ class OpalApplication(object):
             "js/opal/controllers/edit_item.js",
             "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
-            "js/opal/controllers/account.js",
             "js/opal/controllers/keyboard_shortcuts.js",
             "js/opal/controllers/patient_access_log.js",
             "js/opal/controllers/lookup_list_reference.js"
@@ -93,7 +92,7 @@ class OpalApplication(object):
             index=0
         )
     ]
-    default_episode_category = 'Inpatient'
+    default_episode_category = None
 
     @classmethod
     def get_core_javascripts(klass, namespace):
@@ -114,13 +113,11 @@ class OpalApplication(object):
         """
         Default implementation of get_menu_items()
         """
-        # we import here as settings must be set before this is imported
-        from django.contrib.auth.views import logout as logout_view
         logout = menus.MenuItem(
-            href=reverse(logout_view), icon="fa-sign-out", index=1000
+            href=reverse("logout"), icon="fa-sign-out", index=1000
         )
         admin = menus.MenuItem(
-            href="/admin/", icon="fa-cogs", display="Admin",
+            href="/admin/", icon="fa-cogs", display=_("Admin"),
             index=999
         )
         items = []

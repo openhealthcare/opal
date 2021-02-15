@@ -3,6 +3,108 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.20.0 -> v0.21.0
+
+Opal no longer supports Python 3.5. 
+You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
+
+#### Celery changes
+
+Opal does not require you to run Celery but we do pre-configure Opal applications for use with 
+Celery.
+
+If you don't have `celery` or `django-celery` in your requirements.txt this section can be ignored.
+
+`django-celery` has been removed as a dependency. Please remove it from your requirements.
+
+__Note__ This means that old results from `django-celery` will no longer be visible from the admin.
+
+`django-celery-results==2.0.0` replaces `django-celery`, please add it to your requirements. 
+This will show Celery task results in the admin and requires `python manage.py migrate` to be run.
+
+Celery has been upgraded to 5.0.2.
+
+So if you're using a requirements.txt for example it should now include.
+    # requirements.txt
+    opal==0.21.0
+    celery==5.0.2
+    django-celery-results==2.0.0
+
+
+The Django Celery management command has changed from
+`python manage.py celery worker -l info` to `celery -A opal.core worker -l INFO`
+
+Add the below to your settings.py.
+```
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+```
+
+Remove `djcelery` from your `INSTALLED APPS` in settings and add `django_celery_results`
+```
+INSTALLED_APPS = (
+    ...,
+    'django_celery_results',
+)
+```
+
+#### v0.18.3 -> v0.20.0
+
+##### Dependency upgrades
+
+How you do this depends on how you have configured your application. You will need to
+update both the Opal version, and versions of dependencies upgraded dependencies if
+you have specified them in for instance, a requirements.txt.
+
+(This will be the case if you use the requirements.txt originally provided by
+`opal startproject`)
+
+    # requirements.txt
+    opal==0.20.0
+    django==2.2.16
+    djangorestframework==3.12.2
+    django-compressor==2.4
+    six==1.15.0
+    psycopg2==2.8.6
+    requests==2.25.0
+    python-dateutil==2.8.1
+
+
+##### API API Changes (REST Framework)
+
+Note that the Django REST Framework update includes a breaking change to their public 
+API which may affect your application. The `base_name` attribute of a ViewSet has been 
+renamed to `basename` ([release notes](https://www.django-rest-framework.org/community/release-notes/#390)).
+
+Any APIs implemented in your application will likely need to rename this attribute as
+part of this upgrade.
+
+##### Episode Categories
+
+
+`Inpatient` is no longer provided in `opal.core.episodes`. If you are using the
+Inpatient episode category you can add it in your `{{ appname }}/episode_categories.py`
+```
+from opal.core.episodes import EpisodeCategory
+
+
+class InpatientEpisode(EpisodeCategory):
+    display_name    = 'Inpatient'
+    detail_template = 'detail/inpatient.html'
+    stages          = [
+        'Inpatient',
+        'Followup',
+        'Discharged'
+    ]
+```
+
+##### Django Axes
+
+Opal has removed the built in dependency on Django Axes. If your application wishes to
+continue using it, then the relevant settings should already be in your settings file.
+If you were relying on the entry in the opal `setup.py` to install it at deployment time,
+you will need to ensure this via some other mechanism - for instance ensuring it is in your
+application `requirements.txt`.
 
 #### v0.17.1 -> v0.18.2
 

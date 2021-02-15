@@ -2,8 +2,8 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $timeout, $modal, $httpBackend;
-    var item, Item, existingEpisode, opalTestHelper;
-    var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
+    var item, Item, opalTestHelper;
+    var Episode, episode, ngProgressLite, $q, $rootScope;
     var $controller, controller, fakeModalInstance;
     var $analytics, metadataCopy, profile, referencedata;
 

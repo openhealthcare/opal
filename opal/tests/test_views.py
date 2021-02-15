@@ -13,8 +13,8 @@ from unittest.mock import patch, MagicMock
 from opal import models, views
 from opal.core import detail, patient_lists
 from opal.core.subrecords import subrecords
-from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
+from opal.tests.episode_categories import InpatientEpisode
 from opal.views import csrf_failure
 
 # this is used just to import the class for EpisodeListApiTestCase
@@ -268,64 +268,38 @@ class IndexViewTestCase(BaseViewTestCase):
 
 
 class CheckPasswordResetViewTestCase(BaseViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("login")
 
-    @patch('opal.views.login')
-    def test_login_fails(self, login):
-        mockresponse = MagicMock(name='Response')
-        mockresponse.status_code = 200
-        login.return_value = mockresponse
-
-        response = views.check_password_reset(
-            self.get_request('/login/')
+    def test_login_fails(self):
+        response = self.client.post(
+            self.url,
+            {"username": "fake", "password": "not real"},
         )
-        self.assertEqual(mockresponse, response)
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
 
-    @patch('opal.views.login')
-    def test_login_profile_exists_force_change(self, login):
-        mockresponse = MagicMock(name='Response')
-        mockresponse.status_code = 302
-        login.return_value = mockresponse
-
-        self.user.profile.force_password_change = True
-        self.user.profile.save()
-
-        response = views.check_password_reset(
-            self.get_request('/login/')
+    def test_login_profile_exists_force_change(self):
+        profile = self.user.profile
+        profile.force_password_change = True
+        profile.save()
+        response = self.client.post(
+            self.url,
+            {"username": self.USERNAME, "password": self.PASSWORD},
         )
-        self.assertEqual(302, response.status_code)
-        self.assertEqual(
-            '/accounts/change-password',
-            response.get('Location')
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        self.assertRedirects(response, reverse('change-password'))
+
+    def test_login_profile_exists_dont_force_change(self):
+        profile = self.user.profile
+        profile.force_password_change = False
+        profile.save()
+        url = "{}?next=/".format(self.url)
+        response = self.client.post(
+            url, {"username": self.USERNAME, "password": self.PASSWORD},
         )
-
-    @patch('opal.views.login')
-    def test_login_profile_exists_dont_force_change(self, login):
-        mockresponse = MagicMock(name='Response')
-        mockresponse.status_code = 302
-        login.return_value = mockresponse
-
-        self.user.profile.force_password_change = False
-        self.user.profile.save()
-
-        response = views.check_password_reset(
-            self.get_request('/login/')
-        )
-        self.assertEqual(mockresponse, response)
-
-    @patch('opal.views.login')
-    def test_login_no_profile_force_change(self, login):
-        mockresponse = MagicMock(name='Response')
-        mockresponse.status_code = 302
-        login.return_value = mockresponse
-        user = self.make_user('thepassword')
-        req = self.rf.get('/login/')
-        req.user = user
-        response = views.check_password_reset(req)
-        self.assertEqual(302, response.status_code)
-        self.assertEqual(
-            '/accounts/change-password',
-            response.get('Location')
-        )
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        self.assertRedirects(response, "/")
 
 
 class FormTemplateViewTestCase(BaseViewTestCase):

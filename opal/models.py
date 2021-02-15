@@ -20,6 +20,7 @@ from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import force_str
 from django.db.models.signals import post_save
+from django.utils.translation import ugettext_lazy as _
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -109,10 +110,10 @@ class SerialisableFields(object):
     def get_human_readable_type(cls, field_name):
         field_type = cls._get_field(field_name)
 
-        if isinstance(field_type, models.BooleanField):
-            return "Either True or False"
         if isinstance(field_type, models.NullBooleanField):
             return "Either True, False or None"
+        if isinstance(field_type, models.BooleanField):
+            return "Either True or False"
         if isinstance(field_type, models.DateTimeField):
             return "Date & Time"
         if isinstance(field_type, models.DateField):
@@ -207,7 +208,7 @@ class SerialisableFields(object):
         choices = getattr(field, "choices", [])
 
         if choices:
-            return [i[1] for i in choices]
+            return [i[0] for i in choices]
 
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
@@ -467,6 +468,9 @@ class Synonym(models.Model):
 
 
 class Patient(models.Model):
+    class Meta:
+        verbose_name = _("Patient")
+        verbose_name_plural = _("Patients")
 
     objects = managers.PatientQueryset.as_manager()
 
@@ -596,12 +600,16 @@ class PatientRecordAccess(models.Model):
 class ExternallySourcedModel(models.Model):
     # the system upstream that contains this model
     external_system = models.CharField(
-        blank=True, null=True, max_length=255
+        blank=True,
+        null=True,
+        max_length=255,
+        verbose_name=_("External System")
     )
 
     # the identifier used by the upstream system
     external_identifier = models.CharField(
-        blank=True, null=True, max_length=255
+        blank=True, null=True, max_length=255,
+        verbose_name=_("Extenal Identifier")
     )
 
     class Meta:
@@ -616,17 +624,25 @@ class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
     # updates from dict and the getter, setter properties, where available
     # (from the update from dict mixin)
-    created = models.DateTimeField(blank=True, null=True)
-    updated = models.DateTimeField(blank=True, null=True)
+    created = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name=_("Created")
+    )
+    updated = models.DateTimeField(
+        blank=True, null=True, verbose_name=_("Updated")
+    )
     created_by = models.ForeignKey(
         User, blank=True, null=True,
         related_name="created_%(app_label)s_%(class)s_subrecords",
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        verbose_name=_("Created By")
     )
     updated_by = models.ForeignKey(
         User, blank=True, null=True,
         related_name="updated_%(app_label)s_%(class)s_subrecords",
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        verbose_name=_("Updated By")
     )
 
     class Meta:
@@ -662,19 +678,35 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     on which they found themselves on "The List".
     """
     category_name     = models.CharField(
-        max_length=200, default=get_default_episode_type
+        max_length=200,
+        default=get_default_episode_type,
+        verbose_name=_("Category Name")
     )
-    patient           = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    active            = models.BooleanField(default=False)
-    start             = models.DateField(null=True, blank=True)
-    end               = models.DateField(blank=True, null=True)
-    consistency_token = models.CharField(max_length=8)
+    patient           = models.ForeignKey(
+        Patient, on_delete=models.CASCADE, verbose_name=_("Patient")
+    )
+    active            = models.BooleanField(
+        default=False, verbose_name=_("Active")
+    )
+    start             = models.DateField(
+        null=True, blank=True, verbose_name=_("Start")
+    )
+    end               = models.DateField(
+        blank=True, null=True, verbose_name=_("End")
+    )
+    consistency_token = models.CharField(
+        max_length=8, verbose_name=_("Consistency Token")
+    )
 
     # stage is at what stage of an episode flow is the
     # patient at
     stage             = models.CharField(
-        max_length=256, null=True, blank=True
+        max_length=256, null=True, blank=True, verbose_name=_("Stage")
     )
+
+    class Meta:
+        verbose_name = _("Episode")
+        verbose_name_plural = _("Episodes")
 
     objects = managers.EpisodeQueryset.as_manager()
 
@@ -871,7 +903,9 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     _advanced_searchable     = True
     _exclude_from_subrecords = False
 
-    consistency_token = models.CharField(max_length=8)
+    consistency_token = models.CharField(
+        max_length=8, verbose_name=_("Consistency Token")
+    )
 
     class Meta:
         abstract = True
@@ -1027,7 +1061,9 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
 
 class PatientSubrecord(Subrecord):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient = models.ForeignKey(
+        Patient, on_delete=models.CASCADE, verbose_name=_("Patient")
+    )
 
     class Meta:
         abstract = True
@@ -1035,7 +1071,12 @@ class PatientSubrecord(Subrecord):
 
 class EpisodeSubrecord(Subrecord):
 
-    episode = models.ForeignKey(Episode, null=False, on_delete=models.CASCADE)
+    episode = models.ForeignKey(
+        Episode,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name=_("Episode")
+    )
 
     class Meta:
         abstract = True
@@ -1134,7 +1175,9 @@ class Condition(lookuplists.LookupList):
 
 
 class Destination(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name = _("Destination")
+        verbose_name_plural = _("Destinations")
 
 
 class Drug(lookuplists.LookupList):
@@ -1158,11 +1201,14 @@ class Duration(lookuplists.LookupList):
 
 class Ethnicity(lookuplists.LookupList):
     class Meta:
-        verbose_name_plural = "Ethnicities"
+        verbose_name = _("Ethnicity")
+        verbose_name_plural = _("Ethnicities")
 
 
 class Gender(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name = _("Gender")
+        verbose_name_plural = _("Genders")
 
 
 class Hospital(lookuplists.LookupList):
@@ -1180,7 +1226,8 @@ class Speciality(lookuplists.LookupList):
 
 class MaritalStatus(lookuplists.LookupList):
     class Meta:
-        verbose_name_plural = "Marital statuses"
+        verbose_name = _("Marital Status")
+        verbose_name_plural = _("Marital statuses")
 
 
 class ReferralType(lookuplists.LookupList):
@@ -1196,7 +1243,9 @@ class Symptom(lookuplists.LookupList):
 
 
 class Title(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name = _("Title")
+        verbose_name_plural = _("Titles")
 
 
 class Travel_reason(lookuplists.LookupList):
@@ -1215,38 +1264,50 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(
         max_length=255, blank=True,
-        help_text="The unique identifier for this patient at the hospital."
+        help_text=_("The unique identifier for this patient at the hospital."),
+        verbose_name=_("Demographics")
     )
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+        max_length=255, blank=True, null=True, verbose_name=_("NHS Number")
     )
 
-    surname = models.CharField(max_length=255, blank=True)
-    first_name = models.CharField(max_length=255, blank=True)
-    middle_name = models.CharField(max_length=255, blank=True, null=True)
-    title = ForeignKeyOrFreeText(Title)
-    date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name="Date of Birth"
+    surname = models.CharField(
+        max_length=255, blank=True, verbose_name=_("Surname")
     )
-    marital_status = ForeignKeyOrFreeText(MaritalStatus)
+    first_name = models.CharField(
+        max_length=255, blank=True, verbose_name=_("First Name")
+    )
+    middle_name = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("Middle Name")
+    )
+    title = ForeignKeyOrFreeText(Title, verbose_name=_("Title"))
+    date_of_birth = models.DateField(
+        null=True, blank=True, verbose_name=_("Date of Birth")
+    )
+    marital_status = ForeignKeyOrFreeText(
+        MaritalStatus, verbose_name=_("Marital status")
+    )
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(
-        null=True, blank=True, verbose_name="Date of Death"
+        null=True, blank=True, verbose_name=_("Date of Death")
     )
-    post_code = models.CharField(max_length=20, blank=True, null=True)
+    post_code = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name=_("Post Code")
+    )
     gp_practice_code = models.CharField(
         max_length=20, blank=True, null=True,
-        verbose_name="GP Practice Code"
+        verbose_name=_("GP Practice Code")
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country of Birth")
-    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+                                       verbose_name=_("Country of Birth"))
+    ethnicity = ForeignKeyOrFreeText(Ethnicity, verbose_name=_("Ethnicity"))
     death_indicator = models.BooleanField(
         default=False,
-        help_text="This field will be True if the patient is deceased."
+        help_text="This field will be True if the patient is deceased.",
+        verbose_name=_("Death Indicator")
     )
 
-    sex = ForeignKeyOrFreeText(Gender)
+    sex = ForeignKeyOrFreeText(Gender, verbose_name=_("Sex"))
 
     @property
     def name(self):
@@ -1254,7 +1315,8 @@ class Demographics(PatientSubrecord):
 
     class Meta:
         abstract = True
-        verbose_name_plural = "Demographics"
+        verbose_name = _("Demographics")
+        verbose_name_plural = _("Demographics")
 
 
 class Location(EpisodeSubrecord):

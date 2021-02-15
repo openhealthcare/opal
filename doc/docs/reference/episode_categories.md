@@ -86,10 +86,3 @@ rest of the data that's been used to update the episode.
 InpatientEpisode(episode).set_stage('Discharged', user, data_dict)
 # -> True
 ```
-
-
-## InpatientEpisode
-
-This is the default EpisodeCategory imlpementation - applications started with Opal's
-scaffolding scripts will use this as the `OpalApplication.default_episode_category`.
-It sets the detail template to `detail/inpatient.html`

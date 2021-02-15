@@ -4,7 +4,7 @@
 describe('Patient', function() {
   "use strict";
 
-  var $httpBackend, $route, $rootScope, Patient, EpisodeSpy, patientData;
+  var $httpBackend, $route, $rootScope, Patient, patientData;
   var opalTestHelper, episodeData;
 
   beforeEach(function(){

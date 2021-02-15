@@ -10,10 +10,10 @@ from opal import models
 
 from opal.management.commands import detect_duplicates as detector
 
-class CommandTestCase(OpalTestCase):
 
+class CommandTestCase(OpalTestCase):
     def test_handle(self):
-        patient = models.Patient.objects.create()
+        models.Patient.objects.create()
         c = detector.Command()
         with patch.object(c.stdout, 'write') as writer:
             c.handle()
@@ -35,10 +35,8 @@ class CommandTestCase(OpalTestCase):
         c = detector.Command()
         with patch.object(c.stdout, 'write') as writer:
             c.handle()
-
             writer.assert_any_call('Jenny Smith {0}'.format(p1.id))
             writer.assert_any_call('Jenny Smith {0}'.format(p2.id))
-
 
     def test_handle_duplicate_with_three(self):
         """

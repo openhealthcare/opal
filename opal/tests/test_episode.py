@@ -8,7 +8,7 @@ import six
 from django.contrib.auth.models import User
 
 from opal.core import application, exceptions, subrecords
-from opal.core.episodes import InpatientEpisode
+from opal.tests.episode_categories import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
 from opal import models

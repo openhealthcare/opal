@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('patientListLoader', function($q, $window,
+    .factory('patientListLoader', function($q,
                                            $http,
                                            $route,
                                            Episode,

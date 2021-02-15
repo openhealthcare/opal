@@ -8,7 +8,7 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
     """
     Returns the schema to build our extract query builder
     """
-    base_name = 'extract-schema'
+    basename = 'extract-schema'
     permission_classes = (IsAuthenticated,)
 
     def list(self, request):
