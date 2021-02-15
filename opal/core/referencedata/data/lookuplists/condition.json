@@ -1015,7 +1015,7 @@
       "synonyms": [],
       "name": "Chronic Sinusitis",
       "coding": {
-        "code": "0000000",
+        "code": "40055000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -1486,7 +1486,7 @@
       "synonyms": [],
       "name": "Ehrlichiosis",
       "coding": {
-        "code": "0000000",
+        "code": "240626005",
         "system": "http://snomed.info/sct"
       }
     },
@@ -2226,11 +2226,7 @@
       "synonyms": [
         "Tropical splenomegaly syndrome"
       ],
-      "name": "hyperreactive malarial splenomegaly",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
+      "name": "hyperreactive malarial splenomegaly"
     },
     {
       "synonyms": [],
@@ -2300,7 +2296,7 @@
       "synonyms": [],
       "name": "Hypogammaglobulinaemia",
       "coding": {
-        "code": "0000000",
+        "code": "119250001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -2626,11 +2622,7 @@
     },
     {
       "synonyms": [],
-      "name": "Lemierres Syndrome ",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
+      "name": "Lemierres Syndrome "
     },
     {
       "synonyms": [
@@ -2694,11 +2686,7 @@
     },
     {
       "synonyms": [],
-      "name": "Line Thrombosis",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
+      "name": "Line Thrombosis"
     },
     {
       "synonyms": [],
@@ -2833,7 +2821,7 @@
       "synonyms": [],
       "name": "Mastoiditis",
       "coding": {
-        "code": "0000000",
+        "code": "52404001",
         "system": "http://snomed.info/sct"
       }
     },
@@ -3136,14 +3124,6 @@
       "name": "Norovirus",
       "coding": {
         "code": "721763002",
-        "system": "http://snomed.info/sct"
-      }
-    },
-    {
-      "synonyms": [],
-      "name": "Oesophageal Candiasis",
-      "coding": {
-        "code": "0000000",
         "system": "http://snomed.info/sct"
       }
     },
@@ -3590,11 +3570,7 @@
     },
     {
       "synonyms": [],
-      "name": "Post malaria neurological syndrome",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
+      "name": "Post malaria neurological syndrome"
     },
     {
       "synonyms": [],
@@ -3792,11 +3768,7 @@
     },
     {
       "synonyms": [],
-      "name": "Rash of Unknown Aetiology",
-      "coding": {
-        "code": "0000000",
-        "system": "http://snomed.info/sct"
-      }
+      "name": "Rash of Unknown Aetiology"
     },
     {
       "synonyms": [],
