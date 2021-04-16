@@ -2,6 +2,6 @@ pytz
 python-dateutil==2.8.1
 coverage
 coveralls
-flake8==3.8.4
+flake8==3.9.1
 requests==2.25.0
 psycopg2==2.8.6
