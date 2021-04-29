@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: flake8
+    versions:
+    - 3.9.0
+  - dependency-name: django
+    versions:
+    - 3.1.5
+    - 3.1.6
+    - 3.1.7
+  - dependency-name: jinja2
+    versions:
+    - 2.11.2
