@@ -50,7 +50,7 @@ setup(
         'django==2.2.16',
         'requests==2.25.0',
         'djangorestframework==3.12.2',
-        'django-reversion==3.0.8',
+        'django-reversion==4.0.0',
         'django-compressor==2.4',
         'python-dateutil==2.8.1',
         'django-celery-results==2.0.0',
