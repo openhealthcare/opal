@@ -1,5 +1,7 @@
+from collections import defaultdict
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.fields.related import ForeignKey
 from django.db.models.signals import pre_delete
 from opal.utils import _itersubclasses
 
@@ -71,6 +73,7 @@ class ForeignKeyOrFreeText(property):
         self.name = name
         self.fk_field_name = name + '_fk'
         self.ft_field_name = name + '_ft'
+        self.cache_name = name + '_cache'
         setattr(cls, name, self)
         fk_kwargs = dict(blank=True, null=True)
         if self.related_name:
@@ -119,6 +122,7 @@ class ForeignKeyOrFreeText(property):
             return self.default
 
     def __set__(self, inst, val):
+        setattr(inst, self.cache_name, None)
         if val is None:
             return
         # This is totally not the right place to look up synonyms...
@@ -155,11 +159,16 @@ class ForeignKeyOrFreeText(property):
     def __get__(self, inst, cls):
         if inst is None:
             return self
+        result = getattr(inst, self.cache_name, None)
+        if result:
+            return result
         try:
             foreign_obj = getattr(inst, self.fk_field_name)
         except AttributeError:
             return 'Unknown Lookuplist Entry'
         if foreign_obj is None:
-            return getattr(inst, self.ft_field_name)
+            result = getattr(inst, self.ft_field_name)
         else:
-            return foreign_obj.name
+            result = foreign_obj.name
+        setattr(inst, self.cache_name, result)
+        return result

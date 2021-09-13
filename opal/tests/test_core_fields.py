@@ -239,3 +239,17 @@ class TestForeignKeyOrFreeText(OpalTestCase):
         alsation_owner = test_models.DogOwner.objects.create(episode=episode)
         alsation_owner.dog = "German Shepherd, Poodle"
         self.assertEqual(alsation_owner.dog, "Alsation, Poodle")
+
+    def test_get_from_cache(self):
+        _, episode = self.new_patient_and_episode_please()
+        alsation_owner = test_models.DogOwner.objects.create(episode=episode)
+        alsation_owner.dog_cache = 'Alsation'
+        self.assertEqual(alsation_owner.dog, "Alsation")
+
+    def test_set_removes_cache(self):
+        _, episode = self.new_patient_and_episode_please()
+        alsation_owner = test_models.DogOwner.objects.create(episode=episode)
+        alsation_owner.dog_cache = 'Alsation'
+        alsation_owner.dog = "Poodle"
+        self.assertEqual(alsation_owner.dog, "Poodle")
+        self.assertEqual(alsation_owner.dog_cache, "Poodle")
