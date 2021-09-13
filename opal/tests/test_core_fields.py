@@ -10,7 +10,7 @@ from opal.tests import models as test_models
 from opal.models import Synonym
 
 from opal.core import fields
-from opal.core.fields import ForeignKeyOrFreeText, is_numeric
+from opal.core.fields import ForeignKeyOrFreeText, is_numeric, precache_fkft
 
 
 class TestIsNumeric(OpalTestCase):
@@ -38,6 +38,58 @@ class TestEnum(OpalTestCase):
         )
         self.assertEqual(choices, fields.enum('one', '2', 'III'))
 
+
+class PrefetchFkFtTestCase(OpalTestCase):
+    def test_populates(self):
+        test_models.Dog.objects.create(name='alsation')
+        test_models.Dog.objects.create(name='poodle')
+        _, episode_1 = self.new_patient_and_episode_please()
+        alsation_owner = test_models.DogOwner.objects.create(episode=episode_1)
+        alsation_owner.dog = 'alsation'
+        alsation_owner.save()
+        _, episode_2 = self.new_patient_and_episode_please()
+        poodle_owner = test_models.DogOwner.objects.create(episode=episode_2)
+        poodle_owner.dog = 'poodle'
+        poodle_owner.save()
+        dog_owners = test_models.DogOwner.objects.all()
+        precache_fkft(dog_owners)
+        self.assertEqual(
+            dog_owners[0].dog_cache, 'alsation'
+        )
+        self.assertEqual(
+            dog_owners[1].dog_cache, 'poodle'
+        )
+
+    def test_with_none(self):
+        dog_owners = test_models.DogOwner.objects.none()
+        try:
+            precache_fkft(dog_owners)
+        except Exception:
+            self.fail()
+
+    def test_with_free_text(self):
+        _, episode_1 = self.new_patient_and_episode_please()
+        alsation_owner = test_models.DogOwner.objects.create(episode=episode_1)
+        alsation_owner.dog = 'alsation'
+        alsation_owner.save()
+        _, episode_2 = self.new_patient_and_episode_please()
+        poodle_owner = test_models.DogOwner.objects.create(episode=episode_2)
+        poodle_owner.dog = 'poodle'
+        poodle_owner.save()
+        dog_owners = test_models.DogOwner.objects.all()
+        precache_fkft(dog_owners)
+        self.assertEqual(
+            dog_owners[0].dog, 'alsation'
+        )
+        self.assertEqual(
+            dog_owners[0].dog_ft, 'alsation'
+        )
+        self.assertEqual(
+            dog_owners[1].dog, 'poodle'
+        )
+        self.assertEqual(
+            dog_owners[1].dog_ft, 'poodle'
+        )
 
 class TestForeignKeyOrFreeText(OpalTestCase):
 
@@ -239,3 +291,17 @@ class TestForeignKeyOrFreeText(OpalTestCase):
         alsation_owner = test_models.DogOwner.objects.create(episode=episode)
         alsation_owner.dog = "German Shepherd, Poodle"
         self.assertEqual(alsation_owner.dog, "Alsation, Poodle")
+
+    def test_get_from_cache(self):
+        _, episode = self.new_patient_and_episode_please()
+        alsation_owner = test_models.DogOwner.objects.create(episode=episode)
+        alsation_owner.dog_cache = 'Alsation'
+        self.assertEqual(alsation_owner.dog, "Alsation")
+
+    def test_set_removes_cache(self):
+        _, episode = self.new_patient_and_episode_please()
+        alsation_owner = test_models.DogOwner.objects.create(episode=episode)
+        alsation_owner.dog_cache = 'Alsation'
+        alsation_owner.dog = "Poodle"
+        self.assertEqual(alsation_owner.dog, "Poodle")
+        self.assertEqual(alsation_owner.dog_cache, "Poodle")

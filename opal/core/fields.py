@@ -1,5 +1,7 @@
+from collections import defaultdict
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.fields.related import ForeignKey
 from django.db.models.signals import pre_delete
 from opal.utils import _itersubclasses
 
@@ -23,6 +25,43 @@ def enum(*args):
     Given ARGS, return a Django style choices tuple-of-tuples
     """
     return tuple((i, i) for i in args)
+
+
+def precache_fkft(iterable_of_models):
+    if not len(iterable_of_models):
+        return
+    cls = iterable_of_models[0].__class__
+    fk_fields = {}
+
+    for field_name in vars(cls).keys():
+        if field_name.endswith('_fk'):
+            cleaned_field_name = field_name.rsplit('_fk')[0]
+            field = getattr(cls, cleaned_field_name, None)
+            if field and isinstance(field, ForeignKeyOrFreeText):
+                fk_fields[cleaned_field_name] = field
+    model_to_ids = defaultdict(set)
+    for instance in iterable_of_models:
+        for key, field in fk_fields.items():
+            fk_ft_id_field = f"{key}_fk_id"
+            fk_ft_id = getattr(instance, fk_ft_id_field)
+            if not fk_ft_id:
+                continue
+            model_to_ids[field.foreign_model].add(fk_ft_id)
+
+    model_id_to_val = {}
+
+    for foreign_model, ids in model_to_ids.items():
+        vals = foreign_model.objects.filter(id__in=ids)
+        for val in vals:
+            model_id_to_val[(foreign_model, val.id,)] = val.name
+    for instance in iterable_of_models:
+        for field_name, field_class in fk_fields.items():
+            fk_ft_id = getattr(instance, f"{field_name}_fk_id")
+            if not fk_ft_id:
+                continue
+            foreign_model = field_class.foreign_model
+            field_class = getattr(instance.__class__, field_name)
+            setattr(instance, field_class.cache_name, model_id_to_val[(foreign_model, fk_ft_id,)])
 
 
 class ForeignKeyOrFreeText(property):
@@ -71,6 +110,7 @@ class ForeignKeyOrFreeText(property):
         self.name = name
         self.fk_field_name = name + '_fk'
         self.ft_field_name = name + '_ft'
+        self.cache_name = name + '_cache'
         setattr(cls, name, self)
         fk_kwargs = dict(blank=True, null=True)
         if self.related_name:
@@ -119,6 +159,7 @@ class ForeignKeyOrFreeText(property):
             return self.default
 
     def __set__(self, inst, val):
+        setattr(inst, self.cache_name, None)
         if val is None:
             return
         # This is totally not the right place to look up synonyms...
@@ -155,11 +196,16 @@ class ForeignKeyOrFreeText(property):
     def __get__(self, inst, cls):
         if inst is None:
             return self
+        result = getattr(inst, self.cache_name, None)
+        if result:
+            return result
         try:
             foreign_obj = getattr(inst, self.fk_field_name)
         except AttributeError:
             return 'Unknown Lookuplist Entry'
         if foreign_obj is None:
-            return getattr(inst, self.ft_field_name)
+            result = getattr(inst, self.ft_field_name)
         else:
-            return foreign_obj.name
+            result = foreign_obj.name
+        setattr(inst, self.cache_name, result)
+        return result
