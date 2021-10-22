@@ -14,6 +14,7 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
       "lib/bower_components/angular-cookies/angular-cookies.js",
       "lib/bower_components/angular-mocks/angular-mocks.js",
       'lib/angular-ui-utils-0.1.0/ui-utils.js',
+      'lib/angular-sanitize.js',
       "lib/ui-bootstrap-tpls-0.14.3.js",
       "lib/angulartics-0.17.2/angulartics.min.js",
       "lib/angulartics-0.17.2/angulartics-ga.min.js",

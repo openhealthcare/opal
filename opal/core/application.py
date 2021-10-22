@@ -21,7 +21,7 @@ class OpalApplication(object):
             "js/lib/bower_components/angular-route/angular-route.js",
             "js/lib/bower_components/angular-resource/angular-resource.js",
             "js/lib/bower_components/angular-cookies/angular-cookies.js",
-
+            "js/lib/angular-sanitize.js",
             "js/lib/angular-ui-utils-0.1.0/ui-utils.js",
             "js/lib/ui-bootstrap-tpls-0.14.3.js",
 
