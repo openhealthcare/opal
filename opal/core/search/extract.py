@@ -323,9 +323,9 @@ def zip_archive(episodes, description, user):
     return target
 
 
-def async_extract(user, criteria):
+def async_extract(user_id, criteria):
     """
     Given the user and the criteria, let's run an async extract.
     """
     from opal.core.search import tasks
-    return tasks.extract.delay(user, criteria).id
+    return tasks.extract.delay(user_id, criteria).id

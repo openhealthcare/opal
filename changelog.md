@@ -1,9 +1,18 @@
+### 0.21.0 (Major Release)
+
+#### Celery upgrade and Django Celery library change.
+`django-celery` only officially supports Python 3.5 which Opal no longer supports. It is also no longer the recommended solution for results by Celery. So we have removed this dependency and added the `django-celery-results` module that has a similar functionality.
+
+#### Drops support for Python 3.5
+Opal now supports Python 3.6 - Python 3.8.
+
+
 ### 0.20.0 (Major Release)
 
 #### Python 3 version changes.
 
-Opal now supports python 3.5 - python 3.8.
-Please note that the 0.21.0 release will drop support for python 3.5.
+Opal now supports Python 3.5 - Python 3.8.
+Please note that the 0.21.0 release will drop support for Python 3.5.
 
 ### Scaffold application episode category
 
@@ -19,7 +28,7 @@ per application basis is simple, and requires only settings and requirements cha
 
 ### Removes Letter
 
-The dependency on the letter python package has been removed from the Opal core application. If you wish to send emails, django ships with email wrappers to make this easy.
+The dependency on the letter python package has been removed from the Opal core application. If you wish to send emails, Django ships with email wrappers to make this easy.
 
 #### Updates to the Dependency Graph
 
