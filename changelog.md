@@ -1,3 +1,10 @@
+### 0.22.0 (Major Release)
+
+#### The future filter now accepts strings
+
+The filter `future` not accepts a string that looks like a date e.g. 27/12/2022.
+
+
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and Django Celery library change.

@@ -278,6 +278,10 @@ describe('filters', function() {
       expect(futureFilter(tomorrow)).toBe(true);
     });
 
+    it('should work for strings that look like dates', function(){
+      expect(futureFilter('27/12/5000')).toBe(true);
+    });
+
     it('should return true if today if we include today', function(){
       expect(futureFilter(new Date(), true)).toBe(true);
     });
