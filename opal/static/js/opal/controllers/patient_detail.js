@@ -1,10 +1,11 @@
 angular.module('opal.controllers').controller(
     'PatientDetailCtrl',
     function(
-        $scope, $routeParams, patientLoader, patient, profile, metadata, $q
+        $scope, $routeParams, patientLoader, patient, profile, metadata, $q, $location, $window
     ){
         $scope.profile = profile;
         $scope.patient = patient;
+        var routeUrl = "/patient/" + $routeParams.patient_id + "/"
         if($scope.patient != null){
             $scope.episode = patient.episodes[0];
         }
@@ -40,25 +41,38 @@ angular.module('opal.controllers').controller(
                 }
             }
             $scope.metadata = metadata;
-        }
+        };
 
         $scope.switch_to_episode = function(index, $event){
             if($event){
                 $event.preventDefault()
-
             }
             $scope.episode = $scope.patient.episodes[index];
             $scope.view = null;
+            var newUrl = routeUrl + $scope.episode.id;
+            if(newUrl !== $location.url()){
+                $location.url(routeUrl + $scope.episode.id);
+                $("html, body").scrollTop(0);;
+                $location.replace();
+                $window.history.pushState(null, 'any', $location.absUrl());
+            }
             return true
         }
 
         $scope.switch_to_view = function(what){
             $scope.view = what;
+            var newUrl = routeUrl + what;
+            if(newUrl !== $location.url()){
+                $location.url(routeUrl + what);
+                $("html, body").scrollTop(0);;
+                $location.replace();
+                $window.history.pushState(null, 'any', $location.absUrl());
+            }
             return true
         }
 
       if($scope.patient != null){
-            $scope.initialise();
+           $scope.initialise();
         }
     }
 );
