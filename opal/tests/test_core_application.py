@@ -129,6 +129,22 @@ class OpalApplicationTestCase(OpalTestCase):
             ["upstream.dependency"]
         )
 
+    @patch('opal.core.application.get_all_components')
+    def test_post_extract_processing(self, get_all_components):
+        fake_application = MagicMock()
+        fake_application.angular_module_deps = ["upstream.dependency"]
+        get_all_components.return_value = [
+            fake_application
+        ]
+        self.assertIsNone(
+            application.OpalApplication.post_extract_processing(
+                episodes=[],
+                description="desc",
+                user=None,
+                extract_directory="some_directory"
+            )
+        )
+
 
 class GetAppTestCase(OpalTestCase):
 

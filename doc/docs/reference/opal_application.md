@@ -102,3 +102,10 @@ Defaults to returning the contents of `OpalApplication.styles`.
 application.get_styles()
 # -> ['css/app.css', ...]
 ```
+
+#### OpalApplication.post_extract_processing
+
+This is a hook that gets called after an extract has been generated.
+It is passed the episode_qs, the description, the user and the extract directory that will be made into a zip directory.
+
+Anything in this extract directory after this is called is zipped and returned to the user as part of the extract.
