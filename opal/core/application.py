@@ -159,6 +159,16 @@ class OpalApplication(object):
             all_angular_module_deps.extend(i.angular_module_deps)
         return all_angular_module_deps
 
+    @classmethod
+    def post_extract_processing(cls, episodes, description, user, extract_directory):
+        """
+        After the subrecords have been serialized to csvs, this provides a hook
+        for applications to add files to the extract directory.
+
+        Anything in the extract directory is zipped up and returned to the users.
+        """
+        pass
+
 
 def get_app():
     """

@@ -4,7 +4,6 @@ Utilities for extracting data from Opal applications
 from collections import OrderedDict
 import csv
 import datetime
-import functools
 import json
 import logging
 import os
@@ -310,6 +309,7 @@ def zip_archive(episodes, description, user):
     root_dir = os.path.join(target_dir, zipfolder)
     os.mkdir(root_dir)
     generate_csv_files(root_dir, episodes, user)
+    post_extract_processing(episodes, description, user, extract_directory)
 
     target = os.path.join(target_dir, 'extract.zip')
 
