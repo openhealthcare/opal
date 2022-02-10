@@ -25,7 +25,10 @@
                     <span ng-show="query.column === 'Tagging'">
                       patient has been under the <strong>[[ query.field ]]</strong> team
                     </span>
-                    <span ng-hide="$last">[[ query.combine ]]</span>
+                    <span ng-hide="$last">
+                      <span></span>
+                      [[ query.combine ]]
+                    </span>
                   </span>
                 </span>
               </div>
@@ -260,7 +263,7 @@
                 </button>
                 {% else %}
                 <form action="/search/extract/download" method="post" target="_blank">
-                  <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+                  <input name="criteria" type="hidden" value="[[ JSON.stringify(completeCriteria()) ]]">
                   {% csrf_token %}
                   <button type="submit"
                           class="btn btn-secondary btn-lg"

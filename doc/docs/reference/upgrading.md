@@ -3,14 +3,28 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+#### v0.21.0 -> v0.22.0
+The default `extract.html` has been updated, as part of making sure we clean the criteria before we send it to the server
+
+The line
+```
+<input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+```
+is now
+```
+<input name="criteria" type="hidden" value="[[ JSON.stringify(completeCriteria()) ]]">
+```
+
+
+
 #### v0.20.0 -> v0.21.0
 
-Opal no longer supports Python 3.5. 
+Opal no longer supports Python 3.5.
 You will need to use 3.6, 3.7 or 3.8 and therefore must make sure they are installed in your environment.
 
 #### Celery changes
 
-Opal does not require you to run Celery but we do pre-configure Opal applications for use with 
+Opal does not require you to run Celery but we do pre-configure Opal applications for use with
 Celery.
 
 If you don't have `celery` or `django-celery` in your requirements.txt this section can be ignored.
@@ -19,7 +33,7 @@ If you don't have `celery` or `django-celery` in your requirements.txt this sect
 
 __Note__ This means that old results from `django-celery` will no longer be visible from the admin.
 
-`django-celery-results==2.0.0` replaces `django-celery`, please add it to your requirements. 
+`django-celery-results==2.0.0` replaces `django-celery`, please add it to your requirements.
 This will show Celery task results in the admin and requires `python manage.py migrate` to be run.
 
 Celery has been upgraded to 5.0.2.
@@ -72,8 +86,8 @@ you have specified them in for instance, a requirements.txt.
 
 ##### API API Changes (REST Framework)
 
-Note that the Django REST Framework update includes a breaking change to their public 
-API which may affect your application. The `base_name` attribute of a ViewSet has been 
+Note that the Django REST Framework update includes a breaking change to their public
+API which may affect your application. The `base_name` attribute of a ViewSet has been
 renamed to `basename` ([release notes](https://www.django-rest-framework.org/community/release-notes/#390)).
 
 Any APIs implemented in your application will likely need to rename this attribute as

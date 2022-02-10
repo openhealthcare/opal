@@ -1,3 +1,7 @@
+### 0.22.0 (Major Release)
+The extract criteria is now cleaned of empty query rows before its sent to the server.
+
+
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and Django Celery library change.

@@ -197,12 +197,18 @@ describe('ExtractCtrl', function(){
 
         it("should update the critieria to or if we're of anyOrAll is 'any'", function(){
           $scope.anyOrAll = "any";
+          $scope.criteria[0].column = 'demographics';
+          $scope.criteria[0].field = 'age';
+          $scope.criteria[0].query = 0;
           $scope.completeCriteria();
           expect($scope.criteria[0].combine).toBe('or');
         });
 
         it("should update the critieria to and if we're of anyOrAll is 'all'", function(){
           $scope.anyOrAll = "all";
+          $scope.criteria[0].column = 'demographics';
+          $scope.criteria[0].field = 'age';
+          $scope.criteria[0].query = 0;
           $scope.completeCriteria();
           expect($scope.criteria[0].combine).toBe('and');
         });

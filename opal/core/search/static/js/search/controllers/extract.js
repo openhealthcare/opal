@@ -74,7 +74,6 @@ angular.module('opal.controllers').controller(
           if(c.column &&  c.field && queryPopulated){
               return true;
           }
-          c.combine = combine;
           // If not, we ignore this clause
           return false;
       });
