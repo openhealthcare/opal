@@ -306,20 +306,19 @@ def zip_archive(episodes, description, user):
     for download with all of these episodes as CSVs.
     """
     target_dir = tempfile.mkdtemp()
+    zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+    root_dir = os.path.join(target_dir, zipfolder)
+    os.mkdir(root_dir)
+    generate_csv_files(root_dir, episodes, user)
+
     target = os.path.join(target_dir, 'extract.zip')
 
     with zipfile.ZipFile(target, mode='w') as z:
-        zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-        root_dir = os.path.join(target_dir, zipfolder)
-        os.mkdir(root_dir)
-        zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        file_names = generate_csv_files(root_dir, episodes, user)
-        for full_file_name, file_name in file_names:
+        for file_name in os.listdir(root_dir):
             z.write(
-                full_file_name,
-                zip_relative_file_path(file_name)
+                os.path.join(root_dir, file_name),
+                os.path.join(zipfolder, file_name)
             )
-
     return target
 
 

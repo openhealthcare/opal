@@ -4,6 +4,7 @@ Unittests for opal.core.search.extract
 import datetime
 import json
 import os
+from pathlib import Path
 
 from django.urls import reverse
 from django.test import override_settings
@@ -132,50 +133,34 @@ class GenerateFilesTestCase(OpalTestCase):
 
 
 class ZipArchiveTestCase(OpalTestCase):
-
-    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.generate_csv_files')
     @patch('opal.core.search.extract.zipfile')
-    def test_subrecords(self, zipfile, subrecords):
-        patient, episode = self.new_patient_and_episode_please()
-        subrecords.return_value = [HatWearer, HouseOwner]
-        HatWearer.objects.create(name="Indiana", episode=episode)
-        HouseOwner.objects.create(patient=patient)
+    def test_zip_file_writes(self, zipfile, generate_csv_files):
+        """
+        generate_zip_files does the followig
+        * Creates an extract directory in a temp directory
+        * Calls the function that creates/writes the csvs to that extract directory
+        * Writes all files within the extract directory to a zip directory
+
+        This tests that by mocking out the creates/writes function to put a file in
+        and makes sure that get's written to a zip directory.
+        """
+        root_dir = None
+
+        def _generate_csv_files(_root_dir, episodes, user):
+            nonlocal root_dir
+            root_dir = _root_dir
+            Path(os.path.join(root_dir, 'some_subrecord.csv')).touch()
+        generate_csv_files.side_effect = _generate_csv_files
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(4, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
-        self.assertTrue(call_args[2][0][0].endswith("hat_wearer.csv"))
-        self.assertTrue(call_args[3][0][0].endswith("house_owner.csv"))
-
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
-    def test_subrecords_if_none(self, zipfile, subrecords):
-        # if there are no subrecords we don't expect them to write to the file
-        patient, episode = self.new_patient_and_episode_please()
-        subrecords.return_value = [HatWearer, HouseOwner]
-        HouseOwner.objects.create(patient=patient)
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(3, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
-        self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
-
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
-    def test_subrecords_if_empty_query(self, zipfile, subrecords):
-        # if there are no subrecords we don't expect them to write to the file
-        subrecords.return_value = [HatWearer, HouseOwner]
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(2, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+        self.assertEqual(1, len(call_args))
+        self.assertEqual(
+            call_args[0][0][0], os.path.join(root_dir, 'some_subrecord.csv'
+        ))
 
 
 class AsyncExtractTestCase(OpalTestCase):
-
     @patch('opal.core.search.tasks.extract.delay')
     def test_async(self, delay):
         extract.async_extract(self.user, 'THIS')
