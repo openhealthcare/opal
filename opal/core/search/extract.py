@@ -1,6 +1,7 @@
 """
 Utilities for extracting data from Opal applications
 """
+import shutil
 from collections import OrderedDict
 from opal.core import application
 import csv
@@ -312,16 +313,9 @@ def zip_archive(episodes, description, user):
     generate_csv_files(root_dir, episodes, user)
     app = application.get_app()
     app.post_extract_processing(episodes, description, user, root_dir)
-
-    target = os.path.join(target_dir, 'extract.zip')
-
-    with zipfile.ZipFile(target, mode='w') as z:
-        for file_name in os.listdir(root_dir):
-            z.write(
-                os.path.join(root_dir, file_name),
-                os.path.join(zipfolder, file_name)
-            )
-    return target
+    target = os.path.join(target_dir, 'extract')
+    shutil.make_archive(target, 'zip', root_dir)
+    return f"{target}.zip"
 
 
 def async_extract(user_id, criteria):

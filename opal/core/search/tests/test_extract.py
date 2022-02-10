@@ -134,9 +134,9 @@ class GenerateFilesTestCase(OpalTestCase):
 
 class ZipArchiveTestCase(OpalTestCase):
     @patch('opal.core.search.extract.generate_csv_files')
-    @patch('opal.core.search.extract.zipfile')
+    @patch('opal.core.search.extract.shutil.make_archive')
     @patch('opal.core.search.extract.application.get_app')
-    def test_zip_file_writes(self, get_app, zipfile, generate_csv_files):
+    def test_zip_file_writes(self, get_app, make_archive, generate_csv_files):
         """
         generate_zip_files does the followig
         * Creates an extract directory in a temp directory
@@ -154,18 +154,22 @@ class ZipArchiveTestCase(OpalTestCase):
         def _generate_csv_files(_root_dir, episodes, user):
             nonlocal root_dir
             root_dir = _root_dir
-            Path(os.path.join(root_dir, 'some_subrecord.csv')).touch()
         generate_csv_files.side_effect = _generate_csv_files
         episode_qs = models.Episode.objects.all()
-        extract.zip_archive(episode_qs, 'this', self.user)
-        call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(1, len(call_args))
-        self.assertEqual(
-            call_args[0][0][0], os.path.join(root_dir, 'some_subrecord.csv'
-        ))
+        result = extract.zip_archive(episode_qs, 'this', self.user)
+        make_archive_call_args = make_archive.call_args
+
+        # the directory that will contain extract.zip
+        zip_archive_dir = Path(root_dir).parent.absolute()
+        expected_zip_name = os.path.join(zip_archive_dir, 'extract')
+        make_archive_call_args.assert_called_once_with(
+            expected_zip_name, 'zip', root_dir
+        )
         application.post_extract_processing.assert_called_once_with(
             episode_qs, 'this', self.user, root_dir
         )
+        self.assertEqual(result, f"{expected_zip_name}.zip")
+
 
 
 class AsyncExtractTestCase(OpalTestCase):
