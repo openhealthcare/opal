@@ -1,3 +1,9 @@
+### 0.22.0 (Major Release)
+
+#### Advanced search changes
+Date and datetime fields now support `Equals` along with `Before` and `After`
+
+
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and Django Celery library change.

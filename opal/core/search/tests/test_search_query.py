@@ -185,6 +185,30 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
 
+    def test_episodes_for_date_fields_equals(self):
+        criteria = dict(
+            column='dog_owner', field='Ownership Start Date',
+            combine='and', query='2/12/2000', queryType='Equals'
+        )
+        # should be ignored because its too early
+        _, other_episode = self.new_patient_and_episode_please()
+        testmodels.DogOwner.objects.create(
+            episode=other_episode, ownership_start_date=date(2000, 12, 1)
+        )
+
+        # the expected episode
+        testmodels.DogOwner.objects.create(
+            episode=self.episode, ownership_start_date=date(2000, 12, 2)
+        )
+
+        # should be ignored because its too late
+        _, other_episode_2 = self.new_patient_and_episode_please()
+        testmodels.DogOwner.objects.create(
+            episode=other_episode_2, ownership_start_date=date(2000, 12, 3)
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
     def test_episodes_for_date_fields_after(self):
         criteria = dict(
             column='dog_owner', field='Ownership Start Date',
