@@ -55,8 +55,6 @@ setup(
         'python-dateutil==2.8.1',
         'django-celery-results==2.0.0',
         'celery==5.0.2',
-        'MarkupSafe==1.1.1', # required for python 3.5
-        'six==1.15.0'
         ],
     classifiers = [
         "Programming Language :: Python",
