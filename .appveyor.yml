@@ -9,8 +9,8 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "echo %PYTHON%"
   # - "python -m pip install --disable-pip-version-check --user --upgrade pip"
-  - "python setup.py develop"
-  - "pip install -r test-requirements.txt"
+  - "pip3 install -e ."
+  - "pip3 install -r test-requirements.txt"
 
 build: off
 
