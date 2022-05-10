@@ -306,16 +306,19 @@ def zip_archive(episodes, description, user):
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
     """
-    target_dir = tempfile.mkdtemp()
-    zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-    root_dir = os.path.join(target_dir, zipfolder)
-    os.mkdir(root_dir)
-    generate_csv_files(root_dir, episodes, user)
-    app = application.get_app()
-    app.run_modify_extract(episodes, root_dir, user)
-    target = os.path.join(target_dir, 'extract')
-    shutil.make_archive(target, 'zip', root_dir)
-    return f"{target}.zip"
+    with tempfile.TemporaryDirectory() as csv_parent_dir:
+        zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+        csv_dir = os.path.join(csv_parent_dir, zipfolder)
+        os.mkdir(csv_dir)
+        generate_csv_files(csv_dir, episodes, user)
+        app = application.get_app()
+        app.run_modify_extract(episodes, csv_dir, user)
+        extract_dir = tempfile.mkdtemp()
+        target = os.path.join(extract_dir, 'extract')
+        archive_name = os.path.join(
+            extract_dir, shutil.make_archive(target, 'zip', csv_dir)
+        )
+    return archive_name
 
 
 def async_extract(user_id, criteria):
