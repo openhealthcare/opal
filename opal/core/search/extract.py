@@ -312,7 +312,7 @@ def zip_archive(episodes, description, user):
     os.mkdir(root_dir)
     generate_csv_files(root_dir, episodes, user)
     app = application.get_app()
-    app.post_extract_processing(episodes, description, user, root_dir)
+    app.run_modify_extract(episodes, root_dir, user)
     target = os.path.join(target_dir, 'extract')
     shutil.make_archive(target, 'zip', root_dir)
     return f"{target}.zip"

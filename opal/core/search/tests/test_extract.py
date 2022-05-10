@@ -165,11 +165,10 @@ class ZipArchiveTestCase(OpalTestCase):
         make_archive_call_args.assert_called_once_with(
             expected_zip_name, 'zip', root_dir
         )
-        application.post_extract_processing.assert_called_once_with(
-            episode_qs, 'this', self.user, root_dir
+        application.run_modify_extract.assert_called_once_with(
+            episode_qs, root_dir, self.user,
         )
         self.assertEqual(result, f"{expected_zip_name}.zip")
-
 
 
 class AsyncExtractTestCase(OpalTestCase):

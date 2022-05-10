@@ -130,19 +130,18 @@ class OpalApplicationTestCase(OpalTestCase):
         )
 
     @patch('opal.core.application.get_all_components')
-    def test_post_extract_processing(self, get_all_components):
-        fake_application = MagicMock()
-        fake_application.angular_module_deps = ["upstream.dependency"]
-        get_all_components.return_value = [
-            fake_application
-        ]
+    def test_modify_extract(self, get_all_components):
+        modify_extract = MagicMock()
+        self.app.modify_extract = [modify_extract]
         self.assertIsNone(
-            application.OpalApplication.post_extract_processing(
+            self.app.run_modify_extract(
                 episodes=[],
-                description="desc",
+                extract_directory="some_directory",
                 user=None,
-                extract_directory="some_directory"
             )
+        )
+        modify_extract.assert_called_once_with(
+            [], 'some_directory', None
         )
 
 

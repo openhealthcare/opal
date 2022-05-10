@@ -103,7 +103,7 @@ application.get_styles()
 # -> ['css/app.css', ...]
 ```
 
-#### OpalApplication.post_extract_processing
+#### OpalApplication.modify_extract
 
 This is a hook that gets called after an extract has been generated.
 It is passed the episode_qs, the description, the user and the extract directory that will be made into a zip directory.

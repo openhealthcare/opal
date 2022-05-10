@@ -85,6 +85,7 @@ class OpalApplication(object):
     javascripts = []
     styles = []
     actions = []
+    modify_extract = []
     menuitems = [
         menus.MenuItem(
             href="/#/list/", activepattern="/list/",
@@ -160,14 +161,15 @@ class OpalApplication(object):
         return all_angular_module_deps
 
     @classmethod
-    def post_extract_processing(cls, episodes, description, user, extract_directory):
+    def run_modify_extract(cls, episodes, extract_directory, user, *args):
         """
         After the subrecords have been serialized to csvs, this provides a hook
         for applications to add files to the extract directory.
 
         Anything in the extract directory is zipped up and returned to the users.
         """
-        pass
+        for some_fun in cls.modify_extract:
+            some_fun(episodes, extract_directory, user, *args)
 
 
 def get_app():
