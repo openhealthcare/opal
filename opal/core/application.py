@@ -162,17 +162,19 @@ class OpalApplication(object):
         return all_angular_module_deps
 
     @classmethod
-    def run_modify_extract(cls, episodes, extract_directory, user, *args):
+    def get_modify_extract_functions(cls):
         """
         After the subrecords have been serialized to csvs, this provides a hook
         for applications to add files to the extract directory.
 
         Anything in the extract directory is zipped up and returned to the users.
         """
+        function_list = []
         for some_fun in cls.modify_extract:
             if isinstance(some_fun, str):
                 some_fun = module_loading.import_string(some_fun)
-            some_fun(episodes, extract_directory, user, *args)
+            function_list.append(some_fun)
+        return function_list
 
 
 def get_app():

@@ -312,7 +312,8 @@ def zip_archive(episodes, description, user):
         os.mkdir(csv_dir)
         generate_csv_files(csv_dir, episodes, user)
         app = application.get_app()
-        app.run_modify_extract(episodes, csv_dir, user)
+        for modify_extract_fun in app.get_modify_extract_functions():
+            modify_extract_fun(episodes, csv_dir, user)
         extract_dir = tempfile.mkdtemp()
         target = os.path.join(extract_dir, 'extract')
         archive_name = os.path.join(

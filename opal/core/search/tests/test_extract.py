@@ -157,6 +157,8 @@ class ZipArchiveTestCase(OpalTestCase):
                 root_dir = None
 
                 application = MagicMock()
+                modify_extract_fun = MagicMock()
+                application.get_modify_extract_functions.return_value = [modify_extract_fun]
                 get_app.return_value = application
 
                 def _generate_csv_files(_root_dir, episodes, user):
@@ -174,7 +176,7 @@ class ZipArchiveTestCase(OpalTestCase):
                 make_archive_call_args.assert_called_once_with(
                     expected_zip_name, 'zip', root_dir
                 )
-                application.run_modify_extract.assert_called_once_with(
+                modify_extract_fun.run_modify_extract.assert_called_once_with(
                     episode_qs, root_dir, self.user,
                 )
         self.assertEqual(os.path.basename(result), "extract.zip")
