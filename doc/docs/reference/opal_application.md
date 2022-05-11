@@ -62,8 +62,14 @@ class MyApplication(OpalApplication):
 
 #### OpalApplication.modify_extract
 
-A list of functions or string paths to functions that will be
-called on an extract after it has been generated and before it is returned to the user.
+A list of callables or string paths to functions that will be
+called on an extract after it has been generated and before it is zipped and returned to the user.
+
+The callables is passed
+ * The episodes that are returned by the query.
+ * The directory where the zip files for all the subrecords have been stored.
+ * The user who made the query.
+
 
 ```python
 class MyApplication(Application):
