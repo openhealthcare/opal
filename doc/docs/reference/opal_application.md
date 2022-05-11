@@ -60,6 +60,19 @@ class MyApplication(OpalApplication):
     styles = ['css/app.css']
 ```
 
+#### OpalApplication.modify_extract
+
+A list of functions or string paths to functions that will be
+called on an extract after it has been generated and before it is returned to the user.
+
+```python
+class MyApplication(Application):
+    modify_extract = [
+      some_function_to_call_with_extract,
+      "string_path_to_function_to_call_with_extract"
+    ]
+```
+
 ### Classmethods
 
 Classmethod API for OpalApplication instances:
@@ -102,10 +115,3 @@ Defaults to returning the contents of `OpalApplication.styles`.
 application.get_styles()
 # -> ['css/app.css', ...]
 ```
-
-#### OpalApplication.modify_extract
-
-This is a hook that gets called after an extract has been generated.
-It is passed the episode_qs, the description, the user and the extract directory that will be made into a zip directory.
-
-Anything in this extract directory after this is called is zipped and returned to the user as part of the extract.

@@ -129,8 +129,7 @@ class OpalApplicationTestCase(OpalTestCase):
             ["upstream.dependency"]
         )
 
-    @patch('opal.core.application.get_all_components')
-    def test_modify_extract(self, get_all_components):
+    def test_modify_extract(self):
         modify_extract = MagicMock()
         self.app.modify_extract = [modify_extract]
         self.assertIsNone(
@@ -141,6 +140,21 @@ class OpalApplicationTestCase(OpalTestCase):
             )
         )
         modify_extract.assert_called_once_with(
+            [], 'some_directory', None
+        )
+
+    @patch('opal.core.application.module_loading.import_string')
+    def test_modify_extract_with_string(self, import_string):
+        self.app.modify_extract = ["some_fun"]
+        self.assertIsNone(
+            self.app.run_modify_extract(
+                episodes=[],
+                extract_directory="some_directory",
+                user=None,
+            )
+        )
+        import_string.assert_called_once_with("some_fun")
+        import_string.return_value.assert_called_once_with(
             [], 'some_directory', None
         )
 

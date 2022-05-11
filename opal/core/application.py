@@ -4,6 +4,7 @@ Application helpers for Opal
 import inspect
 import itertools
 import os
+from django.utils import module_loading
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from opal.core import plugins, menus
@@ -169,6 +170,8 @@ class OpalApplication(object):
         Anything in the extract directory is zipped up and returned to the users.
         """
         for some_fun in cls.modify_extract:
+            if isinstance(some_fun, str):
+                some_fun = module_loading.import_string(some_fun)
             some_fun(episodes, extract_directory, user, *args)
 
 
