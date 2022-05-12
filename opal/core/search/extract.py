@@ -82,7 +82,14 @@ class CsvRenderer(object):
             if field_name not in non_field_csv_columns_set:
                 result.append(field_name)
 
-        return result
+        # We should have id, patient_id, episode_id in every subrecord
+        # CSV, if these fields are present, make them appear first.
+        id_fields = [f for f in ["id", "patient_id", "episode_id"] if f in result]
+
+        for f in id_fields:
+            result.remove(f)
+
+        return id_fields + result
 
     def get_field_title(self, field_name):
         return self.model._get_field_title(field_name)
@@ -196,13 +203,6 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             model, queryset, user, fields
         )
 
-    def get_field_names_to_render(self):
-        field_names = super(
-            PatientSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
-
     def get_rows(self):
         for sub in self.queryset:
             for episode_id in self.patient_to_episode[sub.patient_id]:
@@ -248,13 +248,6 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             value=lambda self, instance: text_type(instance.episode.patient_id)
         ),
     )
-
-    def get_field_names_to_render(self):
-        field_names = super(
-            EpisodeSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
 
     def __init__(self, model, episode_queryset, user, fields=None):
         queryset = model.objects.filter(episode__in=episode_queryset)
@@ -305,8 +298,8 @@ def zip_archive(episodes, description, user):
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
-    
-    After CSV serialization but before archiving, call the optional 
+
+    After CSV serialization but before archiving, call the optional
     extract modification functions from the application layer.
     """
     with tempfile.TemporaryDirectory() as csv_parent_dir:
