@@ -81,7 +81,13 @@ class CsvRenderer(object):
         for field_name in field_names:
             if field_name not in non_field_csv_columns_set:
                 result.append(field_name)
-
+        # We should have id, patient, episode in each every subrecord
+        # CSV, if these fields are present, make them appear first.
+        for first_field in ["episode_id", "patient_id", "id"]:
+            if first_field in result:
+                result = [first_field] + [
+                    i for i in result if not i == first_field
+                ]
         return result
 
     def get_field_title(self, field_name):
@@ -196,13 +202,6 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             model, queryset, user, fields
         )
 
-    def get_field_names_to_render(self):
-        field_names = super(
-            PatientSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
-
     def get_rows(self):
         for sub in self.queryset:
             for episode_id in self.patient_to_episode[sub.patient_id]:
@@ -248,13 +247,6 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             value=lambda self, instance: text_type(instance.episode.patient_id)
         ),
     )
-
-    def get_field_names_to_render(self):
-        field_names = super(
-            EpisodeSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
 
     def __init__(self, model, episode_queryset, user, fields=None):
         queryset = model.objects.filter(episode__in=episode_queryset)
@@ -305,8 +297,8 @@ def zip_archive(episodes, description, user):
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
-    
-    After CSV serialization but before archiving, call the optional 
+
+    After CSV serialization but before archiving, call the optional
     extract modification functions from the application layer.
     """
     with tempfile.TemporaryDirectory() as csv_parent_dir:
