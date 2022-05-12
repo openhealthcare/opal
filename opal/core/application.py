@@ -164,10 +164,10 @@ class OpalApplication(object):
     @classmethod
     def get_modify_extract_functions(cls):
         """
-        After the subrecords have been serialized to csvs, this provides a hook
-        for applications to add files to the extract directory.
+        Return extract modifier functions.
 
-        Anything in the extract directory is zipped up and returned to the users.
+        If the functions are string paths, evaluate those paths and
+        retrieve the callable function.
         """
         function_list = []
         for some_fun in cls.modify_extract:
