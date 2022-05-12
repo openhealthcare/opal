@@ -1,10 +1,11 @@
 """
 Utilities for extracting data from Opal applications
 """
+import shutil
 from collections import OrderedDict
+from opal.core import application
 import csv
 import datetime
-import functools
 import json
 import logging
 import os
@@ -304,23 +305,24 @@ def zip_archive(episodes, description, user):
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
+    
+    After CSV serialization but before archiving, call the optional 
+    extract modification functions from the application layer.
     """
-    target_dir = tempfile.mkdtemp()
-    target = os.path.join(target_dir, 'extract.zip')
-
-    with zipfile.ZipFile(target, mode='w') as z:
+    with tempfile.TemporaryDirectory() as csv_parent_dir:
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-        root_dir = os.path.join(target_dir, zipfolder)
-        os.mkdir(root_dir)
-        zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        file_names = generate_csv_files(root_dir, episodes, user)
-        for full_file_name, file_name in file_names:
-            z.write(
-                full_file_name,
-                zip_relative_file_path(file_name)
-            )
-
-    return target
+        csv_dir = os.path.join(csv_parent_dir, zipfolder)
+        os.mkdir(csv_dir)
+        generate_csv_files(csv_dir, episodes, user)
+        app = application.get_app()
+        for modify_extract_fun in app.get_modify_extract_functions():
+            modify_extract_fun(episodes, csv_dir, user)
+        extract_dir = tempfile.mkdtemp()
+        target = os.path.join(extract_dir, 'extract')
+        archive_name = os.path.join(
+            extract_dir, shutil.make_archive(target, 'zip', csv_dir)
+        )
+    return archive_name
 
 
 def async_extract(user_id, criteria):

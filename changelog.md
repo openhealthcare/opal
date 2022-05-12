@@ -1,3 +1,12 @@
+### 0.22.0 (Major Release)
+
+#### Application.modify_extract
+
+A list of functions attached to the application object that 
+enable the application to add, remove or alter files in an 
+advanced search extract.
+
+
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and Django Celery library change.
