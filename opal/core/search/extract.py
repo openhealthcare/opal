@@ -81,14 +81,15 @@ class CsvRenderer(object):
         for field_name in field_names:
             if field_name not in non_field_csv_columns_set:
                 result.append(field_name)
-        # We should have id, patient, episode in every subrecord
+
+        # We should have id, patient_id, episode_id in every subrecord
         # CSV, if these fields are present, make them appear first.
-        for first_field in ["episode_id", "patient_id", "id"]:
-            if first_field in result:
-                result = [first_field] + [
-                    i for i in result if not i == first_field
-                ]
-        return result
+        id_fields = [f for f in ["id", "patient_id", "episode_id"] if f in result]
+
+        for f in id_fields:
+            result.remove(f)
+
+        return id_fields + result
 
     def get_field_title(self, field_name):
         return self.model._get_field_title(field_name)
