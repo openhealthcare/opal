@@ -63,13 +63,8 @@ class MyApplication(OpalApplication):
 #### OpalApplication.modify_extract
 
 A list of callables or string paths to functions that will be
-called on an extract after it has been generated and before it is zipped and returned to the user.
-
-The callables is passed
- * The episodes that are returned by the query.
- * The directory where the zip files for all the subrecords have been stored.
- * The user who made the query.
-
+called after the files in an extract have been generated but 
+before it is zipped and returned to the user.
 
 ```python
 class MyApplication(Application):
@@ -78,6 +73,25 @@ class MyApplication(Application):
       "string_path_to_function_to_call_with_extract"
     ]
 ```
+
+The callables are passed:
+
+ * An iterable of episodes in this extract
+ * The directory where the zip files for all the subrecords have been stored
+ * The user who made the query
+ * kwargs reserved for future API alterations
+
+```python
+def my_modifier(episodes, path, user, **kwargs):
+    if not user.is_superuser:
+        return
+    count = len(episodes)
+    with open(os.path.join(path, 'counter.txt', 'w') as fh:
+        fh.write(f"{count} episodes\n")
+    return
+```
+
+
 
 ### Classmethods
 
