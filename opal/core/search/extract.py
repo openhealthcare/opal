@@ -305,6 +305,9 @@ def zip_archive(episodes, description, user):
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
+    
+    After CSV serialization but before archiving, call the optional 
+    extract modification functions from the application layer.
     """
     with tempfile.TemporaryDirectory() as csv_parent_dir:
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
