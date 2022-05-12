@@ -101,6 +101,7 @@
                                   set-focus-if="isDateType(query.column, query.field)" >
                             <option>Before</option>
                             <option>After</option>
+                            <option>Equals</option>
                           </select>
                           <select class="form-control content-offset-25" ng-model="query.queryType"
                                   ng-show="isNumber(query.column, query.field) && query.field != null"
