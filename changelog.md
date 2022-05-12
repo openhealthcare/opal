@@ -3,6 +3,12 @@
 #### Advanced search changes
 Date and datetime fields now support `Equals` along with `Before` and `After`
 
+#### Application.modify_extract
+
+A list of functions attached to the application object that
+enable the application to add, remove or alter files in an
+advanced search extract.
+
 
 ### 0.21.0 (Major Release)
 

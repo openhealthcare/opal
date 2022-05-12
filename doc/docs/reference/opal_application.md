@@ -60,6 +60,39 @@ class MyApplication(OpalApplication):
     styles = ['css/app.css']
 ```
 
+#### OpalApplication.modify_extract
+
+A list of callables or string paths to functions that will be
+called after the files in an extract have been generated but 
+before it is zipped and returned to the user.
+
+```python
+class MyApplication(Application):
+    modify_extract = [
+      some_function_to_call_with_extract,
+      "string_path_to_function_to_call_with_extract"
+    ]
+```
+
+The callables are passed:
+
+ * An iterable of episodes in this extract
+ * The directory where the zip files for all the subrecords have been stored
+ * The user who made the query
+ * kwargs reserved for future API alterations
+
+```python
+def my_modifier(episodes, path, user, **kwargs):
+    if not user.is_superuser:
+        return
+    count = len(episodes)
+    with open(os.path.join(path, 'counter.txt', 'w') as fh:
+        fh.write(f"{count} episodes\n")
+    return
+```
+
+
+
 ### Classmethods
 
 Classmethod API for OpalApplication instances:
