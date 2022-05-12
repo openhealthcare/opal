@@ -81,7 +81,7 @@ class CsvRenderer(object):
         for field_name in field_names:
             if field_name not in non_field_csv_columns_set:
                 result.append(field_name)
-        # We should have id, patient, episode in each every subrecord
+        # We should have id, patient, episode in every subrecord
         # CSV, if these fields are present, make them appear first.
         for first_field in ["episode_id", "patient_id", "id"]:
             if first_field in result:
