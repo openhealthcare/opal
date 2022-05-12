@@ -176,7 +176,7 @@ class ZipArchiveTestCase(OpalTestCase):
                 make_archive_call_args.assert_called_once_with(
                     expected_zip_name, 'zip', root_dir
                 )
-                modify_extract_fun.run_modify_extract.assert_called_once_with(
+                modify_extract_fun.assert_called_once_with(
                     episode_qs, root_dir, self.user,
                 )
         self.assertEqual(os.path.basename(result), "extract.zip")
