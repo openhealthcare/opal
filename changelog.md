@@ -1,6 +1,6 @@
 ### 0.22.1 (Minor Release)
 
-#### Exclude many to one relationships from the advanced Search
+#### Exclude many to one relationships from the advanced search
 
 Many to one fields are no longer visible in the advanced search screen.
 
