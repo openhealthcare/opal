@@ -103,6 +103,12 @@ describe('ExtractCtrl', function(){
                     "type":"token"
                 },
                 {
+                    "title":"A Many To One",
+                    "lookup_list":null,
+                    "name":"a many to one",
+                    "type":"many_to_o"
+                },
+                {
                     "title":"Created",
                     "lookup_list":null,
                     "name":"created",
