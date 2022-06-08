@@ -375,6 +375,11 @@ describe('ExtractCtrl', function(){
           var result = $scope.getChoices("some", "field");
           expect(result).toEqual([1, 2, 3]);
         });
+
+        it('should error if there is no field', function(){
+            var result = $scope.getChoices("some", null);
+            expect(result).toEqual([]);
+        });
     });
 
     describe('refresh', function(){
