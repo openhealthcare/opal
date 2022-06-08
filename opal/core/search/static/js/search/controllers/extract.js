@@ -95,7 +95,7 @@ angular.module('opal.controllers').controller(
                       if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
                           return true;
                       }
-                      return c.type == 'token' ||  c.type ==  'list';
+                      return c.type == 'token' ||  c.type ==  'list' || c.type == "many_to_o";;
                   }),
 
               function(c){ return c; }
