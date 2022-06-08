@@ -88,7 +88,6 @@ angular.module('opal.controllers').controller(
 
     $scope.searchableFields = function(columnName){
         var column = $scope.findColumn(columnName);
-        // TODO - don't hard-code this
         if(column){
           return _.map(
               _.reject(
