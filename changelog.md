@@ -1,6 +1,12 @@
 ### 0.23.0 (Major Release)
 
 
+### 0.22.1 (Minor Release)
+
+#### Exclude many to one relationships from the advanced search
+
+Many to one fields are no longer visible in the advanced search screen.
+
 
 ### 0.22.0 (Major Release)
 
@@ -13,10 +19,10 @@ A list of functions attached to the application object that
 enable the application to add, remove or alter files in an
 advanced search extract.
 
-
 #### Include ID in the extract
 
 The model ID will no longer be excluded from its csv extract. If present, id will appear first, then patient id, then episode id.
+
 
 ### 0.21.0 (Major Release)
 
