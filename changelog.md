@@ -1,3 +1,6 @@
+### 0.22.1 (Minor Release)
+
+
 ### 0.22.0 (Major Release)
 
 #### Advanced search changes
