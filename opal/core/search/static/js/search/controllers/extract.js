@@ -85,10 +85,8 @@ angular.module('opal.controllers').controller(
 
       return criteria;
     };
-
     $scope.searchableFields = function(columnName){
         var column = $scope.findColumn(columnName);
-        // TODO - don't hard-code this
         if(column){
           return _.map(
               _.reject(
@@ -97,8 +95,9 @@ angular.module('opal.controllers').controller(
                       if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
                           return true;
                       }
-                      return c.type == 'token' ||  c.type ==  'list';
+                      return c.type == 'token' ||  c.type ==  'list' || c.type == "many_to_o";;
                   }),
+
               function(c){ return c; }
           ).sort();
         }
@@ -144,6 +143,9 @@ angular.module('opal.controllers').controller(
     };
 
     $scope.getChoices = function(column, field){
+      if(!field){
+        return []
+      }
       var modelField = $scope.findField(column, field);
 
       if(modelField.lookup_list && modelField.lookup_list.length){

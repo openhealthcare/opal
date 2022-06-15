@@ -103,6 +103,12 @@ describe('ExtractCtrl', function(){
                     "type":"token"
                 },
                 {
+                    "title":"A Many To One",
+                    "lookup_list":null,
+                    "name":"a many to one",
+                    "type":"many_to_o"
+                },
+                {
                     "title":"Created",
                     "lookup_list":null,
                     "name":"created",
@@ -374,6 +380,11 @@ describe('ExtractCtrl', function(){
           });
           var result = $scope.getChoices("some", "field");
           expect(result).toEqual([1, 2, 3]);
+        });
+
+        it('should error if there is no field', function(){
+            var result = $scope.getChoices("some", null);
+            expect(result).toEqual([]);
         });
     });
 
