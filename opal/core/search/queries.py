@@ -171,6 +171,8 @@ class DatabaseQuery(QueryBackend):
             qtype = '__lte'
         elif query['queryType'] == 'After':
             qtype = '__gte'
+        elif query['queryType'] == 'Equals':
+            qtype = ''
 
         kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
         return self._episodes_for_filter_kwargs(kw, model)

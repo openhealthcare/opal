@@ -22,7 +22,6 @@ angular.module('opal.services').service('Patient', function(Episode, FieldTransl
       }
     }).reverse();
 
-
     // TODO: There are edge cases here - e.g. We are viewing Episode 3,
     // which has a custom detail view which only displays some elements
     // based on demographics - e.g. "only display the parental consent

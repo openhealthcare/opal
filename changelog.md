@@ -1,3 +1,23 @@
+### 0.23.0 (Major Release)
+
+
+
+### 0.22.0 (Major Release)
+
+#### Advanced search changes
+Date and datetime fields now support `Equals` along with `Before` and `After`
+
+#### Application.modify_extract
+
+A list of functions attached to the application object that
+enable the application to add, remove or alter files in an
+advanced search extract.
+
+
+#### Include ID in the extract
+
+The model ID will no longer be excluded from its csv extract. If present, id will appear first, then patient id, then episode id.
+
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and Django Celery library change.
@@ -178,7 +198,6 @@ rather than `media="screen".
 
 * DjangoRESTFramework 3.7.4 -> 3.10.2
 * python-dateutil 2.7.5 -> 2.8.0
-
 
 ### 0.17.1 (Minor Release)
 Removes a now deleted file from the default application javascripts list
