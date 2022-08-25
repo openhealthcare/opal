@@ -1,5 +1,8 @@
 ### 0.23.0 (Major Release)
 
+#### Allows to the patient summary class that returns results to the front end to be overridden
+
+If you are using the default DatabaseQueryBackend, you can now return difference results to the front end by overriding the class that translates a patient and episodes to a result in the search results.
 
 ### 0.22.1 (Minor Release)
 

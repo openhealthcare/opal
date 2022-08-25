@@ -26,23 +26,46 @@ from opal.tests.episodes import RestrictedEpisodeCategory  # NOQA
 
 class PatientSummaryTestCase(OpalTestCase):
 
-    def test_update_sets_start(self):
-        patient, episode = self.new_patient_and_episode_please()
-        summary = queries.PatientSummary(episode)
-        self.assertEqual(None, summary.start)
-        the_date = date(day=27, month=1, year=1972)
-        episode2 = patient.create_episode(start=the_date)
-        summary.update(episode2)
-        self.assertEqual(summary.start, the_date)
+    def setUp(self):
+        self.patient, self.episode_1 = self.new_patient_and_episode_please()
+        self.patient.demographics_set.update(
+            first_name='Sarah',
+            surname='Wilson',
+            hospital_number="2342232323",
+            date_of_birth=date(1984, 1, 2)
+        )
+        self.episode_1.category_name = 'Inpatient'
+        self.episode_1.start = date(2022, 10, 1)
+        self.episode_1.end = date(2022, 10, 30)
 
-    def test_update_sets_end(self):
-        patient, episode = self.new_patient_and_episode_please()
-        summary = queries.PatientSummary(episode)
-        self.assertEqual(None, summary.start)
-        the_date = date(day=27, month=1, year=1972)
-        episode2 = patient.create_episode(end=the_date)
-        summary.update(episode2)
-        self.assertEqual(summary.end, the_date)
+        self.episode_2 = self.patient.episode_set.create(
+            category_name='Inpatient',
+            start=date(2022, 9, 10),
+            end=date(2022, 10, 10),
+        )
+
+        self.episode_3 = self.patient.episode_set.create(
+            category_name='Inpatient',
+            start=date(2022, 10, 12),
+            end=date(2022, 10, 13),
+        )
+
+    def test_patient_summary(self):
+        summary = queries.PatientSummary(
+            self.patient, [self.episode_1, self.episode_2, self.episode_3]
+        )
+        expected = {
+            "patient_id": self.patient.id,
+            "start": date(2022, 9, 10),
+            "end": date(2022, 10, 30),
+            "first_name": 'Sarah',
+            "surname": 'Wilson',
+            "hospital_number": "2342232323",
+            "date_of_birth": date(1984, 1, 2),
+            "categories": ['Inpatient'],
+            "count": 3
+        }
+        self.assertEqual(summary.to_dict(), expected)
 
 
 class QueryBackendTestCase(OpalTestCase):
@@ -778,6 +801,32 @@ class DatabaseQueryTestCase(OpalTestCase):
             'end': end_date,
             'start': start_date,
             'patient_id': self.patient.id,
+            'categories': [u'Inpatient']
+        }]
+        self.assertEqual(expected, summaries)
+
+    def test_allows_override_of_patient_summary_class(self):
+        class MyPatientSummary(queries.PatientSummary):
+            def to_dict(self):
+                result = super().to_dict()
+                result['overridden'] = True
+                return result
+
+        class MySearchBackEnd(queries.DatabaseQuery):
+            patient_summary_class = MyPatientSummary
+
+        query = MySearchBackEnd(self.user, self.name_criteria)
+        summaries = query.get_patient_summaries()
+        expected = [{
+            'count': 1,
+            'hospital_number': u'0',
+            'date_of_birth': self.DATE_OF_BIRTH,
+            'first_name': u'Sally',
+            'surname': u'Stevens',
+            'end': self.DATE_OF_EPISODE,
+            'start': self.DATE_OF_EPISODE,
+            'patient_id': self.patient.id,
+            'overridden': True,
             'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)

@@ -16,6 +16,13 @@ The backend takes in a dictionary with the following fields
 }
 ```
 
+## Overriding what is serialized in the search results
+By default the class `opal.core.search.queries.PatientSummary` is used to serialize search results to the front end. It takes in a patient and some episodes and returns an element of the list to the front end.
+
+To override this declare a custom OPAL_SEARCH_BACKEND in settings and
+override the `patient_summary_class` attribute.
+
+
 ## The Advanced search interface
 
 The Opal advanced search interface at `/#/extract` allows users to specify rules
