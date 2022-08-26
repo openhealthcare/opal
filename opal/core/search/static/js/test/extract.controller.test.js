@@ -442,6 +442,10 @@ describe('ExtractCtrl', function(){
             expect($scope.searched).toBe(true);
         });
 
+        it('will fail', function(){
+            expect(false).toBe(true);
+        });
+
         it('should handle errors', function(){
             spyOn($window, 'alert');
             $httpBackend.expectPOST('/search/extract/').respond(500, {});
