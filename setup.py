@@ -45,6 +45,8 @@ setup(
         ]
     },
     install_requires=[
+        # We pin kombu because kombu 5.3 imports does not work on python 3.6.9
+        'kombu==5.2.3',
         'ffs>=0.0.8.2',
         'Jinja2==2.10.1',
         'django==2.2.16',
