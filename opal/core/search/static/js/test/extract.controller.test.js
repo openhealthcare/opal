@@ -424,7 +424,6 @@ describe('ExtractCtrl', function(){
                     {categories: []}
                 ]
             });
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             $scope.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",
