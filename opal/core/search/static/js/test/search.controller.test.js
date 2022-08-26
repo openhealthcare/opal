@@ -57,7 +57,6 @@ describe('SearchCtrl', function (){
             $httpBackend.expectGET('/search/simple/?query=jane').respond(
                 {object_list: [{categories: []}]}
             );
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             expect($scope.query.searchTerm.length).toBe(0);
             $scope.query.autocompleteSearchTerm = 'jane';
             expect($scope.getQueryParam()).toEqual('jane');
