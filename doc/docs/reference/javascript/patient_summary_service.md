@@ -11,3 +11,13 @@ that comes back from the Patient search JSON API.
 
     var patient_summary = new PatientSummary(json_data);
 
+Whatever is on the JSON response is put onto it. The constructor adds in the below:
+
+ * `hospitalNumber`
+ * `patientId`
+ * `link` A link to the patients patient detail page
+ * `dateOfBirth` The patient's date of birth cast to a moment
+ * `startDate` The patient's earliest episode.start cast to a moment
+ * `endDate` The patient's last episdoe.end cast to a moment
+ * `years` The span of years between startDate and EndDate e.g. "2020-2023"
+ * `categories` A comma joined string of the patient's episode categories, e.g. "Inpatient, ICU"

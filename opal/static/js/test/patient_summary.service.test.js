@@ -27,10 +27,20 @@ describe('PatientSummary', function (){
       expect(patientSummary.dateOfBirth.toDate()).toEqual(new Date(1973, 4, 12));
       expect(patientSummary.years).toEqual(undefined);
       expect(patientSummary.hospitalNumber).toEqual("11111111");
+      expect(patientSummary.hospital_number).toEqual("11111111");
       expect(patientSummary.first_name).toEqual("Isabella");
       expect(patientSummary.surname).toEqual("King");
       expect(patientSummary.link).toEqual("/#/patient/192");
       expect(patientSummary.patientId).toEqual(192);
+      expect(patientSummary.patient_id).toEqual(192);
+  });
+
+  it('should cast start date and end date to moments', function(){
+    testData.start_date = "10/10/1973";
+    testData.end_date = "10/10/1974";
+    var patientSummary = new PatientSummary(testData);
+    expect(patientSummary.start_date.toDate()).toEqual(new Date(1973, 9, 10));
+    expect(patientSummary.end_date.toDate()).toEqual(new Date(1974, 9, 10));
   });
 
   it("should populate years if they exist", function(){
