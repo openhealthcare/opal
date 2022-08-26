@@ -2,7 +2,7 @@
 
 #### The future filter now accepts strings
 
-The filter `future` now accepts a string as outputted by the opal date serialization
+The filter `future` now accepts a string as outputted by the Opal date serialization
 e.g. 27/12/2022.
 
 
