@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import tempfile
-import zipfile
 
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
@@ -84,7 +83,9 @@ class CsvRenderer(object):
 
         # We should have id, patient_id, episode_id in every subrecord
         # CSV, if these fields are present, make them appear first.
-        id_fields = [f for f in ["id", "patient_id", "episode_id"] if f in result]
+        id_fields = [
+            f for f in ["id", "patient_id", "episode_id"] if f in result
+        ]
 
         for f in id_fields:
             result.remove(f)
