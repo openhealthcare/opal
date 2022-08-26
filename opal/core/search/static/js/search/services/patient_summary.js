@@ -1,10 +1,9 @@
 //
 // This is the main PatientSummary class for OPAL.
 //
-angular.module('opal.services').factory('PatientSummary', function(UserProfile) {
+angular.module('opal.services').factory('PatientSummary', function() {
         var PatientSummary = function(jsonResponse){
             var startYear, endYear;
-            var self = this;
 
             if(jsonResponse.start_date){
                 startYear= moment(jsonResponse.start_date, 'DD/MM/YYYY').format("YYYY");
