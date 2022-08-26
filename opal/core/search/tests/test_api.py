@@ -28,3 +28,6 @@ class LoginRequredTestCase(OpalTestCase):
             response.status_code,
             401
         )
+
+    def test_fail(self):
+        self.fail()
