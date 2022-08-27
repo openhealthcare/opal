@@ -1,8 +1,31 @@
 ### 0.23.0 (Major Release)
 
-#### Allows to the patient summary class that returns results to the front end to be overridden
+#### Allows the patient summary class to be overridden.
 
-If you are using the default DatabaseQueryBackend, you can now return difference results to the front end by overriding the class that translates a patient and episodes to a result in the search results.
+The PatientSummary class is used to serialize episodes by the search functionality.
+
+The default is the DatabaseQueryBackend. You can now create a custom backend that inherits this but sets its own serialization class.
+
+e.g. adding title to the serialization
+
+```
+class MyPatientSummary(PatientSummary):
+    def __init__(self, patient, episodes):
+        super()__init__(patient, episodes)
+        self.patient_title = patient.demographics().title
+
+    def to_json(self):
+        as_json = super().to_json()
+        as_json['title'] = self.patient_title
+        return as_json
+
+
+class MyCustomBackend(DatabaseQueryBackend):
+    patient_summary_class = PatientSummary
+
+# change settings.py to include OPAL_SEARCH_BACKEND='{path to my backend}.MyCustomBackend'
+```
+
 
 ### 0.22.1 (Minor Release)
 
