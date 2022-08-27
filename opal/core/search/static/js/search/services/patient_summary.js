@@ -1,7 +1,7 @@
 //
 // This is the main PatientSummary class for OPAL.
 //
-angular.module('opal.services').factory('PatientSummary', function(UserProfile) {
+angular.module('opal.services').factory('PatientSummary', function() {
     "use strict";
     var PatientSummary = function(jsonResponse){
         _.extend(this, jsonResponse);

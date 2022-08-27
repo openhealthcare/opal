@@ -26,6 +26,11 @@ class MyCustomBackend(DatabaseQueryBackend):
 # change settings.py to include OPAL_SEARCH_BACKEND='{path to my backend}.MyCustomBackend'
 ```
 
+#### The future filter now accepts strings
+
+The filter `future` now accepts a string as outputted by the Opal date serialization
+e.g. 27/12/2022.
+
 
 ### 0.22.1 (Minor Release)
 
