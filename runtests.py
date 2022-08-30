@@ -43,7 +43,7 @@ test_settings_config = dict(
         'reversion.middleware.RevisionMiddleware'
     ),
     INSTALLED_APPS=(
-    'django.contrib.auth',
+        'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.staticfiles',
         'django.contrib.sessions',
