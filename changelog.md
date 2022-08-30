@@ -2,9 +2,9 @@
 
 #### Allows the patient summary class to be overridden.
 
-The PatientSummary class is used to serialize episodes by the search functionality.
+You can now override the default episode serialization in the serach functionality.
 
-The default is the DatabaseQueryBackend. You can now create a custom backend that inherits this but sets its own serialization class.
+Serialization is done by default with the PatientSummary class. This can be overridden in a custom search backend.
 
 e.g. adding title to the serialization
 
