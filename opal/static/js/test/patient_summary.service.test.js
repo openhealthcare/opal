@@ -39,8 +39,8 @@ describe('PatientSummary', function (){
     testData.start_date = "10/10/1973";
     testData.end_date = "10/10/1974";
     var patientSummary = new PatientSummary(testData);
-    expect(patientSummary.start_date.toDate()).toEqual(new Date(1973, 9, 10));
-    expect(patientSummary.end_date.toDate()).toEqual(new Date(1974, 9, 10));
+    expect(patientSummary.startDate.toDate()).toEqual(new Date(1973, 9, 10));
+    expect(patientSummary.endDate.toDate()).toEqual(new Date(1974, 9, 10));
   });
 
   it("should populate years if they exist", function(){
@@ -67,5 +67,11 @@ describe('PatientSummary', function (){
       testData.end_date = "10/10/1973";
       var patientSummary = new PatientSummary(testData);
       expect(patientSummary.years).toEqual("1973");
+  });
+
+  it("should put whatever is in the PatientSummary's initialising data onto the object", function(){
+    testData.otherInfo = "other info"
+    var patientSummary = new PatientSummary(testData);
+    expect(patientSummary.otherInfo).toEqual("other info");
   });
 });
