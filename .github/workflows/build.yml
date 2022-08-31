@@ -53,18 +53,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-  coveralls:
-    name: Indicate completion to coveralls.io
-    needs: integration-test
-    runs-on: ubuntu-latest
-    container: python:3-slim
-    steps:
-    - name: Finished
-      run: |
-        pip3 install --upgrade coveralls
-        coveralls --service=github --finish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # make sure the python side of things works on windows
   other-os-tests:
     name: Test ${{ matrix.os }} Python ${{ matrix.python-version }}
