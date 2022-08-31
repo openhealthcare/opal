@@ -113,7 +113,7 @@ test_settings_config = dict(
     }
 )
 
-if os.environ.get('USE_POSTGRES'):
+if os.environ.get('GITHUB_WORKFLOW') and not os.environ.get('RUNNER_OS') == 'Windows':
     test_settings_config["DATABASES"] = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',

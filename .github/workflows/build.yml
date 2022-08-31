@@ -38,8 +38,6 @@ jobs:
         run: npm install jasmine-core@2.3.4 karma@1.5 karma-coverage@1.1.1 karma-jasmine@0.3.8 karma-firefox-launcher@2.1.0 karma-coveralls@1.1.2
       - name: Install opal
         run: pip install -e .
-        env:
-          OPAL_TEST_USE_POSTGRES: 1
       - name: Install dependencies
         run: pip install -r test-requirements.txt
       - run: gem install coveralls-lcov
