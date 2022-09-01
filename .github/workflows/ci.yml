@@ -3,7 +3,7 @@ name: CI
 jobs:
   # run python/js tests, coveralls and lint
   integration-test:
-    name: ${{ matrix.os }} python ${{ matrix.python-version }}
+    name: python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     services:
       postgres:
@@ -54,7 +54,7 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
   # make sure the python side of things works on windows
   other-os-tests:
-    name: ${{ matrix.os }} Python ${{ matrix.python-version }}
+    name: ${{ matrix.os }} python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
