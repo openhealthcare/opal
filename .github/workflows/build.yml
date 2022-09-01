@@ -1,5 +1,5 @@
 on: [pull_request]
-name: "CI:"
+name: CI -
 jobs:
   # run python/js tests, coveralls and lint
   integration-test:
