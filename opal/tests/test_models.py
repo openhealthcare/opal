@@ -21,7 +21,7 @@ from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
     HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner,
-    EntitledHatWearer
+    EntitledHatWearer, Demographics
 )
 
 
@@ -814,7 +814,7 @@ class TaggingTestCase(OpalTestCase):
 
 class AbstractDemographicsTestCase(OpalTestCase):
     def test_name(self):
-        d = models.Demographics(first_name='Jane',
+        d = Demographics(first_name='Jane',
                                 surname='Doe',
                                 middle_name='Obsidian')
         self.assertEqual('Jane Doe', d.name)

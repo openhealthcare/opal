@@ -6,6 +6,13 @@ The filter `future` now accepts a string as outputted by the Opal date serializa
 e.g. 27/12/2022.
 
 
+#### Updates to the Dependency Graph
+
+* Django: 2.2.16 -> 3.2
+* Django-compressor: 2.4 -> 3.0
+* django-reversion: 3.0.8 -> 4.0.2
+
+
 ### 0.22.1 (Minor Release)
 
 #### Exclude many to one relationships from the advanced search
