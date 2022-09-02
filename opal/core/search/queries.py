@@ -32,12 +32,12 @@ class PatientSummary(object):
     def __init__(self, patient, episodes):
         start_dates = [i.start for i in episodes if i.start]
         self.start = None
-        if start_dates:
+        if len(start_dates) > 0:
             self.start = min(start_dates)
 
         end_dates = [i.end for i in episodes if i.end]
         self.end = None
-        if end_dates:
+        if len(end_dates) > 0:
             self.end = max(end_dates)
 
         self.patient_id = patient.id
