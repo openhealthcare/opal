@@ -4,7 +4,7 @@
 angular.module('opal.services').factory('PatientSummary', function() {
     "use strict";
     var PatientSummary = function(jsonResponse){
-        _.extend(this, jsonResponse);
+        this.data = jsonResponse;
         var startYear, endYear
 
         if(jsonResponse.start_date){
@@ -37,9 +37,11 @@ angular.module('opal.services').factory('PatientSummary', function() {
             this.categories = jsonResponse.categories.join(", ");
         }
 
-        if(jsonResponse.hospital_number){
-            this.hospitalNumber = jsonResponse.hospital_number;
-        }
+        this.first_name = jsonResponse.first_name;
+        this.surname = jsonResponse.surname;
+        this.count = jsonResponse.count;
+        this.dateOfBirth = moment(jsonResponse.date_of_birth, 'DD/MM/YYYY');
+        this.hospitalNumber = jsonResponse.hospital_number;
     };
 
     return PatientSummary;

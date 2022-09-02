@@ -9,9 +9,9 @@ functionality related to interacting with patient search results in the client.
 The PatientSummary service is instantiated with the patient search result data
 that comes back from the patient search JSON API.
 
-    var patient_summary = new PatientSummary(json_data);
+    var patientSummary = new PatientSummary(json_data);
 
-Whatever is on the JSON response is put onto it. The constructor adds in the below:
+Whatever is on the JSON response is put onto patientSummary.data. The constructor adds in the below to the object itself:
 
  * `hospitalNumber`
  * `patientId`

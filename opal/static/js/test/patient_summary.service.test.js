@@ -1,4 +1,4 @@
-describe('PatientSummary', function (){
+fdescribe('PatientSummary', function (){
   "use strict";
   var PatientSummary;
   var testData;
@@ -27,12 +27,16 @@ describe('PatientSummary', function (){
       expect(patientSummary.dateOfBirth.toDate()).toEqual(new Date(1973, 4, 12));
       expect(patientSummary.years).toEqual(undefined);
       expect(patientSummary.hospitalNumber).toEqual("11111111");
-      expect(patientSummary.hospital_number).toEqual("11111111");
       expect(patientSummary.first_name).toEqual("Isabella");
       expect(patientSummary.surname).toEqual("King");
       expect(patientSummary.link).toEqual("/#/patient/192");
       expect(patientSummary.patientId).toEqual(192);
-      expect(patientSummary.patient_id).toEqual(192);
+  });
+
+  it("should not error if the json object we use to initialize it is unexpected", function(){
+    var testData = {"title": "Dr"};
+    var patientSummary = new PatientSummary(testData);
+    expect(patientSummary.data.title).toBe("Dr")
   });
 
   it('should cast start date and end date to moments', function(){
@@ -67,11 +71,5 @@ describe('PatientSummary', function (){
       testData.end_date = "10/10/1973";
       var patientSummary = new PatientSummary(testData);
       expect(patientSummary.years).toEqual("1973");
-  });
-
-  it("should put whatever is in the PatientSummary's initialising data onto the object", function(){
-    testData.otherInfo = "other info"
-    var patientSummary = new PatientSummary(testData);
-    expect(patientSummary.otherInfo).toEqual("other info");
   });
 });
