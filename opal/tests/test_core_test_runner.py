@@ -10,6 +10,7 @@ from opal.core.test import OpalTestCase
 
 from opal.core import test_runner
 
+
 class RunPyTestsTestCase(OpalTestCase):
 
     @patch('subprocess.check_call')
@@ -148,10 +149,10 @@ class RunPyTestsTestCase(OpalTestCase):
 class RunJSTestsTestCase(OpalTestCase):
 
     def setUp(self):
-        self.TRAVIS = test_runner.TRAVIS
+        self.GITHUB_ACTION = test_runner.GITHUB_ACTION
 
     def tearDown(self):
-        test_runner.TRAVIS = self.TRAVIS
+        test_runner.GITHUB_ACTION = self.GITHUB_ACTION
 
     @patch('subprocess.check_call')
     def test_run_tests(self, check_call):
@@ -160,7 +161,7 @@ class RunJSTestsTestCase(OpalTestCase):
         mock_args.coverage = False
         mock_args.test = None
         mock_args.failfast = False
-        test_runner.TRAVIS = False
+        test_runner.GITHUB_ACTION = False
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
             ['karma', 'start', 'config/karma.conf.js', '--single-run'],
@@ -168,13 +169,13 @@ class RunJSTestsTestCase(OpalTestCase):
         )
 
     @patch('subprocess.check_call')
-    def test_run_tests_travis(self, check_call):
+    def test_run_tests_github(self, check_call):
         mock_args = MagicMock(name="args")
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
         mock_args.failfast = False
-        test_runner.TRAVIS = True
+        test_runner.GITHUB_ACTION = True
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
             [
@@ -198,7 +199,7 @@ class RunJSTestsTestCase(OpalTestCase):
         mock_args.coverage = False
         mock_args.test = None
         mock_args.failfast = True
-        test_runner.TRAVIS = False
+        test_runner.GITHUB_ACTION = False
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
             [

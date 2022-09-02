@@ -63,8 +63,8 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
       }
     ];
 
-    if(process.env.TRAVIS){
-        browsers = ["Firefox"];
+    if(process.env.GITHUB_WORKFLOW){
+        browsers = ["FirefoxHeadless"];
         plugins.push("karma-firefox-launcher");
         plugins.push("karma-coveralls");
         if(useCoverage){
