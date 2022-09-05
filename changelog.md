@@ -1,3 +1,11 @@
+### 0.22.2 (Minor Release)
+
+#### The future filter now accepts strings
+
+The filter `future` now accepts a string as outputted by the Opal date serialization
+e.g. 27/12/2022.
+
+
 ### 0.22.1 (Minor Release)
 
 #### Exclude many to one relationships from the advanced search
