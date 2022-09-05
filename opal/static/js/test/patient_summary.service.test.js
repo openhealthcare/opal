@@ -1,4 +1,4 @@
-fdescribe('PatientSummary', function (){
+describe('PatientSummary', function (){
   "use strict";
   var PatientSummary;
   var testData;
