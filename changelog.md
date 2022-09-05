@@ -1,4 +1,4 @@
-### 0.23.0 (Major Release)
+### 0.22.2 (Minor Release)
 
 #### The future filter now accepts strings
 
