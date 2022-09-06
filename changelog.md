@@ -1,5 +1,8 @@
 ### 0.23.0 (Major Release)
 
+
+### 0.22.2 (Minor Release)
+
 #### The future filter now accepts strings
 
 The filter `future` now accepts a string as outputted by the Opal date serialization
