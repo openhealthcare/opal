@@ -1,30 +1,11 @@
 ### 0.23.0 (Major Release)
 
-#### Allows the patient summary class to be overridden.
+#### Enhanced customisation of search results
 
-You can now override the default episode serialization in the serach functionality.
+Provides a new API for applications to customize the data serialized for each patient in a 
+set of search results and then use this data in the front end.
 
-Serialization is done by default with the PatientSummary class. This can be overridden in a custom search backend.
-
-e.g. adding title to the serialization
-
-```
-class MyPatientSummary(PatientSummary):
-    def __init__(self, patient, episodes):
-        super()__init__(patient, episodes)
-        self.patient_title = patient.demographics().title
-
-    def to_json(self):
-        as_json = super().to_json()
-        as_json['title'] = self.patient_title
-        return as_json
-
-
-class MyCustomBackend(DatabaseQueryBackend):
-    patient_summary_class = PatientSummary
-
-# change settings.py to include OPAL_SEARCH_BACKEND='{path to my backend}.MyCustomBackend'
-```
+Applications should use a custom search backend with their own `PatientSummary` class.
 
 #### The future filter now accepts strings
 
