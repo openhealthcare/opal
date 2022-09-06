@@ -9,9 +9,11 @@ functionality related to interacting with patient search results in the client.
 The PatientSummary service is instantiated with the patient search result data
 that comes back from the patient search JSON API.
 
-    var patientSummary = new PatientSummary(json_data);
+```javascript
+var patientSummary = new PatientSummary(json_data);
+```
 
-Whatever is on the JSON response is put onto patientSummary.data. The constructor adds in the below to the object itself:
+The result object has the following properties by default:
 
  * `hospitalNumber`
  * `patientId`
@@ -21,3 +23,5 @@ Whatever is on the JSON response is put onto patientSummary.data. The constructo
  * `endDate` The patient's last episdoe.end cast to a moment
  * `years` The span of years between startDate and EndDate e.g. "2020-2023"
  * `categories` A comma joined string of the patient's episode categories, e.g. "Inpatient, ICU"
+ * `data` the raw JSON data from the API
+ 
