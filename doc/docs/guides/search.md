@@ -16,17 +16,19 @@ The backend takes in a dictionary with the following fields
 }
 ```
 
-## Overriding what is serialized in the search results
-By default the class `opal.core.search.queries.PatientSummary` is used to serialize search results to the front end. This can be overridden by declaring a custom class on a custom backend.
+## Customisation of search results
 
-The class is initialised with the patient and the episodes and is then serialized with the `to_json` method.
+Search results are rendered with the template `partials/_patient_summary_list.html`. To
+improve performance of serializing multiple patients, the backend returns a patient summary
+for the current page of search results.
 
-With a custom backend you can declare your own `patient_summary_class` allowing you to control how and what gets serialized.
+To add data to these results the application can implement a `PatientSummary` class.
 
-
-e.g. adding title to the serialization
+The following example adds the title to the data returned to the front end.
 
 ```
+from opal.core.search.queries import PatientSummary
+
 class MyPatientSummary(PatientSummary):
     def __init__(self, patient, episodes):
         super()__init__(patient, episodes)
@@ -44,7 +46,11 @@ class MyCustomBackend(DatabaseQueryBackend):
 # change settings.py to include OPAL_SEARCH_BACKEND='{path to my backend}.MyCustomBackend'
 ```
 
+The raw serialised data is available to the front end in a `.data` property.
 
+```
+[[ result.data.title ]] [[ result.first_name ]] [[ result.surname ]] [[ result.hospitalNumber ]]
+```
 
 ## The Advanced search interface
 
