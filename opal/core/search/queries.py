@@ -3,6 +3,7 @@ Allow us to make search queries
 """
 import datetime
 import operator
+from collections import defaultdict
 from functools import reduce
 
 from django.contrib.contenttypes.models import ContentType
@@ -28,36 +29,35 @@ def get_model_from_api_name(column_name):
 
 
 class PatientSummary(object):
-    def __init__(self, episode):
-        self.start = episode.start
-        self.end = episode.end
-        self.episode_ids = set([episode.id])
-        self.patient_id = episode.patient.id
-        self.categories = set([episode.category_name])
+    def __init__(self, patient, episodes):
+        start_dates = [i.start for i in episodes if i.start]
+        self.start = None
+        if len(start_dates) > 0:
+            self.start = min(start_dates)
 
-    def update(self, episode):
-        if not self.start:
-            self.start = episode.start
-        elif episode.start:
-            if self.start > episode.start:
-                self.start = episode.start
+        end_dates = [i.end for i in episodes if i.end]
+        self.end = None
+        if len(end_dates) > 0:
+            self.end = max(end_dates)
 
-        if not self.end:
-            self.end = episode.end
-        elif episode.end:
-            if self.end < episode.end:
-                self.end = episode.end
-
-        self.episode_ids.add(episode.id)
-        self.categories.add(episode.category_name)
+        self.patient_id = patient.id
+        demographics = patient.demographics_set.all()[0]
+        self.first_name = demographics.first_name
+        self.surname = demographics.surname
+        self.hospital_number = demographics.hospital_number
+        self.date_of_birth = demographics.date_of_birth
+        self.categories = list(sorted(set([
+            episode.category_name for episode in episodes
+        ])))
+        self.count = len(episodes)
 
     def to_dict(self):
-        result = {k: getattr(self, k) for k in [
-            "patient_id", "start", "end"
-        ]}
-        result["categories"] = sorted(self.categories)
-        result["count"] = len(self.episode_ids)
-        return result
+        keys = [
+            "patient_id", "start", "end", "first_name",
+            "surname", "hospital_number", "date_of_birth",
+            "categories", "count"
+        ]
+        return {key: getattr(self, key) for key in keys}
 
 
 def episodes_for_user(episodes, user):
@@ -73,6 +73,7 @@ class QueryBackend(object):
     """
     Base class for search implementations to inherit from
     """
+
     def __init__(self, user, query):
         self.user = user
         self.query = query
@@ -109,6 +110,7 @@ class DatabaseQuery(QueryBackend):
 
     Finally we filter based on episode type level restrictions.
     """
+    patient_summary_class = PatientSummary
 
     def fuzzy_query(self):
         """
@@ -403,37 +405,16 @@ class DatabaseQuery(QueryBackend):
         return eps
 
     def get_aggregate_patients_from_episodes(self, episodes):
-        # at the moment we use start/end only
-        patient_summaries = {}
+        patient_to_episodes = defaultdict(set)
+        result = []
 
         for episode in episodes:
-            patient_id = episode.patient_id
-            if patient_id in patient_summaries:
-                patient_summaries[patient_id].update(episode)
-            else:
-                patient_summaries[patient_id] = PatientSummary(episode)
+            patient_to_episodes[episode.patient].add(episode)
 
-        patients = models.Patient.objects.filter(
-            id__in=list(patient_summaries.keys())
-        )
-        patients = patients.prefetch_related("demographics_set")
-
-        results = []
-
-        for patient_id, patient_summary in patient_summaries.items():
-            patient = next(p for p in patients if p.id == patient_id)
-            # Explicitly not using the .demographics property for performance
-            # note that we prefetch demographics_set a few lines earlier
-            demographic = patient.demographics_set.get()
-
-            result = {k: getattr(demographic, k) for k in [
-                "first_name", "surname", "hospital_number", "date_of_birth"
-            ]}
-
-            result.update(patient_summary.to_dict())
-            results.append(result)
-
-        return results
+        for patient, episodes in patient_to_episodes.items():
+            patient_summary = self.patient_summary_class(patient, episodes)
+            result.append(patient_summary.to_dict())
+        return result
 
     def _episodes_without_restrictions(self):
         all_matches = [
