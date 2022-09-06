@@ -26,7 +26,7 @@ To add data to these results the application can implement a `PatientSummary` cl
 
 The following example adds the title to the data returned to the front end.
 
-```
+```python
 from opal.core.search.queries import PatientSummary
 
 class MyPatientSummary(PatientSummary):
