@@ -1,3 +1,34 @@
+### 0.22.2 (Minor Release)
+
+#### The future filter now accepts strings
+
+The filter `future` now accepts a string as outputted by the Opal date serialization
+e.g. 27/12/2022.
+
+
+### 0.22.1 (Minor Release)
+
+#### Exclude many to one relationships from the advanced search
+
+Many to one fields are no longer visible in the advanced search screen.
+
+
+### 0.22.0 (Major Release)
+
+#### Advanced search changes
+Date and datetime fields now support `Equals` along with `Before` and `After`
+
+#### Application.modify_extract
+
+A list of functions attached to the application object that
+enable the application to add, remove or alter files in an
+advanced search extract.
+
+#### Include ID in the extract
+
+The model ID will no longer be excluded from its csv extract. If present, id will appear first, then patient id, then episode id.
+
+
 ### 0.21.0 (Major Release)
 
 #### Celery upgrade and Django Celery library change.

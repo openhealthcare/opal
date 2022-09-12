@@ -4,6 +4,7 @@ Application helpers for Opal
 import inspect
 import itertools
 import os
+from django.utils import module_loading
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from opal.core import plugins, menus
@@ -85,6 +86,7 @@ class OpalApplication(object):
     javascripts = []
     styles = []
     actions = []
+    modify_extract = []
     menuitems = [
         menus.MenuItem(
             href="/#/list/", activepattern="/list/",
@@ -158,6 +160,21 @@ class OpalApplication(object):
         for i in get_all_components():
             all_angular_module_deps.extend(i.angular_module_deps)
         return all_angular_module_deps
+
+    @classmethod
+    def get_modify_extract_functions(cls):
+        """
+        Return extract modifier functions.
+
+        If the functions are string paths, evaluate those paths and
+        retrieve the callable function.
+        """
+        function_list = []
+        for some_fun in cls.modify_extract:
+            if isinstance(some_fun, str):
+                some_fun = module_loading.import_string(some_fun)
+            function_list.append(some_fun)
+        return function_list
 
 
 def get_app():

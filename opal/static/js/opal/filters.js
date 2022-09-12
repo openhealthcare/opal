@@ -120,13 +120,13 @@ filters.filter('daysSince', function(daysToFilter){
 });
 
 
-filters.filter('future', function(){
+filters.filter('future', function(toMomentFilter){
     return function(i, includeToday){
       if(!i){
         return false;
       }
       var today = new moment();
-      var input = moment(i);
+      var input = toMomentFilter(i);
 
 			if(includeToday && input.isSame(today, "day")){
         return true;

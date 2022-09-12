@@ -1,15 +1,15 @@
 """
 Utilities for extracting data from Opal applications
 """
+import shutil
 from collections import OrderedDict
+from opal.core import application
 import csv
 import datetime
-import functools
 import json
 import logging
 import os
 import tempfile
-import zipfile
 
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
@@ -81,7 +81,16 @@ class CsvRenderer(object):
             if field_name not in non_field_csv_columns_set:
                 result.append(field_name)
 
-        return result
+        # We should have id, patient_id, episode_id in every subrecord
+        # CSV, if these fields are present, make them appear first.
+        id_fields = [
+            f for f in ["id", "patient_id", "episode_id"] if f in result
+        ]
+
+        for f in id_fields:
+            result.remove(f)
+
+        return id_fields + result
 
     def get_field_title(self, field_name):
         return self.model._get_field_title(field_name)
@@ -195,13 +204,6 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             model, queryset, user, fields
         )
 
-    def get_field_names_to_render(self):
-        field_names = super(
-            PatientSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
-
     def get_rows(self):
         for sub in self.queryset:
             for episode_id in self.patient_to_episode[sub.patient_id]:
@@ -247,13 +249,6 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             value=lambda self, instance: text_type(instance.episode.patient_id)
         ),
     )
-
-    def get_field_names_to_render(self):
-        field_names = super(
-            EpisodeSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
 
     def __init__(self, model, episode_queryset, user, fields=None):
         queryset = model.objects.filter(episode__in=episode_queryset)
@@ -304,23 +299,24 @@ def zip_archive(episodes, description, user):
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
+
+    After CSV serialization but before archiving, call the optional
+    extract modification functions from the application layer.
     """
-    target_dir = tempfile.mkdtemp()
-    target = os.path.join(target_dir, 'extract.zip')
-
-    with zipfile.ZipFile(target, mode='w') as z:
+    with tempfile.TemporaryDirectory() as csv_parent_dir:
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-        root_dir = os.path.join(target_dir, zipfolder)
-        os.mkdir(root_dir)
-        zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        file_names = generate_csv_files(root_dir, episodes, user)
-        for full_file_name, file_name in file_names:
-            z.write(
-                full_file_name,
-                zip_relative_file_path(file_name)
-            )
-
-    return target
+        csv_dir = os.path.join(csv_parent_dir, zipfolder)
+        os.mkdir(csv_dir)
+        generate_csv_files(csv_dir, episodes, user)
+        app = application.get_app()
+        for modify_extract_fun in app.get_modify_extract_functions():
+            modify_extract_fun(episodes, csv_dir, user)
+        extract_dir = tempfile.mkdtemp()
+        target = os.path.join(extract_dir, 'extract')
+        archive_name = os.path.join(
+            extract_dir, shutil.make_archive(target, 'zip', csv_dir)
+        )
+    return archive_name
 
 
 def async_extract(user_id, criteria):

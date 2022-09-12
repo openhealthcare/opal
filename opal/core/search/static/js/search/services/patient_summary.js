@@ -1,10 +1,9 @@
 //
 // This is the main PatientSummary class for OPAL.
 //
-angular.module('opal.services').factory('PatientSummary', function(UserProfile) {
+angular.module('opal.services').factory('PatientSummary', function() {
         var PatientSummary = function(jsonResponse){
             var startYear, endYear;
-            var self = this;
 
             if(jsonResponse.start_date){
                 startYear= moment(jsonResponse.start_date, 'DD/MM/YYYY').format("YYYY");
@@ -28,9 +27,6 @@ angular.module('opal.services').factory('PatientSummary', function(UserProfile) 
             this.categories = jsonResponse.categories.join(", ");
             this.link = "/#/patient/" + jsonResponse.patient_id;
             this.hospitalNumber = jsonResponse.hospital_number;
-            UserProfile.load().then(function(user_profile){
-                self.canViewPatientNotes = _.contains(user_profile.roles.default, "micro_haem");
-            })
         };
 
         return PatientSummary;
