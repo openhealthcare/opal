@@ -1,5 +1,8 @@
 ### 0.22.3 (Minor Release)
 
+#### Subrecord.get_field_enum now returns the human readable value
+The `get_field_enum` method now returns the human readable part of the choices tuple.
+
 
 ### 0.22.2 (Minor Release)
 

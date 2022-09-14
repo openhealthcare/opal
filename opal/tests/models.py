@@ -173,9 +173,9 @@ class EpisodeName(models.EpisodeSubrecord):
 
 
 COLOUR_CHOICES = (
-    ('purple', 'purple'),
-    ('yellow', 'yellow'),
-    ('blue', 'blue'),
+    ('p', 'purple'),
+    ('y', 'yellow'),
+    ('b', 'blue'),
 )
 
 
