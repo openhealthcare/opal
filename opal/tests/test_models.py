@@ -742,6 +742,20 @@ class PatientConsultationTestCase(OpalTestCase):
         patient_consultation = self.episode.patientconsultation_set.first()
         self.assertTrue(patient_consultation.when >= now)
 
+    def test_consistency_token_error(self):
+        self.patient_consultation.set_consistency_token()
+        self.patient_consultation.save()
+        patient_consultation_dict = dict(
+            when='10/06/2016 12:02:20',
+            consistency_token='wrong'
+        )
+        with self.assertRaises(exceptions.ConsistencyError) as m:
+            self.patient_consultation.update_from_dict(patient_consultation_dict, self.user)
+        self.assertEqual(
+            str(m.exception),
+            f'Consistency token error for PatientConsultation id: {self.patient_consultation.id}'
+        )
+
 
 class SymptomComplexTestCase(OpalTestCase):
     def setUp(self):
