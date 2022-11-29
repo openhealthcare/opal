@@ -351,7 +351,9 @@ class UpdatesFromDictMixin(SerialisableFields):
                 )
 
             if consistency_token != self.consistency_token:
-                raise exceptions.ConsistencyError
+                class_name = self.__class__.__name__
+                msg = f"Consistency token error for {class_name} id: {self.id}"
+                raise exceptions.ConsistencyError(msg)
 
         post_save = []
 
