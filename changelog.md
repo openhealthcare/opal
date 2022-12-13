@@ -1,13 +1,17 @@
-### 0.22.2 (Minor Release)
+### 0.23.0 (Major Release)
+
+#### Enhanced customisation of search results
+
+Provides a new API for applications to customize the data serialized for each patient in a
+set of search results and then use this data in the front end.
+
+Applications should use a custom search backend with their own `PatientSummary` class.
 
 #### The future filter now accepts strings
 
 The filter `future` now accepts a string as outputted by the Opal date serialization
 e.g. 27/12/2022.
 
-#### Allows to the patient summary class that returns results to the front end to be overridden
-
-If you are using the default DatabaseQueryBackend, you can now return difference results to the front end by overriding the class that translates a patient and episodes to a result in the search results.
 
 ### 0.22.1 (Minor Release)
 

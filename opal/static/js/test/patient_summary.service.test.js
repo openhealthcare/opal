@@ -43,6 +43,20 @@ describe('PatientSummary', function (){
     expect(patientSummary.end_date.toDate()).toEqual(new Date(1974, 9, 10));
   });
 
+  it("should not error if the json object we use to initialize it is unexpected", function(){
+    var testData = {"title": "Dr"};
+    var patientSummary = new PatientSummary(testData);
+    expect(patientSummary.data.title).toBe("Dr")
+  });
+
+  it('should cast start date and end date to moments', function(){
+    testData.start_date = "10/10/1973";
+    testData.end_date = "10/10/1974";
+    var patientSummary = new PatientSummary(testData);
+    expect(patientSummary.startDate.toDate()).toEqual(new Date(1973, 9, 10));
+    expect(patientSummary.endDate.toDate()).toEqual(new Date(1974, 9, 10));
+  });
+
   it("should populate years if they exist", function(){
       testData.start_date = "10/10/1973";
       testData.end_date = "10/10/1974";

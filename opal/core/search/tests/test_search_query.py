@@ -545,7 +545,10 @@ class DatabaseQueryTestCase(OpalTestCase):
         hound_owner.dog = "Dalwinion"
         hound_owner.save()
         query = queries.DatabaseQuery(self.user, [criteria])
-        self.assertEqual([self.episode, episode_2], query.get_episodes())
+        self.assertEqual(
+            set([self.episode, episode_2]),
+            set(query.get_episodes())
+        )
 
     def test_episode_fkorft_contains_distinct(self):
         criteria = dict(

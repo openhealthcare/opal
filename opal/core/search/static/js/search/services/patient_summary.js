@@ -1,20 +1,20 @@
 //
 // This is the main PatientSummary class for OPAL.
 //
-angular.module('opal.services').factory('PatientSummary', function(UserProfile) {
+angular.module('opal.services').factory('PatientSummary', function() {
     "use strict";
     var PatientSummary = function(jsonResponse){
-        _.extend(this, jsonResponse);
+        this.data = jsonResponse;
         var startYear, endYear
 
         if(jsonResponse.start_date){
             this.startDate = moment(jsonResponse.start_date, 'DD/MM/YYYY');
-            startYear= this.start_date.format("YYYY");
+            startYear= this.startDate.format("YYYY");
         }
 
         if(jsonResponse.end_date){
             this.endDate = moment(jsonResponse.end_date, 'DD/MM/YYYY');
-            endYear = this.end_date.format("YYYY");
+            endYear = this.endDate.format("YYYY");
         }
 
         if(startYear && endYear && startYear !== endYear){
@@ -37,9 +37,11 @@ angular.module('opal.services').factory('PatientSummary', function(UserProfile) 
             this.categories = jsonResponse.categories.join(", ");
         }
 
-        if(jsonResponse.hospital_number){
-            this.hospitalNumber = jsonResponse.hospital_number;
-        }
+        this.first_name = jsonResponse.first_name;
+        this.surname = jsonResponse.surname;
+        this.count = jsonResponse.count;
+        this.dateOfBirth = moment(jsonResponse.date_of_birth, 'DD/MM/YYYY');
+        this.hospitalNumber = jsonResponse.hospital_number;
     };
 
     return PatientSummary;
