@@ -16,6 +16,42 @@ The backend takes in a dictionary with the following fields
 }
 ```
 
+## Customisation of search results
+
+Search results are rendered with the template `partials/_patient_summary_list.html`. To
+improve performance of serializing multiple patients, the backend returns a patient summary
+for the current page of search results.
+
+To add data to these results the application can implement a `PatientSummary` class.
+
+The following example adds the title to the data returned to the front end.
+
+```python
+from opal.core.search.queries import PatientSummary
+
+class MyPatientSummary(PatientSummary):
+    def __init__(self, patient, episodes):
+        super()__init__(patient, episodes)
+        self.patient_title = patient.demographics().title
+
+    def to_json(self):
+        as_json = super().to_json()
+        as_json['title'] = self.patient_title
+        return as_json
+
+
+class MyCustomBackend(DatabaseQueryBackend):
+    patient_summary_class = PatientSummary
+
+# change settings.py to include OPAL_SEARCH_BACKEND='{path to my backend}.MyCustomBackend'
+```
+
+The raw serialised data is available to the front end in a `.data` property.
+
+```
+[[ result.data.title ]] [[ result.first_name ]] [[ result.surname ]] [[ result.hospitalNumber ]]
+```
+
 ## The Advanced search interface
 
 The Opal advanced search interface at `/#/extract` allows users to specify rules
