@@ -11,6 +11,7 @@ angular.module('opal.controllers').controller(
   $scope.limit = 10;
   $scope.results = [];
   $scope.searched = false;
+  $scope.searching = false;
   $scope.paginator = new Paginator($scope.search);
 
   $scope.getQueryParam = function(){
@@ -52,13 +53,17 @@ angular.module('opal.controllers').controller(
         ngProgressLite.set(0);
         ngProgressLite.start();
         var queryParams = $location.search();
+        $scope.searching = true;
         queryBackend(queryParams).then(
             function(response){
+                $scope.searching = false;
+
                 ngProgressLite.done();
                 $scope.searched = true;
                 $scope.paginator = new Paginator($scope.search, response.data);
             },
             function(){
+                $scope.searching = false;
                 ngProgressLite.done();
             }
         );

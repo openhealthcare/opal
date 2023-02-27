@@ -1,3 +1,10 @@
+### 0.23.1 (Minor Release)
+
+#### Disable search button while searching
+
+While waiting for search results the search button and form are now disabled.
+
+
 ### 0.23.0 (Major Release)
 
 #### Enhanced customisation of search results
