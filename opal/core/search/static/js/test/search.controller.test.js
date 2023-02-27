@@ -125,7 +125,7 @@ describe('SearchCtrl', function (){
             });
 
             var expectedUrl = "/search/simple/?query=Bond&page_number=1";
-            $httpBackend.expectGET().respond(500);
+            $httpBackend.expectGET(expectedUrl).respond(500);
             spyOn(ngProgressLite, 'done');
             $scope.loadResults();
             $httpBackend.flush();
