@@ -38,7 +38,6 @@ angular.module('opal.controllers').controller(
   };
 
   $scope.loadResults = function(){
-    var queryString;
     var urlParams = $location.search();
 
     // this view only allows a couple a couple of search columns
