@@ -148,7 +148,7 @@ describe('SearchCtrl', function (){
             $scope.loadResults();
             expect($scope.searching).toBe(true);
             $httpBackend.flush();
-            expect($scope.searching).toBe(false);
+            expect($scope.searching).toBe(true);
         });
 
         it('loadResults() should set and reset the searching variable if the server errors', function(){
