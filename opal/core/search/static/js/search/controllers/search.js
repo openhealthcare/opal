@@ -56,8 +56,6 @@ angular.module('opal.controllers').controller(
         $scope.searching = true;
         queryBackend(queryParams).then(
             function(response){
-                $scope.searching = false;
-
                 ngProgressLite.done();
                 $scope.searched = true;
                 $scope.paginator = new Paginator($scope.search, response.data);
