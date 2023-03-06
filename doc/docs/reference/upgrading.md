@@ -3,7 +3,7 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-#### 0.22.1 -> v0.23.0
+#### 0.23.0 -> v0.24.0
 
 Django is upgraded to 3.2 as part of this,
 * `{% load staticfiles %}` in templates needs to be replaced with `{% load static %}`
