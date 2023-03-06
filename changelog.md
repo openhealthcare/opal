@@ -1,3 +1,5 @@
+### 0.24.0 (Major Release)
+
 ### 0.23.0 (Major Release)
 
 #### Enhanced customisation of search results
