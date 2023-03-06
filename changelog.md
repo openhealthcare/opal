@@ -1,5 +1,15 @@
 ### 0.23.0 (Major Release)
 
+#### Enhanced customisation of search results
+
+Provides a new API for applications to customize the data serialized for each patient in a
+set of search results and then use this data in the front end.
+
+Applications should use a custom search backend with their own `PatientSummary` class.
+
+
+### 0.22.2 (Minor Release)
+
 #### The future filter now accepts strings
 
 The filter `future` now accepts a string as outputted by the Opal date serialization
