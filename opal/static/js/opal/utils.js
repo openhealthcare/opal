@@ -18,6 +18,7 @@ OPAL.module = function(namespace, dependencies){
         'ngCookies',
         'angulartics',
         'angulartics.google.analytics',
+        'ngSanitize',
         'LocalStorageModule',
     ];
 

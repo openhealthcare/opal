@@ -117,9 +117,10 @@ directives.directive('placeholder', function($timeout){
 	};
 });
 
-directives.directive('markdown', function () {
+directives.directive('markdown', function ($sanitize) {
 	return function postLink (scope, element, attrs) {
     var renderMarkdown = function(unrendered){
+      var unrendered = $sanitize(unrendered);
       var converter = new Showdown.converter({extensions: [OpalDown]});
       element.html(converter.makeHtml(unrendered));
     }

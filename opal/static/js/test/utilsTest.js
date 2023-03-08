@@ -168,6 +168,7 @@ describe("OPAL.module", function(){
       'ngCookies',
       'angulartics',
       'angulartics.google.analytics',
+      'ngSanitize',
       'LocalStorageModule'
     ];
 

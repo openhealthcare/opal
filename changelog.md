@@ -22,6 +22,9 @@ The model ID will no longer be excluded from its csv extract. If present, id wil
 #### Drops support for Python 3.5
 Opal now supports Python 3.6 - Python 3.8.
 
+#### Adds the ng-sanitize
+Opal now ships with the filter `$sanitize` that escapes dangerous tokens in html.
+
 
 ### 0.20.0 (Major Release)
 
