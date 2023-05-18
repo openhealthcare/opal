@@ -2,7 +2,8 @@
 
 #### Disable search button while searching
 
-While waiting for search results the search button and form are now disabled.
+While waiting for search results the search button and form are now disabled unless 
+the user has changed the search string.
 
 ### 0.23.0 (Major Release)
 
