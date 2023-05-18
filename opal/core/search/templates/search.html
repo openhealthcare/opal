@@ -18,6 +18,7 @@
                      slash-key-focus="!state || state==='normal'"
                      ng-blur="enableShortcuts()"
                      ng-focus="disableShortcuts()"
+                     {# Reenables the search button/form after the input box is changed #}
                      ng-change="searching=false"
                      placeholder="Name or Hospital Number"
                      ng-model="query.searchTerm"
