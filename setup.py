@@ -58,7 +58,9 @@ setup(
         'django-celery-results==2.0.0',
         'celery==5.0.2',
         'MarkupSafe==1.1.1', # required for python 3.5
-        'six==1.15.0'
+        'six==1.15.0',
+        # the following is necessary due to https://github.com/python/importlib_metadata/issues/411
+        'importlib-metadata == 4.13.0; python_version == "3.7"'
         ],
     classifiers = [
         "Programming Language :: Python",
