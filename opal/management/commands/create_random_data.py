@@ -100,7 +100,7 @@ def date_generator(*args, **kwargs):
     else:
         first_day = 1
 
-    if first_day == last_day:
+    if first_day >= last_day:
         day = first_day
     else:
         day = random.randint(first_day, last_day)

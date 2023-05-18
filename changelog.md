@@ -1,5 +1,8 @@
 ### 0.24.0 (Major Release)
 
+#### Fixes a sporadic failure in create_random_data
+Fixes a bug where in an edge case create_random.data.date_generator would raise "ValueError: empty range for randrange()".
+
 ### 0.23.0 (Major Release)
 
 #### Enhanced customisation of search results
