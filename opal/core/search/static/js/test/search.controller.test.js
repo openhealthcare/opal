@@ -125,11 +125,45 @@ describe('SearchCtrl', function (){
             });
 
             var expectedUrl = "/search/simple/?query=Bond&page_number=1";
-            $httpBackend.expectGET().respond(500);
+            $httpBackend.expectGET(expectedUrl).respond(500);
             spyOn(ngProgressLite, 'done');
             $scope.loadResults();
             $httpBackend.flush();
             expect(ngProgressLite.done).toHaveBeenCalledWith();
+        });
+
+        it('loadResults() should set and reset the searching variable', function(){
+            location.search({
+                query: "Bond",
+                page_number: 1
+            });
+
+            var expectedUrl = "/search/simple/?query=Bond&page_number=1";
+            $httpBackend.expectGET(expectedUrl).respond({
+                page_number: 1,
+                object_list: [],
+                total_pages: 1
+            });
+            expect($scope.searching).toBe(false);
+            $scope.loadResults();
+            expect($scope.searching).toBe(true);
+            $httpBackend.flush();
+            expect($scope.searching).toBe(true);
+        });
+
+        it('loadResults() should set and reset the searching variable if the server errors', function(){
+            location.search({
+                query: "Bond",
+                page_number: 1
+            });
+
+            var expectedUrl = "/search/simple/?query=Bond&page_number=1";
+            $httpBackend.expectGET(expectedUrl).respond(500);
+            expect($scope.searching).toBe(false);
+            $scope.loadResults();
+            expect($scope.searching).toBe(true);
+            $httpBackend.flush();
+            expect($scope.searching).toBe(false);
         });
 
         it("should redirect to the search page", function(){

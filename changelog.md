@@ -1,5 +1,10 @@
 ### 0.24.0 (Major Release)
 
+#### Disable search button while searching
+
+While waiting for search results the search button and form are now disabled unless 
+the user has changed the search string.
+
 #### Fixes a sporadic failure in create_random_data
 Fixes a bug where in an edge case create_random.data.date_generator would raise "ValueError: empty range for randrange()".
 
