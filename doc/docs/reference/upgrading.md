@@ -5,13 +5,14 @@ application to a later version where there are extra steps required.
 
 #### 0.23.0 -> v0.24.0
 
-Django is upgraded to 3.2 as part of this,
+Django is upgraded to 3.2 as part of this Opal version. This may requrie some code changes to
+your application.
 * `{% load staticfiles %}` in templates needs to be replaced with `{% load static %}`
-* Third part json field libraries should be replaced with the jsonfield that now ships with django
+* Third party JSONfield libraries should be replaced with the JSONfield that now ships with Django
 * `DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'` should be set in your settings
 
-Note NullBooleanField is deprecated and should be replaced with BooleanField(null=True).
-NullBooleanField will be removed when opal upgrades to django 4.
+Note `NullBooleanField` is deprecated and should be replaced with `BooleanField(null=True)`.
+`NullBooleanField` will be removed when Opal upgrades to Django 4.
 
 #### v0.20.0 -> v0.21.0
 
