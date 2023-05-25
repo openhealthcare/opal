@@ -49,7 +49,7 @@ setup(
         'kombu==5.1.0',
         'ffs>=0.0.8.2',
         'Jinja2==2.10.1',
-        'django==2.2.16',
+        'django==2.2.28',
         'requests==2.25.0',
         'djangorestframework==3.12.2',
         'django-reversion==3.0.8',
