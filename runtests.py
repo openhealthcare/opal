@@ -19,6 +19,8 @@ test_settings_config = dict(
     },
     PROJECT_PATH=PROJECT_PATH,
     ROOT_URLCONF='opal.urls',
+    DEFAULT_AUTO_FIELD = 'django.db.models.AutoField',
+    SECRET_KEY='1111',
     USE_TZ=True,
     OPAL_EXTRA_APPLICATION='',
     DATE_FORMAT='d/m/Y',

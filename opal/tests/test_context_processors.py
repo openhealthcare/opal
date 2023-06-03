@@ -14,7 +14,8 @@ class SettingsTestCase(TestCase):
         context = context_processors.settings(None)
 
         for s in dir(settings):
-            self.assertEqual(getattr(settings, s), context[s])
+            if hasattr(settings, s):
+                self.assertEqual(getattr(settings, s), context[s])
 
 
 class ModelsTestCase(TestCase):

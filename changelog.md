@@ -1,5 +1,11 @@
 ### 0.24.0 (Major Release)
 
+#### Updates to the Dependency Graph
+
+* Django: 2.2.16 -> 3.2
+* Django-compressor: 2.4 -> 3.0
+* django-reversion: 3.0.8 -> 4.0.2
+
 #### Disable search button while searching
 
 While waiting for search results the search button and form are now disabled unless 
@@ -7,6 +13,7 @@ the user has changed the search string.
 
 #### Fixes a sporadic failure in create_random_data
 Fixes a bug where in an edge case create_random.data.date_generator would raise "ValueError: empty range for randrange()".
+
 
 ### 0.23.0 (Major Release)
 
