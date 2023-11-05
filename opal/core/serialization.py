@@ -107,7 +107,7 @@ class OpalSerializer(DjangoJSONEncoder):
         if isinstance(o, list) or isinstance(o, tuple):
             return [_temporal_thing_to_string(i) for i in o]
 
-        if isinstance(o, collections.Mapping):
+        if isinstance(o, collections.abc.Mapping):
             return {
                 _temporal_thing_to_string(k): _temporal_thing_to_string(v)
                 for k, v in o.items()

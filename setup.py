@@ -46,9 +46,9 @@ setup(
     },
     install_requires=[
         # We pin kombu because kombu 5.3 imports does not work on python 3.6.9
-        'kombu==5.1.0',
+        'kombu==5.2.2',
         'ffs>=0.0.8.2',
-        'Jinja2==2.10.1',
+        'Jinja2==3.0.3',
         'django==2.2.16',
         'requests==2.25.0',
         'djangorestframework==3.12.2',
@@ -56,8 +56,8 @@ setup(
         'django-compressor==2.4',
         'python-dateutil==2.8.1',
         'django-celery-results==2.0.0',
-        'celery==5.0.2',
-        'MarkupSafe==1.1.1', # required for python 3.5
+        'celery==5.2.2',
+        'MarkupSafe==2.0', # required for python 3.5
         'six==1.15.0'
         ],
     classifiers = [
